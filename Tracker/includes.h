@@ -3,5 +3,7 @@
 
 #include <stdint.h>
 #include <list>
+#include <pcap.h>
+#include <QtCore>
 
 #endif // INCLUDES_H

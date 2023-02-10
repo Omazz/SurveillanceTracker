@@ -1,13 +1,14 @@
 #ifndef ASTERIXREADER_H
 #define ASTERIXREADER_H
 
+#include <includes.h>
 
 class AsterixReader
 {
 public:
     AsterixReader();
 
-    void readPcapFile();
+    void readPcapFile(std::string filePath);
 
 private:
 };
