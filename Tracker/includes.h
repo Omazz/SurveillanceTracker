@@ -5,5 +5,7 @@
 #include <list>
 #include <pcap.h>
 #include <QtCore>
+#include <iostream>
+#include <fstream>
 
 #endif // INCLUDES_H

@@ -3,6 +3,9 @@
 
 #include <includes.h>
 
+const static quint8 CAT48 = 0x30;
+const static quint8 CAT34 = 0x22;
+
 /*  Asterix34 --  протокол для передачи служебных сообщений монорадара,
  *  таких как SectorCrossed, NORTH MARKER и других */
 
@@ -33,7 +36,7 @@ struct Asterix34 {
     SystemConfigurationAndStatusClass SystemConfigurationAndStatus;
     SystemProcessingModeClass SystemProcessingMode;
     uint8_t REP = 0;
-    std::list<uint16_t> TYP_COUNTERs;
+    std::vector<uint16_t> TYP_COUNTERs;
     uint64_t GenericPolarWindow = 0;
     uint8_t DataFilter = 0;
     uint64_t PositionOfDataSource = 0;
@@ -43,26 +46,26 @@ struct Asterix34 {
 };
 
 
-/*  Asterix34 --  протокол для передачи служебных сообщений монорадара,
+/*  Asterix48 --  протокол для передачи служебных сообщений монорадара,
  *  таких как SectorCrossed, NORTH MARKER и других */
 
 
 struct RadarPlotCharacteristicsClass {
-    uint8_t _PrimarySubfield = 0;
-    uint8_t _SRL = 0;
-    uint8_t _SRR = 0;
-    uint8_t _SAM = 0;
-    uint8_t _PRL = 0;
-    uint8_t _PAM = 0;
-    uint8_t _RPD = 0;
-    uint8_t _APD = 0;
+    uint8_t PrimarySubfield = 0;
+    uint8_t SRL = 0;
+    uint8_t SRR = 0;
+    uint8_t SAM = 0;
+    uint8_t PRL = 0;
+    uint8_t PAM = 0;
+    uint8_t RPD = 0;
+    uint8_t APD = 0;
 };
 
 struct RadialDopplerSpeedClass {
-    uint8_t PrimaryField = 0;
+    uint8_t PrimarySubfield = 0;
     uint16_t CalculatedDopplerSpeed = 0;
     uint8_t REP = 0;
-    std::list<uint64_t> RawDopplerSpeed;
+    std::vector<uint64_t> RawDopplerSpeed;
 };
 
 struct Asterix48 {
@@ -78,7 +81,7 @@ struct Asterix48 {
     uint32_t AircraftAddress = 0; //24
     uint64_t AircraftIndentification = 0; //48
     uint8_t BDSRegisterDataREP = 0;
-    std::list<uint64_t> BDSRegisterData;
+    std::vector<uint64_t> BDSRegisterData;
     uint16_t TrackNumber = 0;
     uint32_t CalculatedPositionInCartesianCoordiantes = 0;
     uint32_t CalculatedTrackVelocityInPolarRepresentation = 0;
