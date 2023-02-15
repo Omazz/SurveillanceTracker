@@ -18,7 +18,13 @@ PKGCONFIG += libpcap
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += asterixreader.h includes.h protocol.h \
+HEADERS += asterixreader.h protocol.h \
     test_asterixreader.h
 SOURCES += asterixreader.cpp main.cpp \
     test_asterixreader.cpp
+
+DISTFILES += \
+    TestRecords/recordAsterix34_1packet_NorthMarker.pcapng \
+    TestRecords/recordAsterix34_1packet_sectorCrossed.pcapng \
+    TestRecords/recordAsterix48_1packet.pcapng \
+    TestRecords/recordsAsterix_100packets.pcapng

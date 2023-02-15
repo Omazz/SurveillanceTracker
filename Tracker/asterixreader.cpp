@@ -6,11 +6,8 @@ AsterixReader::AsterixReader()
 }
 
 
-void AsterixReader::readPcapFile(const char* filePath,
-                                 std::list<Asterix48>* recordsAsterix48,
-                                 std::list<Asterix34>* recordsAsterix34,
-                                 bool print) {
-
+std::pair<std::list<Asterix48>, std::list<Asterix34>> AsterixReader::readPcapFile(const char* filePath, bool print) {
+    std::pair<std::list<Asterix48>, std::list<Asterix34>> records;
     char error_buffer[PCAP_ERRBUF_SIZE] = { 0 };
     char check_buffer[PCAP_ERRBUF_SIZE] = { 0 };
 
@@ -44,7 +41,7 @@ void AsterixReader::readPcapFile(const char* filePath,
 
         if(packet[pos_asterix] == CAT48) {
             Asterix48 record48 = parseAsterix48(packet + pos_asterix);
-            recordsAsterix48->push_back(record48);
+            records.first.push_back(record48);
             if(print) {
                 std::cout << std::hex
                          << "\nRecord Asterix48"
@@ -55,7 +52,7 @@ void AsterixReader::readPcapFile(const char* filePath,
             }
         } else if (packet[pos_asterix] == CAT34) {
             Asterix34 record34 = parseAsterix34(packet + pos_asterix);
-            recordsAsterix34->push_back(record34);
+            records.second.push_back(record34);
             if(print) {
                 std::cout << std::hex
                          << "\nRecord Asterix34"
@@ -65,15 +62,14 @@ void AsterixReader::readPcapFile(const char* filePath,
                          << "\nMessageType:" << record34.MessageType << "\n";
             }
         }
-
     }
+
+    return records;
 }
 
 
-void AsterixReader::readPcapFileWithTimeIntervals(const char* filePath,
-                                                  std::list<Asterix48>* recordsAsterix48,
-                                                  std::list<Asterix34>* recordsAsterix34,
-                                                  bool print) {
+std::pair<std::list<Asterix48>, std::list<Asterix34>> AsterixReader::readPcapFileWithTimeIntervals(const char* filePath, bool print) {
+    std::pair<std::list<Asterix48>, std::list<Asterix34>> records;
     char error_buffer[PCAP_ERRBUF_SIZE] = { 0 };
     char check_buffer[PCAP_ERRBUF_SIZE] = { 0 };
 
@@ -130,7 +126,7 @@ void AsterixReader::readPcapFileWithTimeIntervals(const char* filePath,
 
         if(packet[pos_asterix] == CAT48) {
             Asterix48 record48 = parseAsterix48(packet + pos_asterix);
-            recordsAsterix48->push_back(record48);
+            records.first.push_back(record48);
             if(print) {
                 std::cout << std::hex
                          << "\nRecord Asterix48"
@@ -141,7 +137,7 @@ void AsterixReader::readPcapFileWithTimeIntervals(const char* filePath,
             }
         } else if (packet[pos_asterix] == CAT34) {
             Asterix34 record34 = parseAsterix34(packet + pos_asterix);
-            recordsAsterix34->push_back(record34);
+            records.second.push_back(record34);
             if(print) {
                 std::cout << std::hex
                          << "\nRecord Asterix34"
@@ -151,12 +147,13 @@ void AsterixReader::readPcapFileWithTimeIntervals(const char* filePath,
                          << "\nMessageType:" << record34.MessageType << "\n";
             }
         }
-
     }
+
+    return records;
 }
 
 
-Asterix34 AsterixReader::parseAsterix34(const uchar* data) {
+Asterix34 AsterixReader::parseAsterix34(const uint8_t* data) {
     Asterix34 result;
 
     result.LEN = (data[1] << 8) | data[2];
@@ -290,7 +287,7 @@ Asterix34 AsterixReader::parseAsterix34(const uchar* data) {
     return result;
 }
 
-Asterix48 AsterixReader::parseAsterix48(const uchar* data) {
+Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
     Asterix48 result;
     result.LEN = (data[1] << 8) | data[2];
 

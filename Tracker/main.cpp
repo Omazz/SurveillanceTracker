@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <includes.h>
 #include <asterixreader.h>
 #include <protocol.h>
 #include <test_asterixreader.h>
@@ -18,10 +17,8 @@ int main(int argc, char *argv[])
 
     AsterixReader asterixReader;
 
-    std::list<Asterix34> res34;
-    std::list<Asterix48> res48;
     //asterixReader.readPcapFileWithTimeIntervals("/home/leonid/projects/OverviewTracker/Records/record1.pcapng", &res48, &res34, true);
-    asterixReader.readPcapFileWithTimeIntervals(argv[1], &res48, &res34, true);
+    std::pair<std::list<Asterix48>, std::list<Asterix34>> records = asterixReader.readPcapFileWithTimeIntervals(argv[1], true);
 
     return a.exec();
 }

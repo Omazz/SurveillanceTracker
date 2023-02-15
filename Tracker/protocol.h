@@ -1,10 +1,12 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include <includes.h>
+#include <stdint.h>
+#include <list>
+#include <vector>
 
-const static quint8 CAT48 = 0x30;
-const static quint8 CAT34 = 0x22;
+const static uint8_t CAT48 = 0x30;
+const static uint8_t CAT34 = 0x22;
 
 /*  Asterix34 --  протокол для передачи служебных сообщений монорадара,
  *  таких как SectorCrossed, NORTH MARKER и других */
