@@ -9,18 +9,20 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    AlphaBetaFilter.cpp \
-    KalmanFilter.cpp \
-    main.cpp \
-    mainwindow.cpp
+    Filters/AlphaBetaFilter.cpp \
+    Filters/KalmanFilter.cpp \
+    GUI/GraphicsViewZoom.cpp \
+    GUI/mainwindow.cpp \
+    main.cpp
 
 HEADERS += \
-    AlphaBetaFilter.h \
-    KalmanFilter.h \
-    mainwindow.h
+    Filters/AlphaBetaFilter.h \
+    Filters/KalmanFilter.h \
+    GUI/GraphicsViewZoom.h \
+    GUI/mainwindow.h
 
 FORMS += \
-    mainwindow.ui
+    GUI/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

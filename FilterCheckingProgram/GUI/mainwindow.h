@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QtCore>
-
+#include <Filters/AlphaBetaFilter.h>
+#include "GraphicsViewZoom.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,10 +19,10 @@ const QColor PURPLE = QColor(0x53354A);
 
 const qint16 MIN_CIRCLE_DIAMETER = 1000;
 const quint16 NUMBER_CIRCLES = 10;
+const quint8 PEN_INDICATOR_WIDTH = 5;
 
 
-
-const qint16 MIN_CENTER_CIRCLE_RADIUS = 6;
+const quint8 PEN_TRAJECTORY_WIDTH = 8;
 
 
 
@@ -46,6 +47,10 @@ private:
 
     QVector<QPointF> addNoiseToMeasurements(QVector<QPointF> measurements);
 
+    void drawVariablesTrajectories();
+
+    void clearModulation();
+
     QVector<QPointF> _trajectoryOriginal;
     QVector<QPointF> _trajectoryWithNoise;
     QVector<QPointF> _trajectoryAlphaBetaFilter;
@@ -54,5 +59,6 @@ private:
 
     Ui::MainWindow *ui;
     QGraphicsScene* _graphicsScene;
+    GraphicsViewZoom* zoom;
 };
 #endif // MAINWINDOW_H
