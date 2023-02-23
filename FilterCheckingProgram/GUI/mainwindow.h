@@ -6,6 +6,7 @@
 #include <QtCore>
 #include <Filters/AlphaBetaFilter.h>
 #include "GraphicsViewZoom.h"
+#include "GraphicsBuilderWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,7 +25,7 @@ const quint8 PEN_INDICATOR_WIDTH = 5;
 
 const quint8 PEN_TRAJECTORY_WIDTH = 8;
 
-
+const quint16 NUMBER_MODULATIONS = 1000;
 
 class MainWindow : public QMainWindow
 {
@@ -37,6 +38,8 @@ public:
 private slots:
     void on_PB_modeling_clicked();
 
+    void on_PB_buildingGraphics_clicked();
+
 private:
 
     void drawLineTrajectory();
@@ -47,15 +50,17 @@ private:
 
     QVector<QPointF> addNoiseToMeasurements(QVector<QPointF> measurements);
 
+    void calculateVariablesTrajectories(qreal updateTime);
+
     void drawVariablesTrajectories();
 
     void clearModulation();
 
     QVector<QPointF> _trajectoryOriginal;
-    QVector<QPointF> _trajectoryWithNoise;
-    QVector<QPointF> _trajectoryAlphaBetaFilter;
-    QVector<QPointF> _trajectoryAlphaBetaFilterMNK;
-    QVector<QPointF> _trajectoryKalmanFilterCV;
+    QVector<QVector<QPointF>> _trajectoryWithNoise;
+    QVector<QVector<QPointF>> _trajectoryAlphaBetaFilter;
+    QVector<QVector<QPointF>> _trajectoryAlphaBetaFilterMNK;
+    QVector<QVector<QPointF>> _trajectoryKalmanFilterCV;
 
     Ui::MainWindow *ui;
     QGraphicsScene* _graphicsScene;

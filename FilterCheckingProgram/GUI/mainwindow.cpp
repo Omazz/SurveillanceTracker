@@ -41,8 +41,7 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::on_PB_modeling_clicked()
-{
+void MainWindow::on_PB_modeling_clicked() {
     clearModulation();
     if(ui->RB_onLine->isChecked() == true) {
         drawLineTrajectory();
@@ -53,6 +52,34 @@ void MainWindow::on_PB_modeling_clicked()
     } else if(ui->RB_onCircle->isChecked() == true) {
         drawCircleTrajectory();
     }
+}
+
+void MainWindow::on_PB_buildingGraphics_clicked() {
+    QVector<qreal> sigmaNoise;
+    QVector<qreal> sigmaAlphaBetaFilter;
+    QVector<qreal> sigmaAlphaBetaFilter_MNK;
+    //QVector<qreal> sigmaKalmanFilterCV;
+
+    for(int i = 0; i < _trajectoryOriginal.size(); ++i) {
+        qreal currSigmaNoise = 0;
+        qreal currSigmaAlphaBetaFilter = 0;
+        qreal currSigmaAlphaBetaFilter_MNK = 0;
+
+        for(int indexModulation = 0; indexModulation < NUMBER_MODULATIONS; ++indexModulation) {
+
+        }
+
+        sigmaNoise.append(qSqrt(currSigmaNoise / NUMBER_MODULATIONS));
+        sigmaAlphaBetaFilter.append(qSqrt(currSigmaAlphaBetaFilter / NUMBER_MODULATIONS));
+        sigmaAlphaBetaFilter_MNK.append(qSqrt(currSigmaAlphaBetaFilter_MNK / NUMBER_MODULATIONS));
+    }
+
+    auto window = new GraphicsBuilderWidget();
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    window->setData("Время, с", "Высота цели, метры", timeArray,
+                    {averageTargetH_cnc, averageTargetH_bv, averageTargetH_union, originalHArray},
+                    {"Только от спутника", "Только от барометра", "Компенсированная", "Без шума"});
+    window->show();
 }
 
 
@@ -70,12 +97,7 @@ void MainWindow::drawLineTrajectory() {
         _trajectoryOriginal.append(currentCoord);
     }
 
-    _trajectoryWithNoise = addNoiseToMeasurements(_trajectoryOriginal);
-    _trajectoryAlphaBetaFilter = AlphaBetaFilter::calculateFilteredTrajectory(_trajectoryWithNoise, updateTime,
-                                                                              ui->SB_AB_Kmax->value());
-    _trajectoryAlphaBetaFilterMNK = AlphaBetaFilter::calculateFilteredTrajectory_MNK(_trajectoryWithNoise, updateTime,
-                                                                              ui->SB_AB_MNK_Kmax->value(),
-                                                                              ui->SB_AB_MNK_MNKmax->value());
+    calculateVariablesTrajectories(updateTime);
 
     drawVariablesTrajectories();
 }
@@ -95,12 +117,7 @@ void MainWindow::drawTurnTrajectory() {
         _trajectoryOriginal.append(QPointF((radius * qCos(currAngle)) - radius, (radius * qSin(currAngle)) - radius));
     } while(currAngle <  M_PI_2);
 
-    _trajectoryWithNoise = addNoiseToMeasurements(_trajectoryOriginal);
-    _trajectoryAlphaBetaFilter = AlphaBetaFilter::calculateFilteredTrajectory(_trajectoryWithNoise, updateTime,
-                                                                              ui->SB_AB_Kmax->value());
-    _trajectoryAlphaBetaFilterMNK = AlphaBetaFilter::calculateFilteredTrajectory_MNK(_trajectoryWithNoise, updateTime,
-                                                                              ui->SB_AB_MNK_Kmax->value(),
-                                                                              ui->SB_AB_MNK_MNKmax->value());
+    calculateVariablesTrajectories(updateTime);
 
     drawVariablesTrajectories();
 }
@@ -120,13 +137,7 @@ void MainWindow::drawCircleTrajectory() {
         _trajectoryOriginal.append(QPointF(radius * qCos(currAngle), radius * qSin(currAngle)));
     } while(currAngle < 1.75 * M_PI);
 
-
-    _trajectoryWithNoise = addNoiseToMeasurements(_trajectoryOriginal);
-    _trajectoryAlphaBetaFilter = AlphaBetaFilter::calculateFilteredTrajectory(_trajectoryWithNoise, updateTime,
-                                                                              ui->SB_AB_Kmax->value());
-    _trajectoryAlphaBetaFilterMNK = AlphaBetaFilter::calculateFilteredTrajectory_MNK(_trajectoryWithNoise, updateTime,
-                                                                              ui->SB_AB_MNK_Kmax->value(),
-                                                                              ui->SB_AB_MNK_MNKmax->value());
+    calculateVariablesTrajectories(updateTime);
 
     drawVariablesTrajectories();
 }
@@ -152,6 +163,22 @@ QVector<QPointF> MainWindow::addNoiseToMeasurements(QVector<QPointF> measurement
     return measurementsWithNoise;
 }
 
+void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
+    for(int i = 0; i < NUMBER_MODULATIONS; ++i) {
+        _trajectoryWithNoise.append(addNoiseToMeasurements(_trajectoryOriginal));
+
+        _trajectoryAlphaBetaFilter.append(AlphaBetaFilter::calculateFilteredTrajectory(_trajectoryWithNoise.last(),
+                                                                                       updateTime,
+                                                                                       ui->SB_AB_Kmax->value()));
+
+        _trajectoryAlphaBetaFilterMNK.append(AlphaBetaFilter::calculateFilteredTrajectory_MNK(_trajectoryWithNoise.last(),
+                                                                                              updateTime,
+                                                                                              ui->SB_AB_MNK_Kmax->value(),
+                                                                                              ui->SB_AB_MNK_MNKmax->value()));
+    }
+}
+
+
 void MainWindow::drawVariablesTrajectories() {
     for(int i = 0; i < _trajectoryOriginal.size() - 1; ++i) {
 
@@ -159,20 +186,20 @@ void MainWindow::drawVariablesTrajectories() {
                                       _trajectoryOriginal[i + 1].x(), _trajectoryOriginal[i + 1].y()),
                                 QPen(Qt::white, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
         if(ui->CB_withNoise->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryWithNoise[i].x(), _trajectoryWithNoise[i].y(),
-                                          _trajectoryWithNoise[i + 1].x(), _trajectoryWithNoise[i + 1].y()),
+            _graphicsScene->addLine(QLine(_trajectoryWithNoise[0][i].x(), _trajectoryWithNoise[0][i].y(),
+                                          _trajectoryWithNoise[0][i + 1].x(), _trajectoryWithNoise[0][i + 1].y()),
                                     QPen(Qt::red, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
         }
 
         if(ui->CB_ABfilter->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryAlphaBetaFilter[i].x(), _trajectoryAlphaBetaFilter[i].y(),
-                                          _trajectoryAlphaBetaFilter[i + 1].x(), _trajectoryAlphaBetaFilter[i + 1].y()),
+            _graphicsScene->addLine(QLine(_trajectoryAlphaBetaFilter[0][i].x(), _trajectoryAlphaBetaFilter[0][i].y(),
+                                          _trajectoryAlphaBetaFilter[0][i + 1].x(), _trajectoryAlphaBetaFilter[0][i + 1].y()),
                                     QPen(Qt::green, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
         }
 
         if(ui->CB_ABfilterMNK->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryAlphaBetaFilterMNK[i].x(), _trajectoryAlphaBetaFilterMNK[i].y(),
-                                          _trajectoryAlphaBetaFilterMNK[i + 1].x(), _trajectoryAlphaBetaFilterMNK[i + 1].y()),
+            _graphicsScene->addLine(QLine(_trajectoryAlphaBetaFilterMNK[0][i].x(), _trajectoryAlphaBetaFilterMNK[0][i].y(),
+                                          _trajectoryAlphaBetaFilterMNK[0][i + 1].x(), _trajectoryAlphaBetaFilterMNK[0][i + 1].y()),
                                     QPen(Qt::blue, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
         }
     }
@@ -200,3 +227,6 @@ void MainWindow::clearModulation() {
                                 QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
     }
 }
+
+
+

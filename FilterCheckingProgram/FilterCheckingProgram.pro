@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 CONFIG += c++11
 
@@ -11,17 +11,22 @@ CONFIG += c++11
 SOURCES += \
     Filters/AlphaBetaFilter.cpp \
     Filters/KalmanFilter.cpp \
+    GUI/GraphicsBuilderWidget.cpp \
     GUI/GraphicsViewZoom.cpp \
     GUI/mainwindow.cpp \
-    main.cpp
+    main.cpp \
+    qcustomplot/qcustomplot.cpp
 
 HEADERS += \
     Filters/AlphaBetaFilter.h \
     Filters/KalmanFilter.h \
+    GUI/GraphicsBuilderWidget.h \
     GUI/GraphicsViewZoom.h \
-    GUI/mainwindow.h
+    GUI/mainwindow.h \
+    qcustomplot/qcustomplot.h
 
 FORMS += \
+    GUI/GraphicsBuilderWidget.ui \
     GUI/mainwindow.ui
 
 # Default rules for deployment.
