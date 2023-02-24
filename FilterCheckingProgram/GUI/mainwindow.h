@@ -5,8 +5,10 @@
 #include <QGraphicsScene>
 #include <QtCore>
 #include <Filters/AlphaBetaFilter.h>
+#include <Filters/KalmanFilter.h>
 #include "GraphicsViewZoom.h"
 #include "GraphicsBuilderWidget.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -49,6 +51,8 @@ private:
     void drawCircleTrajectory();
 
     QVector<QPointF> addNoiseToMeasurements(QVector<QPointF> measurements);
+
+    qreal calculateNoise(const qreal sigma, bool flag);
 
     void calculateVariablesTrajectories(qreal updateTime);
 

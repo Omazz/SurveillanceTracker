@@ -33,9 +33,15 @@ void GraphicsBuilderWidget::setData(QString titleX, QString titleY, QVector<qrea
         if(i == 0) {
             currentColor = Qt::red;
         } else if(i == 1) {
-            currentColor = Qt::magenta;
-        } else if (i == 2) {
             currentColor = Qt::green;
+        } else if (i == 2) {
+            currentColor = Qt::blue;
+        } else if (i == 3) {
+            currentColor = Qt::yellow;
+        } else if (i == 4) {
+            currentColor = Qt::magenta;
+        } else if (i == 5) {
+            currentColor = Qt::cyan;
         } else {
             currentColor = Qt::black;
         }

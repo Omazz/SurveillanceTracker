@@ -62,7 +62,7 @@ QVector<QPointF> AlphaBetaFilter::calculateFilteredTrajectory_MNK(QVector<QPoint
     coordsMNK.enqueue(trajectoryWithNoise[2]);
 
     QVector<qreal> time;
-    for(int i = 0; i < 3; ++i) {
+    for(int i = 0; i < numberValuesMNK; ++i) {
         time.append(updateTime * i);
     }
     qreal sumT = time[0] + time[1] + time[2];
@@ -88,13 +88,27 @@ QVector<QPointF> AlphaBetaFilter::calculateFilteredTrajectory_MNK(QVector<QPoint
         filteredVelocity = extrapolatedVelocity + (beta * (trajectoryWithNoise[k] - extrapolatedCoord) / updateTime);
 
         /* Прогноз на следующий шаг */
+        if(coordsMNK.size() == numberValuesMNK) {
+            coordsMNK.dequeue();
+        }
         coordsMNK.enqueue(filteredCoord);
-        coordsMNK.dequeue();
-        sumCoords = coordsMNK[0] + coordsMNK[1] + coordsMNK[2];
-        sumCoordsT = (coordsMNK[0] * time[0]) + (coordsMNK[1] * time[1]) + (coordsMNK[2] * time[2]);
-        extrapolatedVelocity = ((3.0 * sumCoordsT) - (sumCoords * sumT)) / ((3.0 * sumT2) - (sumT * sumT));
-        firstCoord = (sumCoords - (extrapolatedVelocity * sumT)) / 3.0;
-        extrapolatedCoord = firstCoord + (extrapolatedVelocity * (time[2] + updateTime));
+
+        sumCoords= QPointF(0,0);
+        sumCoordsT= QPointF(0,0);
+        sumT = 0;
+        sumT2 = 0;
+
+        for(int i = 0; i < coordsMNK.size(); ++i) {
+            sumT += time[i];
+            sumT2 += qPow(time[i], 2);
+            sumCoords += coordsMNK[i];
+            sumCoordsT += coordsMNK[i] * time[i];
+        }
+
+        extrapolatedVelocity = ((coordsMNK.size() * sumCoordsT) - (sumCoords * sumT)) / ((coordsMNK.size() * sumT2) - (sumT * sumT));
+        firstCoord = (sumCoords - (extrapolatedVelocity * sumT)) / coordsMNK.size();
+        extrapolatedCoord = firstCoord + (extrapolatedVelocity * (time[coordsMNK.size() - 1] + updateTime));
+
 
         filteredTrajectory.append(filteredCoord);
         k++;

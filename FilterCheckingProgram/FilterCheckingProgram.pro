@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     Filters/AlphaBetaFilter.cpp \
     Filters/KalmanFilter.cpp \
+    Filters/Matrix.cpp \
     GUI/GraphicsBuilderWidget.cpp \
     GUI/GraphicsViewZoom.cpp \
     GUI/mainwindow.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     Filters/AlphaBetaFilter.h \
     Filters/KalmanFilter.h \
+    Filters/Matrix.h \
     GUI/GraphicsBuilderWidget.h \
     GUI/GraphicsViewZoom.h \
     GUI/mainwindow.h \

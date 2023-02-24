@@ -24,6 +24,13 @@ MainWindow::MainWindow(QWidget *parent)
         _graphicsScene->addEllipse(-i * MIN_CIRCLE_DIAMETER / 2, -i * MIN_CIRCLE_DIAMETER / 2,
                                    i * MIN_CIRCLE_DIAMETER, i * MIN_CIRCLE_DIAMETER,
                                    QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
+
+        QFont serifFont("Times", 14, QFont::Bold);
+        auto text = _graphicsScene->addSimpleText(QString::number(0.5 * i * MIN_CIRCLE_DIAMETER).append(" м"), serifFont);
+        text->setPen(QPen(Qt::white));
+        text->setBrush(QBrush(Qt::white));
+
+        text->setPos(10, 0.5 * i * MIN_CIRCLE_DIAMETER - 30);
     }
 
     for(qreal i = 0; 2.0 * M_PI - i > 0.1e-6; i += M_PI_4) {
@@ -61,12 +68,14 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<QPointF> sigmaNoise;
     QVector<QPointF> sigmaAlphaBetaFilter;
     QVector<QPointF> sigmaAlphaBetaFilter_MNK;
-    //QVector<qreal> sigmaKalmanFilterCV;
+    QVector<QPointF> sigmaKalmanFilterCV;
 
     for(int i = 0; i < _trajectoryOriginal.size(); ++i) {
         QPointF currSigmaNoise(0, 0);
         QPointF currSigmaAlphaBetaFilter(0, 0);
         QPointF currSigmaAlphaBetaFilter_MNK(0, 0);
+        QPointF currSigmaKalmanFilterCV(0, 0);
+
         step.append(i);
 
         for(int indexModulation = 0; indexModulation < NUMBER_MODULATIONS; ++indexModulation) {
@@ -84,6 +93,11 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
             diffAB_MNK.setX(diffAB_MNK.x() * diffAB_MNK.x());
             diffAB_MNK.setY(diffAB_MNK.y() * diffAB_MNK.y());
             currSigmaAlphaBetaFilter_MNK += diffAB_MNK;
+
+            QPointF diffKalman_CV = (_trajectoryKalmanFilterCV[indexModulation][i] - _trajectoryOriginal[i]);
+            diffKalman_CV.setX(diffKalman_CV.x() * diffKalman_CV.x());
+            diffKalman_CV.setY(diffKalman_CV.y() * diffKalman_CV.y());
+            currSigmaKalmanFilterCV += diffKalman_CV;
         }
 
         sigmaNoise.append(QPointF(qSqrt(currSigmaNoise.x() / NUMBER_MODULATIONS),
@@ -94,6 +108,9 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
         sigmaAlphaBetaFilter_MNK.append(QPointF(qSqrt(currSigmaAlphaBetaFilter_MNK.x() / NUMBER_MODULATIONS),
                                                 qSqrt(currSigmaAlphaBetaFilter_MNK.y() / NUMBER_MODULATIONS)));
+
+        sigmaKalmanFilterCV.append(QPointF(qSqrt(currSigmaKalmanFilterCV.x() / NUMBER_MODULATIONS),
+                                           qSqrt(currSigmaKalmanFilterCV.y() / NUMBER_MODULATIONS)));
     }
 
 
@@ -101,26 +118,36 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<qreal> resSigmaNoise;
     QVector<qreal> resSigmaAlphaBetaFilter;
     QVector<qreal> resSigmaAlphaBetaFilter_MNK;
+    QVector<qreal> resSigmaKalmanFilterCV;
+
     for(int i = 0; i < step.size(); ++i) {
-        resSigmaNoise.append(qSqrt(qPow(sigmaNoise[i].x(), 2) + qPow(sigmaNoise[i].y(), 2)));
-        resSigmaAlphaBetaFilter.append(qSqrt(qPow(sigmaAlphaBetaFilter[i].x(), 2) + qPow(sigmaAlphaBetaFilter[i].y(), 2)));
-        resSigmaAlphaBetaFilter_MNK.append(qSqrt(qPow(sigmaAlphaBetaFilter_MNK[i].x(), 2) + qPow(sigmaAlphaBetaFilter_MNK[i].y(), 2)));
+        resSigmaNoise.append(qSqrt(qPow(sigmaNoise[i].x(), 2)
+                                   + qPow(sigmaNoise[i].y(), 2)));
+
+        resSigmaAlphaBetaFilter.append(qSqrt(qPow(sigmaAlphaBetaFilter[i].x(), 2)
+                                             + qPow(sigmaAlphaBetaFilter[i].y(), 2)));
+
+        resSigmaAlphaBetaFilter_MNK.append(qSqrt(qPow(sigmaAlphaBetaFilter_MNK[i].x(), 2)
+                                                 + qPow(sigmaAlphaBetaFilter_MNK[i].y(), 2)));
+
+        resSigmaKalmanFilterCV.append(qSqrt(qPow(sigmaKalmanFilterCV[i].x(), 2)
+                                            + qPow(sigmaKalmanFilterCV[i].y(), 2)));
     }
 
 
     auto window = new GraphicsBuilderWidget();
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->setData("Состояние модели", "СКО, метры", step,
-                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK},
-                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК"});
+                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK, resSigmaKalmanFilterCV},
+                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК", "Фильтр Калмана CV"});
     window->setWindowModality(Qt::WindowModality::ApplicationModal);
     window->show();
 }
 
 
 void MainWindow::drawLineTrajectory() {
-    QPointF currentCoord(-NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5, 0);
-    QPointF endCoord(0, NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5);
+    QPointF currentCoord(-NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5 * qSin(M_PI_4), -NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5 * qSin(M_PI_4));
+    QPointF endCoord(NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5 * qSin(M_PI_4), NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5* qSin(M_PI_4));
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
     qreal stepX = velocity * updateTime * qCos(M_PI / 4.0);
@@ -184,18 +211,32 @@ QVector<QPointF> MainWindow::addNoiseToMeasurements(QVector<QPointF> measurement
     std::normal_distribution<> normalDistributionTheta{0, ui->DSB_sigmaTheta->value()};
 
     QVector<QPointF> measurementsWithNoise;
-
+    bool flag = true;
     for(int i = 0; i < measurements.size(); ++i) {
         qreal rho = sqrt(qPow(measurements[i].x(), 2) + qPow(measurements[i].y(), 2));
         qreal theta = qAtan2(measurements[i].y(), measurements[i].x());
-        qreal rhoWithNoise = rho + normalDistributionRho(generator);
-        qreal thetaWithNoise = theta + qDegreesToRadians(normalDistributionTheta(generator));
+        //qreal rhoWithNoise = rho + normalDistributionRho(generator);
+        //qreal thetaWithNoise = theta + qDegreesToRadians(normalDistributionTheta(generator));
+        qreal rhoWithNoise = rho + calculateNoise(ui->DSB_sigmaRho->value(), flag);
+        qreal thetaWithNoise = theta + qDegreesToRadians(calculateNoise(ui->DSB_sigmaTheta->value(), flag));
 
+        flag = !flag;
         measurementsWithNoise.append(QPointF(rhoWithNoise * qCos(thetaWithNoise),
                                              rhoWithNoise * qSin(thetaWithNoise)));
     }
 
     return measurementsWithNoise;
+}
+
+qreal MainWindow::calculateNoise(const qreal sigma, bool flag) {
+    qreal phi = QRandomGenerator::global()->generateDouble();
+    qreal r =  QRandomGenerator::global()->generateDouble();
+
+    if(flag) {
+        return sigma * cos(2.0 * 3.14 * phi) * sqrt(-2.0 * log(r));
+    } else {
+        return sigma * sin(2.0 * 3.14 * phi) * sqrt(-2.0 * log(r));
+    }
 }
 
 void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
@@ -210,6 +251,12 @@ void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
                                                                                               updateTime,
                                                                                               ui->SB_AB_MNK_Kmax->value(),
                                                                                               ui->SB_AB_MNK_MNKmax->value()));
+
+        _trajectoryKalmanFilterCV.append(KalmanFilter::calculateKalmanFilter_CV(_trajectoryWithNoise.last(),
+                                                                                updateTime,
+                                                                                ui->DSB_KalmanFilterCV_sigmaNoiseCoord->value(),
+                                                                                ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value(),
+                                                                                ui->DSB_KalmanFilterCV_sigmaNoiseAcceleration->value()));
     }
 }
 
@@ -237,6 +284,12 @@ void MainWindow::drawVariablesTrajectories() {
                                           _trajectoryAlphaBetaFilterMNK[0][i + 1].x(), _trajectoryAlphaBetaFilterMNK[0][i + 1].y()),
                                     QPen(Qt::blue, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
         }
+
+        if(ui->CB_KalmanFilterCV->isChecked()) {
+            _graphicsScene->addLine(QLine(_trajectoryKalmanFilterCV[0][i].x(), _trajectoryKalmanFilterCV[0][i].y(),
+                                          _trajectoryKalmanFilterCV[0][i + 1].x(), _trajectoryKalmanFilterCV[0][i + 1].y()),
+                                    QPen(Qt::yellow, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
+        }
     }
 }
 
@@ -253,6 +306,12 @@ void MainWindow::clearModulation() {
         _graphicsScene->addEllipse(-i * MIN_CIRCLE_DIAMETER / 2, -i * MIN_CIRCLE_DIAMETER / 2,
                                    i * MIN_CIRCLE_DIAMETER, i * MIN_CIRCLE_DIAMETER,
                                    QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
+        QFont serifFont("Times", 14, QFont::Bold);
+        auto text = _graphicsScene->addSimpleText(QString::number(0.5 * i * MIN_CIRCLE_DIAMETER).append(" м"), serifFont);
+        text->setPen(QPen(Qt::white));
+        text->setBrush(QBrush(Qt::white));
+
+        text->setPos(10, 0.5 * i * MIN_CIRCLE_DIAMETER - 30);
     }
 
     for(qreal i = 0; 2.0 * M_PI - i > 0.1e-6; i += M_PI_4) {
