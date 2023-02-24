@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->GW_locator->setScene(_graphicsScene);
     _graphicsScene->setBackgroundBrush(QBrush(BLUE));
     ui->GW_locator->scale(0.08, 0.08);
+    ui->PB_buildingGraphics->setEnabled(false);
     connect(ui->LW_filters, &QListWidget::currentRowChanged, this, [this](int row) {
         ui->SW_filters->setCurrentIndex(row);
     });
@@ -43,6 +44,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_PB_modeling_clicked() {
     clearModulation();
+    ui->PB_buildingGraphics->setEnabled(true);
     if(ui->RB_onLine->isChecked() == true) {
         drawLineTrajectory();
 
@@ -55,30 +57,63 @@ void MainWindow::on_PB_modeling_clicked() {
 }
 
 void MainWindow::on_PB_buildingGraphics_clicked() {
-    QVector<qreal> sigmaNoise;
-    QVector<qreal> sigmaAlphaBetaFilter;
-    QVector<qreal> sigmaAlphaBetaFilter_MNK;
+    QVector<qreal> step;
+    QVector<QPointF> sigmaNoise;
+    QVector<QPointF> sigmaAlphaBetaFilter;
+    QVector<QPointF> sigmaAlphaBetaFilter_MNK;
     //QVector<qreal> sigmaKalmanFilterCV;
 
     for(int i = 0; i < _trajectoryOriginal.size(); ++i) {
-        qreal currSigmaNoise = 0;
-        qreal currSigmaAlphaBetaFilter = 0;
-        qreal currSigmaAlphaBetaFilter_MNK = 0;
+        QPointF currSigmaNoise(0, 0);
+        QPointF currSigmaAlphaBetaFilter(0, 0);
+        QPointF currSigmaAlphaBetaFilter_MNK(0, 0);
+        step.append(i);
 
         for(int indexModulation = 0; indexModulation < NUMBER_MODULATIONS; ++indexModulation) {
+            QPointF diffNoise = (_trajectoryWithNoise[indexModulation][i] - _trajectoryOriginal[i]);
+            diffNoise.setX(diffNoise.x() * diffNoise.x());
+            diffNoise.setY(diffNoise.y() * diffNoise.y());
+            currSigmaNoise += diffNoise;
 
+            QPointF diffAB = (_trajectoryAlphaBetaFilter[indexModulation][i] - _trajectoryOriginal[i]);
+            diffAB.setX(diffAB.x() * diffAB.x());
+            diffAB.setY(diffAB.y() * diffAB.y());
+            currSigmaAlphaBetaFilter += diffAB;
+
+            QPointF diffAB_MNK = (_trajectoryAlphaBetaFilterMNK[indexModulation][i] - _trajectoryOriginal[i]);
+            diffAB_MNK.setX(diffAB_MNK.x() * diffAB_MNK.x());
+            diffAB_MNK.setY(diffAB_MNK.y() * diffAB_MNK.y());
+            currSigmaAlphaBetaFilter_MNK += diffAB_MNK;
         }
 
-        sigmaNoise.append(qSqrt(currSigmaNoise / NUMBER_MODULATIONS));
-        sigmaAlphaBetaFilter.append(qSqrt(currSigmaAlphaBetaFilter / NUMBER_MODULATIONS));
-        sigmaAlphaBetaFilter_MNK.append(qSqrt(currSigmaAlphaBetaFilter_MNK / NUMBER_MODULATIONS));
+        sigmaNoise.append(QPointF(qSqrt(currSigmaNoise.x() / NUMBER_MODULATIONS),
+                                  qSqrt(currSigmaNoise.y() / NUMBER_MODULATIONS)));
+
+        sigmaAlphaBetaFilter.append(QPointF(qSqrt(currSigmaAlphaBetaFilter.x() / NUMBER_MODULATIONS),
+                                            qSqrt(currSigmaAlphaBetaFilter.y() / NUMBER_MODULATIONS)));
+
+        sigmaAlphaBetaFilter_MNK.append(QPointF(qSqrt(currSigmaAlphaBetaFilter_MNK.x() / NUMBER_MODULATIONS),
+                                                qSqrt(currSigmaAlphaBetaFilter_MNK.y() / NUMBER_MODULATIONS)));
     }
+
+
+
+    QVector<qreal> resSigmaNoise;
+    QVector<qreal> resSigmaAlphaBetaFilter;
+    QVector<qreal> resSigmaAlphaBetaFilter_MNK;
+    for(int i = 0; i < step.size(); ++i) {
+        resSigmaNoise.append(qSqrt(qPow(sigmaNoise[i].x(), 2) + qPow(sigmaNoise[i].y(), 2)));
+        resSigmaAlphaBetaFilter.append(qSqrt(qPow(sigmaAlphaBetaFilter[i].x(), 2) + qPow(sigmaAlphaBetaFilter[i].y(), 2)));
+        resSigmaAlphaBetaFilter_MNK.append(qSqrt(qPow(sigmaAlphaBetaFilter_MNK[i].x(), 2) + qPow(sigmaAlphaBetaFilter_MNK[i].y(), 2)));
+    }
+
 
     auto window = new GraphicsBuilderWidget();
     window->setAttribute(Qt::WA_DeleteOnClose);
-    window->setData("Время, с", "Высота цели, метры", timeArray,
-                    {averageTargetH_cnc, averageTargetH_bv, averageTargetH_union, originalHArray},
-                    {"Только от спутника", "Только от барометра", "Компенсированная", "Без шума"});
+    window->setData("Состояние модели", "СКО, метры", step,
+                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK},
+                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК"});
+    window->setWindowModality(Qt::WindowModality::ApplicationModal);
     window->show();
 }
 
