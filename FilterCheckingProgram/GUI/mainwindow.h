@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QtCore>
-#include <Filters/AlphaBetaFilter.h>
-#include <Filters/KalmanFilter.h>
+#include "../FilterCheckingFiles/Filters/AlphaBetaFilter.h"
+#include "../FilterCheckingFiles/Filters/KalmanFilter.h"
 #include "GraphicsViewZoom.h"
 #include "GraphicsBuilderWidget.h"
 

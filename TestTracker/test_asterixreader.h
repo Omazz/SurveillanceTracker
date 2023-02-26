@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTest>
-#include <asterixreader.h>
+#include "../TrackerFiles/asterixreader.h"
 
 class Test_AsterixReader : public QObject
 {

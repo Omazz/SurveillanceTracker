@@ -9,9 +9,6 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Filters/AlphaBetaFilter.cpp \
-    Filters/KalmanFilter.cpp \
-    Filters/Matrix.cpp \
     GUI/GraphicsBuilderWidget.cpp \
     GUI/GraphicsViewZoom.cpp \
     GUI/mainwindow.cpp \
@@ -19,9 +16,6 @@ SOURCES += \
     qcustomplot/qcustomplot.cpp
 
 HEADERS += \
-    Filters/AlphaBetaFilter.h \
-    Filters/KalmanFilter.h \
-    Filters/Matrix.h \
     GUI/GraphicsBuilderWidget.h \
     GUI/GraphicsViewZoom.h \
     GUI/mainwindow.h \
@@ -35,3 +29,5 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+include(../FilterCheckingFiles/FilterFiles.pri)

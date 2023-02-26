@@ -5,7 +5,7 @@
 #include <pcap.h>
 #include <QtCore>
 #include <iostream>
-#include <protocol.h>
+#include "protocol.h"
 
 class AsterixReader
 {
