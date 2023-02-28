@@ -59,7 +59,7 @@ QVector<QPointF> KalmanFilter::calculateKalmanFilter_CV(QVector<QPointF> airplan
 
     // Q -- ковариационная матрица шума
     Matrix Q(4, 4);
-    Q = G.multiply(G.transopse());
+    Q = G.multiply(G.transpose());
     Q = Q.multiply(pow(sigmaAcceleration, 2.0));
 
     // x -- вектор состояния, x_predicted -- предсказанный вектор состояния
@@ -76,7 +76,7 @@ QVector<QPointF> KalmanFilter::calculateKalmanFilter_CV(QVector<QPointF> airplan
     P.set(1, 1, pow(sigmaCoord, 2.0));
     P.set(2, 2, pow(sigmaVelocity, 2.0));
     P.set(3, 3, pow(sigmaVelocity, 2.0));
-    P = A.multiply(P).multiply(A.transopse()).sum(Q);
+    P = A.multiply(P).multiply(A.transpose()).sum(Q);
 
     for(int i = 3; i < airplaneTrajectory.size(); ++i) {
         // измеренные v_x и v_y
@@ -84,8 +84,8 @@ QVector<QPointF> KalmanFilter::calculateKalmanFilter_CV(QVector<QPointF> airplan
         z.set(0, 0, airplaneTrajectory[i].x());
         z.set(1, 0, airplaneTrajectory[i].y());
 
-        Matrix K = P.multiply(H.transopse()).multiply(
-                    (H.multiply(P).multiply(H.transopse()).sum(R)).calculateInverseMatrix()
+        Matrix K = P.multiply(H.transpose()).multiply(
+                    (H.multiply(P).multiply(H.transpose()).sum(R)).calculateInverseMatrix()
                     );
 
         x = x.sum(K.multiply(z.difference(H.multiply(x))));
@@ -95,7 +95,7 @@ QVector<QPointF> KalmanFilter::calculateKalmanFilter_CV(QVector<QPointF> airplan
 
         P = I.difference(K.multiply(H)).multiply(P);
         x = A.multiply(x);
-        P = A.multiply(P).multiply(A.transopse()).sum(Q);
+        P = A.multiply(P).multiply(A.transpose()).sum(Q);
     }
 
     return resultTrajectory;

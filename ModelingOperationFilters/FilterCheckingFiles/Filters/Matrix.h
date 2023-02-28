@@ -31,7 +31,7 @@ public:
 
     quint8 columns() const;
 
-    Matrix transopse() const;
+    Matrix transpose() const;
 
     qreal calculateDeterminant() const;
 

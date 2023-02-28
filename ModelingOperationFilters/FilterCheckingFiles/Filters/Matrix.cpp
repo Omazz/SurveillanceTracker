@@ -115,7 +115,7 @@ void Matrix::set(const quint8& row, const quint8& column, const qreal& value) {
     m_matrix[row][column] = value;
 }
 
-Matrix Matrix::transopse() const{
+Matrix Matrix::transpose() const{
     Matrix result(m_columns, m_rows);
 
     for(quint8 i = 0; i < m_rows; ++i) {
