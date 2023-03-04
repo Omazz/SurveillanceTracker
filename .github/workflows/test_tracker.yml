@@ -1,0 +1,28 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  Test_tracker:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+    
+    - name: Build qmake-file
+      run: qmake ./TrackerProgram/TestTracker/TestTracker.pro
+    
+    - name: Create executable file
+      run: make
+
+    - name: Run test filters
+      run: ./TestTracker
