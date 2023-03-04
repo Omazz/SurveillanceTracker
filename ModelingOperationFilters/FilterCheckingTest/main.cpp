@@ -13,6 +13,6 @@ int main(int argc, char *argv[])
     QTest::qExec(new Test_AlphaBetaFilter);
 
     QTest::qExec(new Test_KalmanFilter);
-    return 0;
-    return a.exec();
+
+    exit(0);
 }
