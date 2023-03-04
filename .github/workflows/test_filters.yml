@@ -27,4 +27,6 @@ jobs:
     - name: run test
       run: ./FilterCheckingTest
       
+    - name: break
+      run: ^C
 
