@@ -8,11 +8,12 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QTest::qExec(new Test_Matrix);
+    int code1 = QTest::qExec(new Test_Matrix);
 
-    QTest::qExec(new Test_AlphaBetaFilter);
+    int code2 = QTest::qExec(new Test_AlphaBetaFilter);
 
-    QTest::qExec(new Test_KalmanFilter);
+    int code3 = QTest::qExec(new Test_KalmanFilter);
 
-    exit(0);
+
+    exit(code1 + code2 + code3);
 }

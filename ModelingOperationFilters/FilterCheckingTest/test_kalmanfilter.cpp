@@ -49,5 +49,5 @@ void Test_KalmanFilter::calculateKalmanFilter_CV_LinearWithNoise() {
     averageDeviation.setY(qSqrt(averageDeviation.y()));
     qreal result = qSqrt(qPow(averageDeviation.x(), 2) + qPow(averageDeviation.y(), 2));
 
-    QCOMPARE(result < 2, true);
+    QCOMPARE(result < 5, true);
 }

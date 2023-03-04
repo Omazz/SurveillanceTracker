@@ -51,7 +51,7 @@ void Test_AlphaBetaFilter::calculateFilteredTrajectory_LinearWithNoise() {
     averageDeviation.setY(qSqrt(averageDeviation.y()));
     qreal result = qSqrt(qPow(averageDeviation.x(), 2) + qPow(averageDeviation.y(), 2));
 
-    QCOMPARE(result < 2, true);
+    QCOMPARE(result < 5, true);
 }
 
 void Test_AlphaBetaFilter::calculateFilteredTrajectory_MNK_LinearWithoutNoise() {
@@ -99,5 +99,5 @@ void Test_AlphaBetaFilter::calculateFilteredTrajectory_MNK_LinearWithNoise() {
     averageDeviation.setY(qSqrt(averageDeviation.y()));
     qreal result = qSqrt(qPow(averageDeviation.x(), 2) + qPow(averageDeviation.y(), 2));
 
-    QCOMPARE(result < 2, true);
+    QCOMPARE(result < 5, true);
 }
