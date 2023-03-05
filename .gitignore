@@ -57,3 +57,4 @@ compile_commands.json
 
 *_qmlcache.qrc
 Tracker/Tracker
+TrackerProgram/TestTracker/TestTracker
