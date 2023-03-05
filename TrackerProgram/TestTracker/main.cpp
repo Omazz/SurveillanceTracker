@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QTest::qExec(new Test_AsterixReader);
+    int code1 = QTest::qExec(new Test_AsterixReader);
 
-    return a.exec();
+    exit(code1);
 }
