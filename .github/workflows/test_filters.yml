@@ -18,8 +18,11 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
+    - name: Go to directory program
+      run: cd ./ModelingOperationFilters/FilterCheckingTest/
+    
     - name: Build qmake-file
-      run: qmake ./ModelingOperationFilters/FilterCheckingTest/FilterCheckingTest.pro
+      run: qmake FilterCheckingTest.pro
     
     - name: Create executable file
       run: make
