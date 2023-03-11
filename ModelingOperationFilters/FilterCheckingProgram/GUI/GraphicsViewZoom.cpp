@@ -11,6 +11,7 @@ GraphicsViewZoom::GraphicsViewZoom(QGraphicsView* view)
   _view->setMouseTracking(true);
   _modifiers = Qt::ControlModifier;
   _zoomFactorBase = 1.0015;
+
 }
 
 void GraphicsViewZoom::gentleZoom(double factor) {
