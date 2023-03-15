@@ -15,7 +15,7 @@ jobs:
       run: sudo apt-get install libpcap-dev
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
 
     steps:
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
     
     - name: Get repository code
       uses: actions/checkout@v3
