@@ -19,6 +19,9 @@ jobs:
     
     - name: Get repository code
       uses: actions/checkout@v3
+
+    - name: Compile tracker program
+      run: cd ./TrackerProgram/Tracker/ && qmake Tracker.pro    
     
     - name: Build qmake-file tracker
       run: cd ./TrackerProgram/TestTracker/ && qmake TestTracker.pro
@@ -38,6 +41,9 @@ jobs:
     
     - name: Get repository code
       uses: actions/checkout@v3
+    
+    - name: Try compile modeling operation filter program
+      run: cd ./ModelingOperationFilters/FilterCheckingProgram/ && qmake FilterCheckingProgram.pro
     
     - name: Build qmake-file filters
       run: cd ./ModelingOperationFilters/FilterCheckingTest/ && qmake FilterCheckingTest.pro
