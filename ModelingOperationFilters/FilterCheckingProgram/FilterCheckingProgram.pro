@@ -25,6 +25,11 @@ FORMS += \
     GUI/GraphicsBuilderWidget.ui \
     GUI/mainwindow.ui
 
+
+DISTFILES += \
+    icons/FilterModelationIcon.ico
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
