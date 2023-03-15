@@ -4,7 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-    ывавыа
     QCoreApplication a(argc, argv);
     if(argc != 2) {
         std::cout << "You should write a pcap-file filepath as argument! Try again." << std::endl;
