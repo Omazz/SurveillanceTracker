@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include <QUdpSocket>
+#include <QFileDialog>
+#include <QTime>
+#include <pcap.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class LocatorWindow; }
@@ -18,6 +21,8 @@ public:
 
 private slots:
     void on_PB_start_clicked();
+
+    void closeEvent(QCloseEvent* event);
 
 private:
     Ui::LocatorWindow *ui;

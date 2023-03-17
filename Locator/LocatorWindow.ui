@@ -24,6 +24,16 @@
 	background-color: #222831;  /* Black */
 }
 
+QScrollBar {
+        background: #393E46;
+        border-radius: 5px;
+}
+
+QScrollBar::handle {
+        background: #00ADB5;
+        border: 2px solid #EEEEEE;
+}
+
 QGroupBox {
     background-color: #393E46;  /* Gray */
     color: #EEEEEE;
