@@ -60,7 +60,7 @@ void LocatorWindow::on_PB_start_clicked() {
     QTime startTime;
     bool firstRecord = true;
     int counter = 0;
-    while(true) {
+    while(_isWorking) {
         struct pcap_pkthdr packet_header;
         const u_char* packet = pcap_next(handle, &packet_header);
         counter++;
@@ -125,6 +125,7 @@ void LocatorWindow::on_PB_start_clicked() {
 
 void LocatorWindow::closeEvent(QCloseEvent* event)
 {
-    Q_UNUSED (event)
-    this->deleteLater();
+    Q_UNUSED(event)
+    //_udpSocket->close();
+    _isWorking = false;
 }

@@ -27,5 +27,6 @@ private slots:
 private:
     Ui::LocatorWindow *ui;
     QUdpSocket* _udpSocket;
+    bool _isWorking = true;
 };
 #endif // LOCATORWINDOW_H
