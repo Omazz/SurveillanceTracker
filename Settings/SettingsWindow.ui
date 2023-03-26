@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsWindow</class>
+ <widget class="QMainWindow" name="SettingsWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SettingsWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+  	background-color: #222831;  /* Black */
+}
+
+QTabWidget {
+  	background-color: #222831;  /* Black */
+}
+
+QTabBar::tab {
+  background: #393E46;
+  color: #EEEEEE;
+  padding: 10px;
+ }
+
+QTabBar::tab:selected {
+   background: #393E46;
+   border: 2px solid #00ADB5;
+ }
+
+QLineEdit {
+  	background-color: #222831;  /* Black */
+    color: #EEEEEE;
+}
+
+QGroupBox {
+    background-color: #393E46;  /* Gray */
+    color: #EEEEEE;
+    border-radius: 8px;
+    border: 2px solid #00ADB5;
+    margin-top: 6px;
+    padding-top: 8px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 10px;
+}
+
+QLabel {
+    color: #EEEEEE;
+}
+
+QCheckBox {
+    color: #EEEEEE;
+}
+
+QPushButton {
+	background-color: #820000;  
+    color: #EEEEEE;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+QPushButton::enabled { 
+    background-color:  #00ADB5;
+ }
+
+ QPushButton::hover {
+	background-color: #03C988;  
+ }
+
+QRadioButton {
+	color: #EEEEEE;
+}
+
+QRadioButton::indicator:checked {
+    background-color:       red;
+    border:                 2px solid white;
+}
+
+QRadioButton::indicator:unchecked {
+    background-color:       black;
+    border:                 2px solid white;
+}
+
+QListWidget {
+     selection-color: #EE0000;
+     selection-background-color: transparent;
+     padding-left: 5px;
+     padding-right: 5px;
+}
+
+QListWidget::item:selected {
+  /*border-bottom: 1px solid #EEEEEE;*/
+}
+
+QDoubleSpinBox{
+  	background-color: #222831; 
+	color: #EEEEEE;
+}
+QSpinBox{
+  	background-color: #222831; 
+	color: #EEEEEE;
+}
+/*
+QProgressBar{
+  	background-color: #222831; 
+    color: #EEEEEE;
+}
+
+QProgressBar::item {
+    background-color: #00ADB5; 
+}*/
+
+ QProgressBar {
+  	background-color: #222831; 
+    color: #EEEEEE;
+    border-style: solid;
+    border-color: #00ADB5;
+    border-radius: 7px;
+    border-width: 2px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+/*	width: 2px;
+   margin: 3px;*/
+   background-color: #03C988;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_apply">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>85</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Применить</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Трекер</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Шифрование</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QLabel" name="L_key">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Секретный ключ:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>528</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="LE_key">
+              <property name="inputMask">
+               <string>HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</string>
+              </property>
+              <property name="text">
+               <string>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QLabel" name="L_iv">
+                <property name="text">
+                 <string>Инициализируюший вектор:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>448</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="LE_iv">
+              <property name="inputMask">
+               <string>HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</string>
+              </property>
+              <property name="text">
+               <string>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</string>
+              </property>
+              <property name="maxLength">
+               <number>32</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>218</width>
+            <height>302</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

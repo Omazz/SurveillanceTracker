@@ -6,6 +6,9 @@
 #include <QFileDialog>
 #include <QTime>
 #include <pcap.h>
+#include "../DataEncryption/Сipher/mycrypto.hpp"
+#include "../DataEncryption/Сipher/Kuznyechik.hpp"
+#include "../DataSettings/SettingsTracker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class LocatorWindow; }
@@ -25,6 +28,9 @@ private slots:
     void closeEvent(QCloseEvent* event);
 
 private:
+    ByteBlock _key;
+    ByteBlock _iv;
+
     Ui::LocatorWindow *ui;
     QUdpSocket* _udpSocket;
     bool _isWorking = true;

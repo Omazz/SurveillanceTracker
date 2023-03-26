@@ -18,6 +18,11 @@ LocatorWindow::LocatorWindow(QWidget *parent)
                      + "\\." + ipRange + "$");
     QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
     ui->LE_ipAddress->setValidator(ipValidator);
+
+    _key = hex_to_bytes(SettingsTracker::KEY.toStdString());
+    _iv = hex_to_bytes(SettingsTracker::INITIALIZING_VECTOR.toStdString());
+   // std::cout << hex_representation(_key) << "\n" << hex_representation(_iv) << std::endl;
+
 }
 
 LocatorWindow::~LocatorWindow()
@@ -35,6 +40,7 @@ void LocatorWindow::on_PB_start_clicked() {
 
     QHostAddress address = QHostAddress(ui->LE_ipAddress->text());
     int port = ui->LE_port->text().toInt();
+
 
     ui->TB_log->clear();
     ui->PB_start->setEnabled(false);
@@ -89,8 +95,7 @@ void LocatorWindow::on_PB_start_clicked() {
             break;
         }
 
-        QByteArray byteArray;
-        QString string;
+        QString stringToPrint;
         int pos_asterix = -1;
         uint size = packet_header.caplen;
         for(int i = 3 ; i < size; i++) {
@@ -103,14 +108,26 @@ void LocatorWindow::on_PB_start_clicked() {
         if(pos_asterix == -1) {
             continue;
         }
-        string.push_back(QString::number(counter).append(") Record: "));
-        string.push_back(QString("0x%1 ").arg(packet[pos_asterix]));
-        for(int i = pos_asterix; i < packet_header.caplen; i++) {
-            byteArray.push_back(packet[i]);
+        stringToPrint.push_back(QString::number(counter).append(") Record: "));
+        stringToPrint.push_back(QString("0x%1 ").arg(packet[pos_asterix]));
+
+        ByteBlock blocksToSend((BYTE*)(packet + pos_asterix), packet_header.caplen - pos_asterix);
+        //std::cout << "\nOriginal message: " << hex_representation(blocksToSend) << std::endl;
+        ByteBlock encryptionBlocks;
+        CFB_Mode<Kuznyechik> encryptor(Kuznyechik(_key), _iv);
+        encryptor.encrypt(blocksToSend, encryptionBlocks);
+        _iv = ByteBlock((encryptionBlocks.byte_ptr() + encryptionBlocks.size() - 16), 16);
+       // std::cout << "Encrypted message: " << hex_representation(encryptionBlocks) << std::endl;
+
+        QByteArray byteArray;
+        BYTE* encryption_pointer = encryptionBlocks.byte_ptr();
+
+        for(int i = 0; i < encryptionBlocks.size(); i++) {
+            byteArray.push_back(encryption_pointer[i]);
         }
 
         if(_udpSocket->writeDatagram(byteArray, address, port)) {
-            ui->TB_log->append(string);
+            ui->TB_log->append(stringToPrint);
 
         } else {
             ui->TB_log->append("Error to send message!");
