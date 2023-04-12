@@ -6,7 +6,7 @@
 #include "../../DataEncryption/Сipher/mycrypto.hpp"
 #include "../../DataEncryption/Сipher/Kuznyechik.hpp"
 #include "../../DataSettings/SettingsTracker.h"
-#include "../TrackerProgram/TrackerFiles/asterixreader.h"
+#include "../TrackerFiles/asterixreader.h"
 
 class MessageHandler : public QObject
 {
