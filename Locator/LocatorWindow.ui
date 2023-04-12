@@ -136,7 +136,7 @@ QProgressBar::chunk {
             <string>00000</string>
            </property>
            <property name="text">
-            <string>12001</string>
+            <string>12222</string>
            </property>
           </widget>
          </item>

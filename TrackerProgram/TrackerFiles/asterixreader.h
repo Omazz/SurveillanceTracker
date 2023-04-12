@@ -17,9 +17,9 @@ public:
 
     std::pair<std::list<Asterix48>, std::list<Asterix34>> readPcapFileWithTimeIntervals(const char* filePath, bool print = false);
 
-    Asterix34 parseAsterix34(const uint8_t* data);
+    static Asterix34 parseAsterix34(const uint8_t* data);
 
-    Asterix48 parseAsterix48(const uint8_t* data);
+    static Asterix48 parseAsterix48(const uint8_t* data);
 
 private:
 };

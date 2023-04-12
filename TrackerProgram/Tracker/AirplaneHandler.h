@@ -5,9 +5,8 @@
 #include <QUdpSocket>
 #include <QtCore>
 #include <QByteArray>
-#include "../../DataEncryption/Сipher/mycrypto.hpp"
-#include "../../DataEncryption/Сipher/Kuznyechik.hpp"
-#include "../../DataSettings/SettingsTracker.h"
+
+#include "MessageHandler.h"
 
 class AirplaneHandler : public QObject
 {
@@ -16,14 +15,8 @@ class AirplaneHandler : public QObject
 public:
     AirplaneHandler();
 
-public slots:
-    void readDatagram();
-
 private:
-    ByteBlock _key;
-    ByteBlock _iv;
-
-    QUdpSocket* _socket;
+    MessageHandler* _messageHandler;
 };
 
 #endif // AIRPLANEHANDLER_H

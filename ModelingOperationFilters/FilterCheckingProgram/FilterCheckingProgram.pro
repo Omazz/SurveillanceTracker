@@ -27,7 +27,7 @@ FORMS += \
 
 
 DISTFILES += \
-    icons/FilterModelationIcon.ico
+    ../../ApplicationIcons/FilterModelationIcon.ico
 
 
 # Default rules for deployment.

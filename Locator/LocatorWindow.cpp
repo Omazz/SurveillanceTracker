@@ -114,8 +114,11 @@ void LocatorWindow::on_PB_start_clicked() {
         ByteBlock blocksToSend((BYTE*)(packet + pos_asterix), packet_header.caplen - pos_asterix);
         //std::cout << "\nOriginal message: " << hex_representation(blocksToSend) << std::endl;
         ByteBlock encryptionBlocks;
+
         CFB_Mode<Kuznyechik> encryptor(Kuznyechik(_key), _iv);
         encryptor.encrypt(blocksToSend, encryptionBlocks);
+
+
         _iv = ByteBlock((encryptionBlocks.byte_ptr() + encryptionBlocks.size() - 16), 16);
        // std::cout << "Encrypted message: " << hex_representation(encryptionBlocks) << std::endl;
 
@@ -126,6 +129,8 @@ void LocatorWindow::on_PB_start_clicked() {
             byteArray.push_back(encryption_pointer[i]);
         }
 
+        /* Создание имитовставки и её отправка */
+        //sha_context SHA;
         if(_udpSocket->writeDatagram(byteArray, address, port)) {
             ui->TB_log->append(stringToPrint);
 

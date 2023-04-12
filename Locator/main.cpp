@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     SettingsTracker::initialization();
 
     LocatorWindow w;
-    w.setWindowIcon(QIcon("../Locator/icons/LocatorIcon.ico"));
+    w.setWindowIcon(QIcon("../ApplicationIcons/LocatorIcon.ico"));
     w.show();
 
     return a.exec();

@@ -25,7 +25,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    icons/LocatorIcon.ico
+    ../ApplicationIcons/LocatorIcon.ico
 
 include(../DataEncryption/Сipher/CipherFiles.pri)
 include(../DataSettings/SettingsFiles.pri)
