@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  Test_tracker:
+  test_tracker:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
     - name: Run test tracker
       run: cd ./TrackerProgram/TestTracker/ && ./TestTracker
      
-  Test_filters:
+  test_modeling_filters:
     runs-on: ubuntu-latest
 
     steps:
@@ -45,22 +45,70 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file filter program
+    - name: Build qmake-file modeling filters program
       run: cd ./ModelingOperationFilters/FilterCheckingProgram/ && qmake FilterCheckingProgram.pro
       
     - name: Compile
       run: cd ./ModelingOperationFilters/FilterCheckingProgram/ && make
     
-    - name: Build qmake-file filters
+    - name: Build qmake-file modeling filters program
       run: cd ./ModelingOperationFilters/FilterCheckingTest/ && qmake FilterCheckingTest.pro
     
-    - name: Create executable filters file
+    - name: Create executable modeling filters program file
       run: cd ./ModelingOperationFilters/FilterCheckingTest/ && make
 
     - name: Run test filters
       run: cd ./ModelingOperationFilters/FilterCheckingTest/ && ./FilterCheckingTest
 
-  Test_encryption:
+  test_indicator:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+    
+    - name: Build qmake-file indicator program
+      run: cd ./Indicator/ && qmake Indicator.pro
+      
+    - name: Compile
+      run: cd ./Indicator/ && make
+  
+  test_locator:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+    
+    - name: Build qmake-file locator program
+      run: cd ./Locator/ && qmake Locator.pro
+      
+    - name: Compile
+      run: cd ./Locator/ && make
+      
+  test_settings:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+    
+    - name: Build qmake-file settings program
+      run: cd ./Settings/ && qmake Settings.pro
+      
+    - name: Compile
+      run: cd ./Settings/ && make
+      
+  test_encryption_tools:
     runs-on: ubuntu-latest
 
     steps:
@@ -70,11 +118,11 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
   
-    - name: Build qmake-file encryption
+    - name: Build qmake-file encryption tools
       run: cd ./DataEncryption/TestCipher/ && qmake TestCipher.pro
     
-    - name: Create executable filters file
+    - name: Create executable test encryption tools file
       run: cd ./DataEncryption/TestCipher/ && make
 
-    - name: Run test filters
-      run: cd ./DataEncryption/TestCipher/ && cd ./TestCipher
+    - name: Run test cipher and mac
+      run: cd ./DataEncryption/TestCipher/ && ./TestCipher
