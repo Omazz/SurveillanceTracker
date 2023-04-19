@@ -59,3 +59,22 @@ jobs:
 
     - name: Run test filters
       run: cd ./ModelingOperationFilters/FilterCheckingTest/ && ./FilterCheckingTest
+
+  Test_encryption:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+  
+    - name: Build qmake-file encryption
+      run: cd ./DataEncryption/TestCipher/ && qmake TestCipher.pro
+    
+    - name: Create executable filters file
+      run: cd ./DataEncryption/TestCipher/ && make
+
+    - name: Run test filters
+      run: cd ./DataEncryption/TestCipher/ && cd ./TestCipher
