@@ -64,6 +64,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Install libpcap
+      run: sudo apt-get install libpcap-dev
+      
     - name: Install Qt
       run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
     
@@ -80,6 +83,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Install libpcap
+      run: sudo apt-get install libpcap-dev
+      
     - name: Install Qt
       run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
     
