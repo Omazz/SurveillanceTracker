@@ -21,7 +21,8 @@ LocatorWindow::LocatorWindow(QWidget *parent)
 
     _key = hex_to_bytes(SettingsTracker::KEY.toStdString());
     _iv = hex_to_bytes(SettingsTracker::INITIALIZING_VECTOR.toStdString());
-   // std::cout << hex_representation(_key) << "\n" << hex_representation(_iv) << std::endl;
+    std::cout << hex_representation(_key) << "\n" << hex_representation(_iv) << std::endl;
+    streebog.SetMode(256);
 
 }
 
@@ -118,9 +119,7 @@ void LocatorWindow::on_PB_start_clicked() {
         CFB_Mode<Kuznyechik> encryptor(Kuznyechik(_key), _iv);
         encryptor.encrypt(blocksToSend, encryptionBlocks);
 
-
         _iv = ByteBlock((encryptionBlocks.byte_ptr() + encryptionBlocks.size() - 16), 16);
-       // std::cout << "Encrypted message: " << hex_representation(encryptionBlocks) << std::endl;
 
         QByteArray byteArray;
         BYTE* encryption_pointer = encryptionBlocks.byte_ptr();
@@ -129,8 +128,16 @@ void LocatorWindow::on_PB_start_clicked() {
             byteArray.push_back(encryption_pointer[i]);
         }
 
-        /* Создание имитовставки и её отправка */
-        //sha_context SHA;
+        /* Формируем имитовставку по зашифрованному сообщению и добавляем её в конец */
+        unsigned char* mac = streebog.Hash(encryption_pointer, encryptionBlocks.size());
+        QString macToPrint;
+        for(int i = 0; i < 32; ++i) {
+            byteArray.push_back(mac[i]);
+            macToPrint.append(mac[i]);
+        }
+
+        std::cout << macToPrint.toStdString() << std::endl;
+
         if(_udpSocket->writeDatagram(byteArray, address, port)) {
             ui->TB_log->append(stringToPrint);
 

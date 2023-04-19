@@ -5,6 +5,7 @@
 #include <QUdpSocket>
 #include "../../DataEncryption/Сipher/mycrypto.hpp"
 #include "../../DataEncryption/Сipher/Kuznyechik.hpp"
+#include "../../DataEncryption/Сipher/gost341112.h"
 #include "../../DataSettings/SettingsTracker.h"
 #include "../TrackerFiles/asterixreader.h"
 
@@ -21,10 +22,9 @@ signals:
 
 
 private:
-
     ByteBlock _key;
     ByteBlock _iv;
-
+    Streebog streebog;
     QUdpSocket* _socket;
 };
 

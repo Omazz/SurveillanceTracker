@@ -6,6 +6,7 @@ MessageHandler::MessageHandler(QObject* parent) : QObject(parent)
     _socket->bind(QHostAddress::LocalHost, 12222);
     _key = hex_to_bytes(SettingsTracker::KEY.toStdString());
     _iv = hex_to_bytes(SettingsTracker::INITIALIZING_VECTOR.toStdString());
+    streebog.SetMode(256);
     connect(_socket, &QUdpSocket::readyRead, this, &MessageHandler::readDatagram);
 }
 
@@ -18,8 +19,22 @@ void MessageHandler::readDatagram() {
         _socket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
         CFB_Mode<Kuznyechik> decryptor(Kuznyechik(_key), _iv);
         qDebug() << QString::fromStdString(hex_representation(_iv));
-        _iv = ByteBlock((BYTE*)(datagram.data() + datagram.size() - 16), 16);
-        ByteBlock encryptionMessage((BYTE*)datagram.constData(), datagram.size());
+        unsigned char* mac = streebog.Hash((unsigned char*)datagram.data(), datagram.size() - 32);
+        unsigned char* mac_message = (unsigned char*)datagram.data();
+        QString mac1, mac2;
+
+        for(int i = 0; i < 32; i++) {
+            mac1.append(mac[i]);
+            mac2.append(mac_message[datagram.size() - 32 + i]);
+        }
+
+        if(QString::compare(mac1, mac2) != 0) {
+            qDebug() << "Exception MAC";
+            throw new QException();
+        }
+
+        _iv = ByteBlock((BYTE*)(datagram.data() + datagram.size() - 16 - 32), 16);
+        ByteBlock encryptionMessage((BYTE*)datagram.constData(), datagram.size() - 32);
         ByteBlock decryptionMessage;
         decryptor.decrypt(encryptionMessage, decryptionMessage);
         const char* packet = (const char*) decryptionMessage.byte_ptr();

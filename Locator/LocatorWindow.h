@@ -8,6 +8,7 @@
 #include <pcap.h>
 #include "../DataEncryption/Сipher/mycrypto.hpp"
 #include "../DataEncryption/Сipher/Kuznyechik.hpp"
+#include "../DataEncryption/Сipher/gost341112.h"
 #include "../DataSettings/SettingsTracker.h"
 
 QT_BEGIN_NAMESPACE
@@ -30,7 +31,7 @@ private slots:
 private:
     ByteBlock _key;
     ByteBlock _iv;
-
+    Streebog streebog;
     Ui::LocatorWindow *ui;
     QUdpSocket* _udpSocket;
     bool _isWorking = true;
