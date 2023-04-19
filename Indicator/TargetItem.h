@@ -3,6 +3,8 @@
 
 #include <QtCore>
 #include <QGraphicsItem>
+#include <QGraphicsView>
+#include "RadarTarget.h"
 
 enum TypeAirplaneObject {
     PLOT,
@@ -14,14 +16,31 @@ enum TypeAirplaneObject {
 class TargetItem : public QGraphicsItem
 {
 public:
-    TargetItem();
+    enum { Type = UserType + 1 };
+
+    /*
+     * Если прямоугольные координаты, то в км
+     * Если полярные, то в км и радианах
+     */
+    TargetItem(QPointF coords,
+               qreal itemSize = 10.0,
+               TypeAirplaneObject type = PLOT,
+               QGraphicsItem* parent = nullptr);
+
+    QRectF boundingRect() const override;
+
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
+    int type() const override;
+
+    TypeAirplaneObject getType();
+
 private:
 
     qreal _itemSize;
     TypeAirplaneObject _type;
-    QGraphicsPolygonItem* _strobe = nullptr;
-    QGraphicsItem* _indicator = nullptr;
-    QGraphicsLineItem* _headingLine = nullptr;
+    QGraphicsItem* _indicator;
+
 };
 
 #endif // TARGETITEM_H

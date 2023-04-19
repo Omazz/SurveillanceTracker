@@ -8,6 +8,7 @@
 
 #include "MessageHandler.h"
 #include "RadarView.h"
+#include "TargetItem.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class IndicatorWindow; }
@@ -39,6 +40,8 @@ public:
 
 public slots:
     void changeSector(qreal angle_deg);
+
+    void onNewPlot(qreal rho_km, qreal angle_rad);
 
 private:
     Ui::IndicatorWindow *ui;

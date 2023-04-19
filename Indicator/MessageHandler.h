@@ -17,7 +17,7 @@ public slots:
 signals:
     void changeSector(qreal angle_deg);
 
-    void addPlot(qreal rho_m, qreal angle_deg);
+    void newPlot(qreal rho_km, qreal angle_rad);
 
     void addTrack(qreal x_m, qreal y_m, quint16 trackNumber);
 

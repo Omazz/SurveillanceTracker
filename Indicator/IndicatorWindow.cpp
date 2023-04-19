@@ -41,6 +41,7 @@ IndicatorWindow::IndicatorWindow(QWidget *parent)
     _sectors[0]->setBrush(QBrush(RED));
 
     connect(_messageHandler, &MessageHandler::changeSector, this, &IndicatorWindow::changeSector);
+    connect(_messageHandler, &MessageHandler::newPlot, this, &IndicatorWindow::onNewPlot);
 }
 
 void IndicatorWindow::changeSector(qreal angle_deg) {
@@ -55,6 +56,11 @@ void IndicatorWindow::changeSector(qreal angle_deg) {
 
     _sectors[secNumber]->setBrush(QBrush(RED));
 
+    _graphicsScene->update();
+}
+
+void IndicatorWindow::onNewPlot(qreal rho_km, qreal angle_rad) {
+    _graphicsScene->addItem(new TargetItem(QPointF(rho_km, angle_rad)));
     _graphicsScene->update();
 }
 
