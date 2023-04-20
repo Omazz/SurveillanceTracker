@@ -11,6 +11,8 @@
 #include <QDateTime>
 #include <QGraphicsItem>
 #include <QDebug>
+
+
 RadarView::RadarView(QWidget* parent) : QGraphicsView(parent) {
     setTransformationAnchor(QGraphicsView::NoAnchor);
     setDragMode(QGraphicsView::ScrollHandDrag);
@@ -53,7 +55,7 @@ void RadarView::keyPressEvent(QKeyEvent* event) {
 void RadarView::zoom(qreal factor) {
     QPointF oldPos = mapToScene(viewport()->rect().center());
 
-    if (transform().m22() * factor >= 0.4096 && transform().m22() * factor <= 60) {
+    if (transform().m22() * factor >= 0.8 && transform().m22() * factor <= 60) {
         scale(factor, factor);
     }
 

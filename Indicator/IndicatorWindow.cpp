@@ -20,7 +20,7 @@ IndicatorWindow::IndicatorWindow(QWidget *parent)
 
     ui->GW_locator->setScene(_graphicsScene);
     _graphicsScene->setBackgroundBrush(QBrush(GRAY));
-    ui->GW_locator->scale(0.4096, 0.4096);
+    ui->GW_locator->scale(0.8, 0.8);
 
 
     qreal rho = _graphicsScene->height() / 2 + 50;
@@ -60,14 +60,56 @@ void IndicatorWindow::changeSector(qreal angle_deg) {
 }
 
 void IndicatorWindow::onNewPlot(qreal rho_km, qreal angle_rad) {
-    _graphicsScene->addItem(new TargetItem(QPointF(rho_km, angle_rad)));
+    TargetItem* targetItem = new TargetItem(QPointF(rho_km, angle_rad));
+    QTimer* timer =  new QTimer(this);
+
+    timer->start(5000.0);
+
+    std::pair<TargetItem*, QTimer*> targetWithTimer(targetItem, timer);
+
+    connect(timer, &QTimer::timeout, this, [this, targetWithTimer]() {
+        if (!_targets.contains(targetWithTimer)) {
+            return;
+        }
+
+        _graphicsScene->removeItem(targetWithTimer.first);
+        delete targetWithTimer.first;
+        _targets.removeOne(targetWithTimer);
+    });
+
+    _targets += targetWithTimer;
+    _graphicsScene->addItem(targetItem);
+    _graphicsScene->update();
+}
+
+
+void IndicatorWindow::onNewTrack(qreal x_km, qreal y_km) {
+    TargetItem* targetItem = new TargetItem(QPointF(x_km, y_km), TRACK);
+    QTimer* timer =  new QTimer(this);
+
+    timer->start(5000.0);
+
+    std::pair<TargetItem*, QTimer*> targetWithTimer(targetItem, timer);
+
+    connect(timer, &QTimer::timeout, this, [this, targetWithTimer]() {
+        if (!_targets.contains(targetWithTimer)) {
+            return;
+        }
+
+        _graphicsScene->removeItem(targetWithTimer.first);
+        delete targetWithTimer.first;
+        _targets.removeOne(targetWithTimer);
+    });
+
+    _targets += targetWithTimer;
+    _graphicsScene->addItem(targetItem);
     _graphicsScene->update();
 }
 
 void IndicatorWindow::createGrid() {
 
-    qreal ringDist = 100;
-    qreal sectorAngle = 45;
+    qreal ringDist = 50;
+    qreal sectorAngle = 30;
 
     QPen gridPen(WHITE);
     gridPen.setCosmetic(true);

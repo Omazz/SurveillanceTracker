@@ -9,6 +9,10 @@
 #include "../../DataSettings/SettingsTracker.h"
 #include "../TrackerFiles/asterixreader.h"
 
+
+static const quint8 PRIMARY_SURVEILLIANCE = 0x20;
+static const quint8 SECONDARY_SURVEILLIANCE = 0x40;
+
 class MessageHandler : public QObject
 {
     Q_OBJECT

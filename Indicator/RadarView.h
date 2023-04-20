@@ -19,6 +19,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
     void mouseReleaseEvent(QMouseEvent* event) override;
+
 private:
     bool _dragged = true;
     QPointF _prevMousePos;

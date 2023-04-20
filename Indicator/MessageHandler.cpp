@@ -22,9 +22,18 @@ void MessageHandler::readDatagram() {
             emit changeSector(angle_deg);
         } else if(packet[0] == CAT48) {
             Asterix48 record48 = AsterixReader::parseAsterix48((const uint8_t*)packet);
-            qreal rho_km = ((record48.MeasuredPositionInSlantPolarCoordinates & 0xFFFF0000) >> 16) * 256.0 * 1.852;
-            qreal theta_rad = 360 * (record48.MeasuredPositionInSlantPolarCoordinates & 0x0000FFFF) >> 16;
-            emit newPlot(rho_km, theta_rad);
+
+            if(record48.TrackNumber == 0) {
+                qreal rho_km = ((record48.MeasuredPositionInSlantPolarCoordinates & 0xFFFF0000) >> 16) / 256.0 * 1.852;
+                qreal theta_rad = qDegreesToRadians(
+                            static_cast<qreal>(360 * (record48.MeasuredPositionInSlantPolarCoordinates & 0x0000FFFF) >> 16));
+                emit newPlot(rho_km, theta_rad);
+            } else {
+                qreal x_km = ((record48.MeasuredPositionInSlantPolarCoordinates & 0xFFFF0000) >> 16) / 128.0 * 1.852;
+                qreal y_km = (record48.MeasuredPositionInSlantPolarCoordinates & 0x0000FFFF) / 128.0 * 1.852;
+                emit newTrack(x_km, y_km);
+            }
+
         } else {
             qDebug() << "Error!";
         }

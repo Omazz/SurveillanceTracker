@@ -9,29 +9,22 @@
 
 TargetItem::TargetItem(
     QPointF coords,
-    qreal itemSize,
     TypeAirplaneObject type,
+    qreal itemSize,
     QGraphicsItem* parent
 ): QGraphicsItem(parent),
-    _itemSize(itemSize),
-    _type(type)
+    _type(type),
+    _itemSize(itemSize)
 {
-    if(_type == PLOT) {
-        QPainterPath path;
+    QPainterPath path;
 
-        path.moveTo(-itemSize / 2, -itemSize / 2);
-        path.lineTo(itemSize / 2, itemSize / 2);
-        path.moveTo(itemSize / 2, -itemSize / 2);
-        path.lineTo(-itemSize / 2, itemSize / 2);
+    path.moveTo(-itemSize / 2, -itemSize / 2);
+    path.lineTo(itemSize / 2, itemSize / 2);
+    path.moveTo(itemSize / 2, -itemSize / 2);
+    path.lineTo(-itemSize / 2, itemSize / 2);
 
-        _indicator = new QGraphicsPathItem(path, this);
-    } else {
-        _indicator = new QGraphicsRectItem(
-            -itemSize / 2, -itemSize / 2,
-            itemSize, itemSize,
-            this
-        );
-    }
+    _indicator = new QGraphicsPathItem(path, this);
+
     _indicator->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
     if (_type == TRACK || _type == PREDICTED_TRACK) {
@@ -44,7 +37,24 @@ TargetItem::TargetItem(
     }
 
     auto pathItem = qgraphicsitem_cast<QGraphicsPathItem*>(_indicator);
-    pathItem->setPen(QPen(Qt::red));
+    switch(_type) {
+
+    case PLOT:
+        pathItem->setPen(QPen(Qt::red, 2));
+        break;
+
+    case PLOT_BY_TRACK:
+        pathItem->setPen(QPen(Qt::green, 2));
+        break;
+
+    case TRACK:
+        pathItem->setPen(QPen(Qt::blue, 2));
+        break;
+
+    case PREDICTED_TRACK:
+        pathItem->setPen(QPen(Qt::yellow, 2));
+        break;
+    }
 }
 
 QRectF TargetItem::boundingRect() const {

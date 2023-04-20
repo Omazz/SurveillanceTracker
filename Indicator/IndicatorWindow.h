@@ -19,11 +19,11 @@ const QColor GRAY = QColor(0x464646);
 const QColor BLUE = QColor(0x19A7CE);
 const QColor RED = QColor(0xE21818);
 
-const qint16 RADAR_RANGE_KM = 1000;
+const qint16 RADAR_RANGE_KM = 500;
 const quint8 SECTOR_COUNT = 32;
-const int CIRCLE_RADIUS = 15;
+const int CIRCLE_RADIUS = 8;
 
-const quint8 PEN_INDICATOR_WIDTH = 5;
+const quint8 PEN_INDICATOR_WIDTH = 1;
 
 class IndicatorWindow : public QMainWindow
 {
@@ -43,12 +43,15 @@ public slots:
 
     void onNewPlot(qreal rho_km, qreal angle_rad);
 
+    void onNewTrack(qreal x_km, qreal y_km);
+
 private:
     Ui::IndicatorWindow *ui;
     QGraphicsScene* _graphicsScene;
 
     QGraphicsLineItem* _line;
     QVector<QGraphicsEllipseItem*> _sectors;
+    QList<std::pair<TargetItem*, QTimer*>> _targets;
 
     MessageHandler* _messageHandler;
 };

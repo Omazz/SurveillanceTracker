@@ -23,8 +23,8 @@ public:
      * Если полярные, то в км и радианах
      */
     TargetItem(QPointF coords,
-               qreal itemSize = 10.0,
                TypeAirplaneObject type = PLOT,
+               qreal itemSize = 10.0,
                QGraphicsItem* parent = nullptr);
 
     QRectF boundingRect() const override;
@@ -36,11 +36,9 @@ public:
     TypeAirplaneObject getType();
 
 private:
-
-    qreal _itemSize;
-    TypeAirplaneObject _type;
     QGraphicsItem* _indicator;
-
+    TypeAirplaneObject _type;
+    qreal _itemSize;
 };
 
 #endif // TARGETITEM_H

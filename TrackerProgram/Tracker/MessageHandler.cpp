@@ -52,7 +52,14 @@ void MessageHandler::readDatagram() {
 
         } else if(packet[0] == CAT48) {
             Asterix48 record48 = AsterixReader::parseAsterix48((const uint8_t*)(packet));
+            QByteArray byteArray(packet);
 
+            if(record48.TargetReportDescriptor.size() == 0 ||
+               record48.TargetReportDescriptor.front() != PRIMARY_SURVEILLIANCE ) {
+               return;
+            }
+
+            _socket->writeDatagram(packet, decryptionMessage.size(), QHostAddress::LocalHost, 12223);
             qDebug() << Qt::hex
                      << "\nRecord Asterix48"
                      << "\nFSPEC:" << record48.FSPEC

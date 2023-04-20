@@ -19,7 +19,7 @@ signals:
 
     void newPlot(qreal rho_km, qreal angle_rad);
 
-    void addTrack(qreal x_m, qreal y_m, quint16 trackNumber);
+    void newTrack(qreal x_km, qreal y_km);
 
 private:
     QUdpSocket* _socket;
