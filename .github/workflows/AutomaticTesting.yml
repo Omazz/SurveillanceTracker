@@ -21,19 +21,19 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Build qmake-file tracker program
-      run: cd ./TrackerProgram/Tracker/ && qmake Tracker.pro    
+      run: cd ./Programs/Tracker/ && qmake Tracker.pro    
     
     - name: Compile 
-      run: cd ./TrackerProgram/Tracker/ && make
+      run: cd ./Programs/Tracker/ && make
     
     - name: Build qmake-file tracker test
-      run: cd ./TrackerProgram/TestTracker/ && qmake TestTracker.pro
+      run: cd ./Tests/TestTracker/ && qmake TestTracker.pro
     
     - name: Create executable tracker file 
-      run: cd ./TrackerProgram/TestTracker/ && make
+      run: cd ./Tests/TestTracker/ && make
 
     - name: Run test tracker
-      run: cd ./TrackerProgram/TestTracker/ && ./TestTracker
+      run: cd ./Tests/TestTracker/ && ./TestTracker
      
   test_modeling_filters:
     runs-on: ubuntu-latest
@@ -46,19 +46,19 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Build qmake-file modeling filters program
-      run: cd ./ModelingOperationFilters/FilterCheckingProgram/ && qmake FilterCheckingProgram.pro
+      run: cd ./Programs/FilterCheckingProgram/ && qmake FilterCheckingProgram.pro
       
     - name: Compile
-      run: cd ./ModelingOperationFilters/FilterCheckingProgram/ && make
+      run: cd ./Programs/FilterCheckingProgram/ && make
     
     - name: Build qmake-file modeling filters program
-      run: cd ./ModelingOperationFilters/FilterCheckingTest/ && qmake FilterCheckingTest.pro
+      run: cd ./Tests/FilterCheckingTest/ && qmake FilterCheckingTest.pro
     
     - name: Create executable modeling filters program file
-      run: cd ./ModelingOperationFilters/FilterCheckingTest/ && make
+      run: cd ./Tests/FilterCheckingTest/ && make
 
     - name: Run test filters
-      run: cd ./ModelingOperationFilters/FilterCheckingTest/ && ./FilterCheckingTest
+      run: cd ./Tests/FilterCheckingTest/ && ./FilterCheckingTest
 
   test_indicator:
     runs-on: ubuntu-latest
@@ -74,10 +74,10 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Build qmake-file indicator program
-      run: cd ./Indicator/ && qmake Indicator.pro
+      run: cd ./Programs/Indicator/ && qmake Indicator.pro
       
     - name: Compile
-      run: cd ./Indicator/ && make
+      run: cd ./Programs/Indicator/ && make
   
   test_locator:
     runs-on: ubuntu-latest
@@ -93,10 +93,10 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Build qmake-file locator program
-      run: cd ./Locator/ && qmake Locator.pro
+      run: cd ./Programs/Locator/ && qmake Locator.pro
       
     - name: Compile
-      run: cd ./Locator/ && make
+      run: cd ./Programs/Locator/ && make
       
   test_settings:
     runs-on: ubuntu-latest
@@ -109,10 +109,10 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Build qmake-file settings program
-      run: cd ./Settings/ && qmake Settings.pro
+      run: cd ./Programs/Settings/ && qmake Settings.pro
       
     - name: Compile
-      run: cd ./Settings/ && make
+      run: cd ./Programs/Settings/ && make
       
   test_encryption_tools:
     runs-on: ubuntu-latest
@@ -125,10 +125,10 @@ jobs:
       uses: actions/checkout@v3
   
     - name: Build qmake-file encryption tools
-      run: cd ./DataEncryption/TestCipher/ && qmake TestCipher.pro
+      run: cd ./Tests/TestCipher/ && qmake TestCipher.pro
     
     - name: Create executable test encryption tools file
-      run: cd ./DataEncryption/TestCipher/ && make
+      run: cd ./Tests/TestCipher/ && make
 
     - name: Run test cipher and mac
-      run: cd ./DataEncryption/TestCipher/ && ./TestCipher
+      run: cd ./Tests/TestCipher/ && ./TestCipher
