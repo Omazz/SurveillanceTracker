@@ -36,5 +36,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     ../../ApplicationIcons/IndicatorIcon.ico
 
-
 include(../../PriFiles/TrackerFiles/TrackerFiles.pri)
+
