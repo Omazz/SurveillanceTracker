@@ -19,6 +19,16 @@ HEADERS += \
 FORMS += \
     LocatorWindow.ui
 
+TARGET = Locator
+
+DESTDIR = ../../ProgramBuilds/PROGRAM-Locator
+
+OBJECTS_DIR = ../../ProgramBuilds/PROGRAM-Locator
+
+MOC_DIR = ../../ProgramBuilds/PROGRAM-Locator
+
+UI_DIR = ../../ProgramBuilds/PROGRAM-Locator
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

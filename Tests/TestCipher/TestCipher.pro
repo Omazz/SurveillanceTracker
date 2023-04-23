@@ -11,6 +11,16 @@ SOURCES += \
         TestCipher.cpp \
         main.cpp
 
+TARGET = TestCipher
+
+DESTDIR = ../../ProgramBuilds/TEST-TestCipher
+
+OBJECTS_DIR = ../../ProgramBuilds/TEST-TestCipher
+
+MOC_DIR = ../../ProgramBuilds/TEST-TestCipher
+
+UI_DIR = ../../ProgramBuilds/TEST-TestCipher
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

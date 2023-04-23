@@ -14,6 +14,16 @@ SOURCES += \
         test_kalmanfilter.cpp \
         test_matrix.cpp
 
+TARGET = FilterCheckingTest
+
+DESTDIR = ../../ProgramBuilds/TEST-FilterCheckingTest
+
+OBJECTS_DIR = ../../ProgramBuilds/TEST-FilterCheckingTest
+
+MOC_DIR = ../../ProgramBuilds/TEST-FilterCheckingTest
+
+UI_DIR = ../../ProgramBuilds/TEST-FilterCheckingTest
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

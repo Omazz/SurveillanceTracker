@@ -27,6 +27,15 @@ HEADERS += \
     MessageHandler.h
 
 
+TARGET = Tracker
+
+DESTDIR = ../../ProgramBuilds/PROGRAM-Tracker
+
+OBJECTS_DIR = ../../ProgramBuilds/PROGRAM-Tracker
+
+MOC_DIR = ../../ProgramBuilds/PROGRAM-Tracker
+
+UI_DIR = ../../ProgramBuilds/PROGRAM-Locator
 include(../../PriFiles/Сipher/CipherFiles.pri)
 include(../../PriFiles/TrackerFiles/TrackerFiles.pri)
 include(../../PriFiles/DataSettings/SettingsFiles.pri)

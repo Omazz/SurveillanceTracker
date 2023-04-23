@@ -25,6 +25,16 @@ FORMS += \
     GUI/GraphicsBuilderWidget.ui \
     GUI/mainwindow.ui
 
+TARGET = FilterCheckingProgram
+
+DESTDIR = ../../ProgramBuilds/PROGRAM-FilterCheckingProgram
+
+OBJECTS_DIR = ../../ProgramBuilds/PROGRAM-FilterCheckingProgram
+
+MOC_DIR = ../../ProgramBuilds/PROGRAM-FilterCheckingProgram
+
+UI_DIR = ../../ProgramBuilds/PROGRAM-FilterCheckingProgram
+
 
 DISTFILES += \
     ../../ApplicationIcons/FilterModelationIcon.ico

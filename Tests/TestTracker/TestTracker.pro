@@ -14,6 +14,16 @@ SOURCES += \
         main.cpp \
         test_asterixreader.cpp
 
+TARGET = TestTracker
+
+DESTDIR = ../../ProgramBuilds/TEST-TestTracker
+
+OBJECTS_DIR = ../../ProgramBuilds/TEST-TestTracker
+
+MOC_DIR = ../../ProgramBuilds/TEST-TestTracker
+
+UI_DIR = ../../ProgramBuilds/TEST-TestTracker
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

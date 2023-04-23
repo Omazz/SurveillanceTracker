@@ -18,6 +18,16 @@ HEADERS += \
 FORMS += \
     SettingsWindow.ui
 
+TARGET = Settings
+
+DESTDIR = ../../ProgramBuilds/PROGRAM-Settings
+
+OBJECTS_DIR = ../../ProgramBuilds/PROGRAM-Settings
+
+MOC_DIR = ../../ProgramBuilds/PROGRAM-Settings
+
+UI_DIR = ../../ProgramBuilds/PROGRAM-Settings
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

@@ -27,6 +27,16 @@ HEADERS += \
 FORMS += \
     IndicatorWindow.ui
 
+TARGET = Indicator
+
+DESTDIR = ../../ProgramBuilds/PROGRAM-Indicator
+
+OBJECTS_DIR = ../../ProgramBuilds/PROGRAM-Indicator
+
+MOC_DIR = ../../ProgramBuilds/PROGRAM-Indicator
+
+UI_DIR = ../../ProgramBuilds/PROGRAM-Indicator
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
