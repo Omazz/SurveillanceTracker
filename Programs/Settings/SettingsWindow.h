@@ -2,6 +2,7 @@
 #define SETTINGSWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 #include "../../PriFiles/DataSettings/SettingsTracker.h"
 
 QT_BEGIN_NAMESPACE
@@ -18,6 +19,10 @@ public:
 
 private slots:
     void on_PB_apply_clicked();
+
+    void on_PB_load_clicked();
+
+    void on_PB_save_clicked();
 
 private:
     void loadSettings();

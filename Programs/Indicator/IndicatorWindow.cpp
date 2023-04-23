@@ -10,7 +10,6 @@ IndicatorWindow::IndicatorWindow(QWidget *parent)
 
     _graphicsScene = new QGraphicsScene();
 
-
     _graphicsScene->setSceneRect(
         -RADAR_RANGE_KM, -RADAR_RANGE_KM,
         RADAR_RANGE_KM * 2, RADAR_RANGE_KM * 2
