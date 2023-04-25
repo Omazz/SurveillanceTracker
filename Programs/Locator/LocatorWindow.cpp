@@ -22,7 +22,6 @@ LocatorWindow::LocatorWindow(QWidget *parent)
     _key = hex_to_bytes(SettingsTracker::KEY.toStdString());
     _iv = hex_to_bytes(SettingsTracker::INITIALIZING_VECTOR.toStdString());
     streebog.SetMode(256);
-
 }
 
 LocatorWindow::~LocatorWindow()

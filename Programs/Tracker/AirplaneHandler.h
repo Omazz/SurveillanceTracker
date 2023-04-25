@@ -16,7 +16,7 @@ public:
     AirplaneHandler();
 
 private:
-    MessageHandler* _messageHandler;
+    MessageHandler* mMessageHandler;
 };
 
 #endif // AIRPLANEHANDLER_H

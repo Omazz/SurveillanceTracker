@@ -25,11 +25,11 @@ signals:
 
 
 private:
-    ByteBlock _key;
-    ByteBlock _iv;
-    Streebog streebog;
-    QUdpSocket* _socket;
-    QUdpSocket* _socketCheckMAC;
+    ByteBlock mKey;
+    ByteBlock mIV;
+    Streebog mStreebog;
+    QUdpSocket* mSocket;
+    QUdpSocket* mSocketCheckMAC;
 };
 
 #endif // MESSAGEHANDLER_H

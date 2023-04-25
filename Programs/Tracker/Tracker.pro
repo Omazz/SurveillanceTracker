@@ -18,13 +18,17 @@ PKGCONFIG += libpcap
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += main.cpp \
+    Airplane.cpp \
     AirplaneHandler.cpp \
-    MessageHandler.cpp
+    MessageHandler.cpp \
+    Plot.cpp
 
 
 HEADERS += \
+    Airplane.h \
     AirplaneHandler.h \
-    MessageHandler.h
+    MessageHandler.h \
+    Plot.h
 
 
 TARGET = Tracker
