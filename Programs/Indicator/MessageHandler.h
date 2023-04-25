@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QUdpSocket>
+#include <QMessageBox>
 #include "../../PriFiles/TrackerFiles/asterixreader.h"
 
 class MessageHandler : public QObject
@@ -14,6 +15,7 @@ public:
 public slots:
     void readDatagram();
 
+    void readDatagramMAC();
 signals:
     void changeSector(qreal angle_deg);
 
@@ -23,6 +25,7 @@ signals:
 
 private:
     QUdpSocket* _socket;
+    QUdpSocket* _socketCheckMAC;
 };
 
 #endif // MESSAGEHANDLER_H

@@ -16,7 +16,6 @@ IndicatorWindow::IndicatorWindow(QWidget *parent)
     );
 
     _messageHandler = new MessageHandler(this);
-
     ui->GW_locator->setScene(_graphicsScene);
     _graphicsScene->setBackgroundBrush(QBrush(GRAY));
     ui->GW_locator->scale(0.8, 0.8);

@@ -29,6 +29,7 @@ private:
     ByteBlock _iv;
     Streebog streebog;
     QUdpSocket* _socket;
+    QUdpSocket* _socketCheckMAC;
 };
 
 #endif // MESSAGEHANDLER_H

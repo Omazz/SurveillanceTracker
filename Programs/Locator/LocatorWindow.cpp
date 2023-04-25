@@ -21,7 +21,6 @@ LocatorWindow::LocatorWindow(QWidget *parent)
 
     _key = hex_to_bytes(SettingsTracker::KEY.toStdString());
     _iv = hex_to_bytes(SettingsTracker::INITIALIZING_VECTOR.toStdString());
-    std::cout << hex_representation(_key) << "\n" << hex_representation(_iv) << std::endl;
     streebog.SetMode(256);
 
 }
@@ -33,7 +32,7 @@ LocatorWindow::~LocatorWindow()
 
 
 void LocatorWindow::on_PB_start_clicked() {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open pcap"), "../Records", tr("pcap (*.pcapng)"));
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open pcap"), "../../Records", tr("pcap (*.pcapng)"));
 
     if(filePath.isEmpty()) {
         return;

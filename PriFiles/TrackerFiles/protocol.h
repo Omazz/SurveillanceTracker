@@ -5,6 +5,9 @@
 #include <list>
 #include <vector>
 
+const static uint8_t OK = 200;
+const static uint8_t ERROR = 220;
+
 const static uint8_t CAT48 = 0x30;
 const static uint8_t CAT34 = 0x22;
 

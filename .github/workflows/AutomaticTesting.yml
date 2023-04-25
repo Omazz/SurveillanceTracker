@@ -33,7 +33,7 @@ jobs:
       run: cd ./Tests/TestTracker/ && make
 
     - name: Run test tracker
-      run: cd ./Tests/TestTracker/ && ./TestTracker
+      run: cd ./ProgramBuilds/TEST-TestTracker/ && ./TestTracker
      
   test_modeling_filters:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
       run: cd ./Tests/FilterCheckingTest/ && make
 
     - name: Run test filters
-      run: cd ./Tests/FilterCheckingTest/ && ./FilterCheckingTest
+      run: cd ./ProgramBuilds/TEST-FilterCheckingTest/ && ./FilterCheckingTest
 
   test_indicator:
     runs-on: ubuntu-latest
@@ -131,4 +131,4 @@ jobs:
       run: cd ./Tests/TestCipher/ && make
 
     - name: Run test cipher and mac
-      run: cd ./Tests/TestCipher/ && ./TestCipher
+      run: cd ./ProgramBuilds/TEST-TestCipher/ && ./TestCipher
