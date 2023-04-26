@@ -13,13 +13,13 @@ SOURCES += \
 
 TARGET = TestCipher
 
-DESTDIR = ../../ProgramBuilds/TEST-TestCipher
+DESTDIR = ../../ProgramBuilds/TEST-Cipher
 
-OBJECTS_DIR = ../../ProgramBuilds/TEST-TestCipher
+OBJECTS_DIR = ../../ProgramBuilds/TEST-Cipher
 
-MOC_DIR = ../../ProgramBuilds/TEST-TestCipher
+MOC_DIR = ../../ProgramBuilds/TEST-Cipher
 
-UI_DIR = ../../ProgramBuilds/TEST-TestCipher
+UI_DIR = ../../ProgramBuilds/TEST-Cipher
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

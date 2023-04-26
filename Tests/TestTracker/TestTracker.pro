@@ -16,13 +16,13 @@ SOURCES += \
 
 TARGET = TestTracker
 
-DESTDIR = ../../ProgramBuilds/TEST-TestTracker
+DESTDIR = ../../ProgramBuilds/TEST-Tracker
 
-OBJECTS_DIR = ../../ProgramBuilds/TEST-TestTracker
+OBJECTS_DIR = ../../ProgramBuilds/TEST-Tracker
 
-MOC_DIR = ../../ProgramBuilds/TEST-TestTracker
+MOC_DIR = ../../ProgramBuilds/TEST-Tracker
 
-UI_DIR = ../../ProgramBuilds/TEST-TestTracker
+UI_DIR = ../../ProgramBuilds/TEST-Tracker
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

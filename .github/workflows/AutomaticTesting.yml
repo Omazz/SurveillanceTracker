@@ -20,22 +20,22 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
 
-    - name: Build qmake-file tracker program
+    - name: Build qmake-file tracker
       run: cd ./Programs/Tracker/ && qmake Tracker.pro    
     
     - name: Compile 
       run: cd ./Programs/Tracker/ && make
     
-    - name: Build qmake-file tracker test
+    - name: Build qmake-file test tracker
       run: cd ./Tests/TestTracker/ && qmake TestTracker.pro
     
-    - name: Create executable tracker file 
+    - name: Create executable file 
       run: cd ./Tests/TestTracker/ && make
 
     - name: Run test tracker
-      run: cd ./ProgramBuilds/TEST-TestTracker/ && ./TestTracker
+      run: cd ./ProgramBuilds/TEST-Tracker/ && ./TestTracker
      
-  test_modeling_filters:
+  test_analyzer:
     runs-on: ubuntu-latest
 
     steps:
@@ -45,20 +45,20 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file modeling filters program
-      run: cd ./Programs/FilterCheckingProgram/ && qmake FilterCheckingProgram.pro
+    - name: Build qmake-file Analyzer
+      run: cd ./Programs/Analyzer/ && qmake Analyzer.pro
       
     - name: Compile
-      run: cd ./Programs/FilterCheckingProgram/ && make
+      run: cd ./Programs/Analyzer/ && make
     
-    - name: Build qmake-file modeling filters program
-      run: cd ./Tests/FilterCheckingTest/ && qmake FilterCheckingTest.pro
+    - name: Build qmake-file test analyzer
+      run: cd ./Tests/TestAnalyzer/ && qmake TestAnalyzer.pro
     
-    - name: Create executable modeling filters program file
-      run: cd ./Tests/FilterCheckingTest/ && make
+    - name: Create executable file
+      run: cd ./Tests/TestAnalyzer/ && make
 
-    - name: Run test filters
-      run: cd ./ProgramBuilds/TEST-FilterCheckingTest/ && ./FilterCheckingTest
+    - name: Run test analyzer
+      run: cd ./ProgramBuilds/TEST-Analyzer/ && ./TestAnalyzer
 
   test_indicator:
     runs-on: ubuntu-latest
@@ -73,13 +73,13 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file indicator program
+    - name: Build qmake-file indicator
       run: cd ./Programs/Indicator/ && qmake Indicator.pro
       
     - name: Compile
       run: cd ./Programs/Indicator/ && make
   
-  test_locator:
+  test_radar:
     runs-on: ubuntu-latest
 
     steps:
@@ -92,11 +92,11 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file locator program
-      run: cd ./Programs/Locator/ && qmake Locator.pro
+    - name: Build qmake-file radar program
+      run: cd ./Programs/Radar/ && qmake Radar.pro
       
     - name: Compile
-      run: cd ./Programs/Locator/ && make
+      run: cd ./Programs/Radar/ && make
       
   test_settings:
     runs-on: ubuntu-latest
@@ -131,4 +131,4 @@ jobs:
       run: cd ./Tests/TestCipher/ && make
 
     - name: Run test cipher and mac
-      run: cd ./ProgramBuilds/TEST-TestCipher/ && ./TestCipher
+      run: cd ./ProgramBuilds/TEST-Cipher/ && ./TestCipher

@@ -4,6 +4,10 @@
 #include <QObject>
 #include <QUdpSocket>
 #include <QMessageBox>
+#include "../../PriFiles/Сipher/mycrypto.hpp"
+#include "../../PriFiles/Сipher/Kuznyechik.hpp"
+#include "../../PriFiles/Сipher/gost341112.h"
+#include "../../PriFiles/DataSettings/SettingsTracker.h"
 #include "../../PriFiles/TrackerFiles/asterixreader.h"
 
 class MessageHandler : public QObject
@@ -15,7 +19,6 @@ public:
 public slots:
     void readDatagram();
 
-    void readDatagramMAC();
 signals:
     void changeSector(qreal angle_deg);
 
@@ -24,8 +27,10 @@ signals:
     void newTrack(qreal x_km, qreal y_km);
 
 private:
+    ByteBlock mKey;
+    ByteBlock mIV;
+    Streebog mStreebog;
     QUdpSocket* _socket;
-    QUdpSocket* _socketCheckMAC;
 };
 
 #endif // MESSAGEHANDLER_H

@@ -1,0 +1,15 @@
+Radar:
+	./../../ProgramBuilds/PROGRAM-Radar/Radar
+	
+Tracker:
+	./../../ProgramBuilds/PROGRAM-Tracker/Tracker
+
+Indicator:
+	./../../ProgramBuilds/PROGRAM-Indicator/Indicator
+
+Settings:
+	./../../ProgramBuilds/PROGRAM-Settings/Settings
+	
+Analyzer:
+	./../../ProgramBuilds/PROGRAM-Analyzer/Analyzer
+	

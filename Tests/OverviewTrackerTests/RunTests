@@ -1,9 +1,0 @@
-TestCipher:
-	./../../ProgramBuilds/TEST-TestCipher/TestCipher
-	
-TestTracker:
-	./../../ProgramBuilds/TEST-TestTracker/TestTracker
-
-FilterCheckingTest:
-	./../../ProgramBuilds/TEST-FilterCheckingTest/FilterCheckingTest
-

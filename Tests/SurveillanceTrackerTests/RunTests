@@ -1,0 +1,9 @@
+Cipher:
+	./../../ProgramBuilds/TEST-Cipher/TestCipher
+	
+Tracker:
+	./../../ProgramBuilds/TEST-Tracker/TestTracker
+
+Analyzer:
+	./../../ProgramBuilds/TEST-Analyzer/TestAnalyzer
+

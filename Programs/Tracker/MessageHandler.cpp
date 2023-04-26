@@ -3,7 +3,6 @@
 MessageHandler::MessageHandler(QObject* parent) : QObject(parent)
 {
     mSocket = new QUdpSocket(this);
-    mSocketCheckMAC = new QUdpSocket(this);
     mSocket->bind(QHostAddress::LocalHost, 12222);
     mKey = hex_to_bytes(SettingsTracker::KEY.toStdString());
     mIV = hex_to_bytes(SettingsTracker::INITIALIZING_VECTOR.toStdString());
@@ -18,39 +17,33 @@ void MessageHandler::readDatagram() {
         QByteArray datagram;
         datagram.resize(mSocket->pendingDatagramSize());
         mSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
-        CFB_Mode<Kuznyechik> decryptor(Kuznyechik(mKey), mIV);
+        ByteBlock blocksToSend((BYTE*)datagram.data(), datagram.size());
+        ByteBlock encryptionBlocks;
 
-        unsigned char* mac = mStreebog.Hash((unsigned char*)datagram.data(), datagram.size() - 32);
-        unsigned char* mac_message = (unsigned char*)(datagram.data() + datagram.size() - 32);
-        QString mac1, mac2;
+        CFB_Mode<Kuznyechik> encryptor(Kuznyechik(mKey), mIV);
+        encryptor.encrypt(blocksToSend, encryptionBlocks);
 
-        for(int i = 0; i < 32; i++) {
-            mac1.append(mac[i]);
-            mac2.append(mac_message[i]);
+        mIV = ByteBlock((encryptionBlocks.byte_ptr() + encryptionBlocks.size() - 16), 16);
+
+        QByteArray byteArray;
+        BYTE* encryption_pointer = encryptionBlocks.byte_ptr();
+
+        for(int i = 0; i < encryptionBlocks.size(); i++) {
+            byteArray.push_back(encryption_pointer[i]);
         }
 
-        if(QString::compare(mac1, mac2) != 0) {
-            QByteArray byteArray;
-            byteArray.append(ERROR);
-            mSocket->writeDatagram(byteArray, byteArray.size(), QHostAddress::LocalHost, 12224);
-            return;
+        /* Формируем имитовставку по зашифрованному сообщению и добавляем её в конец */
+        unsigned char* mac = mStreebog.Hash(encryption_pointer, encryptionBlocks.size());
+        for(int i = 0; i < 32; ++i) {
+            byteArray.push_back(mac[i]);
         }
 
-        mIV = ByteBlock((BYTE*)(datagram.data() + datagram.size() - 16 - 32), 16);
-        ByteBlock encryptionMessage((BYTE*)datagram.constData(), datagram.size() - 32);
-        ByteBlock decryptionMessage;
-        decryptor.decrypt(encryptionMessage, decryptionMessage);
-        const char* packet = (const char*) decryptionMessage.byte_ptr();
+        const char* packet = (const char*) datagram.data();
 
         if(packet[0] == CAT34) {
             Asterix34 record34 = AsterixReader::parseAsterix34((const uint8_t*)(packet));
 
-            mSocket->writeDatagram(packet, decryptionMessage.size(), QHostAddress::LocalHost, 12223);
-
-            QByteArray byteArray;
-            byteArray.append(OK);
-            mSocket->writeDatagram(byteArray, byteArray.size(), QHostAddress::LocalHost, 12224);
-
+            mSocket->writeDatagram(byteArray.data(), byteArray.size(), QHostAddress::LocalHost, 12223);
 
             qDebug() << Qt::hex
                       << "\nRecord Asterix34"
@@ -68,11 +61,7 @@ void MessageHandler::readDatagram() {
                return;
             }
 
-            mSocket->writeDatagram(packet, decryptionMessage.size(), QHostAddress::LocalHost, 12223);
-
-            QByteArray byteArray;
-            byteArray.append(OK);
-            mSocket->writeDatagram(byteArray, byteArray.size(), QHostAddress::LocalHost, 12224);
+            mSocket->writeDatagram(byteArray.data(), byteArray.size(), QHostAddress::LocalHost, 12223);
 
             qDebug() << Qt::hex
                      << "\nRecord Asterix48"
