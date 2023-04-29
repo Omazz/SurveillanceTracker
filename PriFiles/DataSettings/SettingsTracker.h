@@ -12,11 +12,11 @@ static qreal DEFAULT_SCAN_MSECS = 5000.0;
 static qreal DEFAULT_WAIT_INFO_MSECS = 50.0;
 
 /* LOCK PARAMETERS */
-static quint8 DEFAULT_NUMBER_PLOTS_TO_LOCK = 3;
-static quint8 DEFAULT_NUMBER_SCANS_TO_LOCK = 3;
+static quint8 DEFAULT_NUMBER_OF_PLOTS_TO_LOCK = 3;
+static quint8 DEFAULT_NUMBER_OF_SCANS_TO_LOCK = 3;
 
 /* HOLD PARAMETERS */
-static quint8 DEFAULT_NUMBER_MISSING_PLOTS = 4;
+static quint8 DEFAULT_NUMBER_OF_MISSING_PLOTS = 4;
 static qreal DEFAULT_MIN_VELOCITY_M_SECS = 30.0;
 static qreal DEFAULT_MAX_VELOCITY_M_SECS = 330.0;
 static qreal DEFAULT_MAX_ANGLE_DEG = 45.0;
@@ -47,11 +47,11 @@ public:
     static qreal WAIT_INFO_MSECS;
 
     /* LOCK PARAMETERS */
-    static quint8 NUMBER_PLOTS_TO_LOCK;
-    static quint8 NUMBER_SCANS_TO_LOCK;
+    static quint8 NUMBER_OF_PLOTS_TO_LOCK;
+    static quint8 NUMBER_OF_SCANS_TO_LOCK;
 
     /* HOLD PARAMETERS */
-    static quint8 NUMBER_MISSING_PLOTS;
+    static quint8 NUMBER_OF_MISSING_PLOTS;
     static qreal MIN_VELOCITY_M_SECS;
     static qreal MAX_VELOCITY_M_SECS;
     static qreal MAX_ANGLE_DEG;

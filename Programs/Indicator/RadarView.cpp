@@ -49,6 +49,8 @@ void RadarView::keyPressEvent(QKeyEvent* event) {
             setDragMode(QGraphicsView::RubberBandDrag);
 
         }
+    } else if(event->key() == Qt::Key_Space) {
+        emit visiblePlotsChanged();
     }
 }
 
@@ -76,7 +78,6 @@ void RadarView::mouseReleaseEvent(QMouseEvent* event) {
             if (transform().m22() > 60) {
                 qreal fixFactor = 60 / transform().m22();
                 scale(fixFactor, fixFactor);
-                emit zoomChanged(transform().m22());
             }
         }
         setDragMode(QGraphicsView::ScrollHandDrag);

@@ -2,15 +2,16 @@
 #define PLOT_H
 
 #include <QtCore>
+#include "../../PriFiles/TrackerFiles/asterixreader.h"
 
 class Plot
 {
 public:
     Plot();
 
-    Plot(qreal distance, qreal angle, qreal frequencyDoppler, qreal amplitude, qreal time);
+    Plot(qreal distance, qreal angle, qreal frequencyDoppler, qreal amplitude, qreal time, Asterix48 asterixPlot);
 
-    Plot(QPointF cartesianCoords, qreal frequencyDoppler, qreal amplitude, qreal time);
+    Plot(QPointF cartesianCoords, qreal frequencyDoppler, qreal amplitude, qreal time, Asterix48 asterixPlto);
 
     qreal time() const;
 
@@ -37,6 +38,9 @@ public:
 
     qreal amplitude() const;
 
+    Asterix48 asterixPlot() const;
+
+
 private:
     qreal mRange; ///< м
     qreal mAngle; ///< градусы
@@ -44,6 +48,8 @@ private:
     qreal mFrequencyDoppler; ///< Гц
     qreal mAmplitude;
     qreal mTime; ///< с
+
+    Asterix48 mAsterixPlot;
 };
 
 #endif // PLOT_H

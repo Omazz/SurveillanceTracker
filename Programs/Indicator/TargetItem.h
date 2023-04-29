@@ -10,7 +10,7 @@ enum TypeAirplaneObject {
     PLOT,
     PLOT_BY_TRACK,
     TRACK,
-    PREDICTED_TRACK
+    EXTRAPOLATED_TRACK
 };
 
 class TargetItem : public QGraphicsItem
@@ -24,6 +24,7 @@ public:
      */
     TargetItem(QPointF coords,
                TypeAirplaneObject type = PLOT,
+               qreal directionAngle = 0,
                qreal itemSize = 10.0,
                QGraphicsItem* parent = nullptr);
 
@@ -36,9 +37,10 @@ public:
     TypeAirplaneObject getType();
 
 private:
-    QGraphicsItem* _indicator;
-    TypeAirplaneObject _type;
-    qreal _itemSize;
+    QGraphicsItem* mIndicator;
+    QGraphicsLineItem* mHeadingLine = nullptr;
+    TypeAirplaneObject mType;
+    qreal mItemSIze;
 };
 
 #endif // TARGETITEM_H

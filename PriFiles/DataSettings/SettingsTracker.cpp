@@ -11,11 +11,11 @@ qreal SettingsTracker::SCAN_MSECS;
 qreal SettingsTracker::WAIT_INFO_MSECS;
 
 /* LOCK PARAMETERS */
-quint8 SettingsTracker::NUMBER_PLOTS_TO_LOCK;
-quint8 SettingsTracker::NUMBER_SCANS_TO_LOCK;
+quint8 SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK;
+quint8 SettingsTracker::NUMBER_OF_SCANS_TO_LOCK;
 
 /* HOLD PARAMETERS */
-quint8 SettingsTracker::NUMBER_MISSING_PLOTS;
+quint8 SettingsTracker::NUMBER_OF_MISSING_PLOTS;
 qreal SettingsTracker::MIN_VELOCITY_M_SECS;
 qreal SettingsTracker::MAX_VELOCITY_M_SECS;
 qreal SettingsTracker::MAX_ANGLE_DEG;
@@ -32,7 +32,7 @@ SettingsTracker::SettingsTracker()
 }
 
 void SettingsTracker::initialization() {
-    _settings = new QSettings("PetProjects", "OverviewTracker");
+    _settings = new QSettings("PetProjects", "SurveillanceTracker");
 
     if(_settings->childGroups().isEmpty()) {
 
@@ -45,11 +45,11 @@ void SettingsTracker::initialization() {
         WAIT_INFO_MSECS = DEFAULT_WAIT_INFO_MSECS;
 
         /* LOCK PARAMETERS */
-        NUMBER_PLOTS_TO_LOCK = DEFAULT_NUMBER_PLOTS_TO_LOCK;
-        NUMBER_SCANS_TO_LOCK = DEFAULT_NUMBER_SCANS_TO_LOCK;
+        NUMBER_OF_PLOTS_TO_LOCK = DEFAULT_NUMBER_OF_PLOTS_TO_LOCK;
+        NUMBER_OF_SCANS_TO_LOCK = DEFAULT_NUMBER_OF_SCANS_TO_LOCK;
 
         /* HOLD PARAMETERS */
-        NUMBER_MISSING_PLOTS = DEFAULT_NUMBER_MISSING_PLOTS;
+        NUMBER_OF_MISSING_PLOTS = DEFAULT_NUMBER_OF_MISSING_PLOTS;
         MIN_VELOCITY_M_SECS = DEFAULT_MIN_VELOCITY_M_SECS;
         MAX_VELOCITY_M_SECS = DEFAULT_MAX_VELOCITY_M_SECS;
         MAX_ANGLE_DEG = DEFAULT_MAX_ANGLE_DEG;
@@ -73,13 +73,13 @@ void SettingsTracker::initialization() {
 
         /* LOCK PARAMETERS */
         _settings->beginGroup("LOCK_PARAMETERS");
-        _settings->setValue("NUMBER_PLOTS_TO_LOCK", NUMBER_PLOTS_TO_LOCK);
-        _settings->setValue("NUMBER_SCANS_TO_LOCK", NUMBER_SCANS_TO_LOCK);
+        _settings->setValue("NUMBER_OF_PLOTS_TO_LOCK", NUMBER_OF_PLOTS_TO_LOCK);
+        _settings->setValue("NUMBER_OF_SCANS_TO_LOCK", NUMBER_OF_SCANS_TO_LOCK);
         _settings->endGroup();
 
         /* HOLD PARAMETERS */
         _settings->beginGroup("HOLD_PARAMETERS");
-        _settings->setValue("NUMBER_MISSING_PLOTS", NUMBER_MISSING_PLOTS);
+        _settings->setValue("NUMBER_OF_MISSING_PLOTS", NUMBER_OF_MISSING_PLOTS);
         _settings->setValue("MIN_VELOCITY_M_SECS", MIN_VELOCITY_M_SECS);
         _settings->setValue("MAX_VELOCITY_M_SECS", MAX_VELOCITY_M_SECS);
         _settings->setValue("MAX_ANGLE_DEG", MAX_ANGLE_DEG);
@@ -107,13 +107,13 @@ void SettingsTracker::initialization() {
 
         /* LOCK PARAMETERS */
         _settings->beginGroup("LOCK_PARAMETERS");
-        NUMBER_PLOTS_TO_LOCK = _settings->value("NUMBER_PLOTS_TO_LOCK", DEFAULT_NUMBER_PLOTS_TO_LOCK).toUInt();
-        NUMBER_SCANS_TO_LOCK = _settings->value("NUMBER_SCANS_TO_LOCK", DEFAULT_NUMBER_SCANS_TO_LOCK).toUInt();
+        NUMBER_OF_PLOTS_TO_LOCK = _settings->value("NUMBER_OF_PLOTS_TO_LOCK", DEFAULT_NUMBER_OF_PLOTS_TO_LOCK).toUInt();
+        NUMBER_OF_SCANS_TO_LOCK = _settings->value("NUMBER_OF_SCANS_TO_LOCK", DEFAULT_NUMBER_OF_SCANS_TO_LOCK).toUInt();
         _settings->endGroup();
 
         /* HOLD PARAMETERS */
         _settings->beginGroup("HOLD_PARAMETERS");
-        NUMBER_MISSING_PLOTS = _settings->value("NUMBER_MISSING_PLOTS", DEFAULT_NUMBER_MISSING_PLOTS).toUInt();
+        NUMBER_OF_MISSING_PLOTS = _settings->value("NUMBER_OF_MISSING_PLOTS", DEFAULT_NUMBER_OF_MISSING_PLOTS).toUInt();
         MIN_VELOCITY_M_SECS = _settings->value("MIN_VELOCITY_M_SECS", DEFAULT_MIN_VELOCITY_M_SECS).toDouble();
         MAX_VELOCITY_M_SECS = _settings->value("MAX_VELOCITY_M_SECS", DEFAULT_MAX_VELOCITY_M_SECS).toDouble();
         MAX_ANGLE_DEG = _settings->value("MAX_ANGLE_DEG", DEFAULT_MAX_ANGLE_DEG).toDouble();
@@ -143,13 +143,13 @@ void SettingsTracker::saveParameters() {
 
     /* LOCK PARAMETERS */
     _settings->beginGroup("LOCK_PARAMETERS");
-    _settings->setValue("NUMBER_PLOTS_TO_LOCK", NUMBER_PLOTS_TO_LOCK);
-    _settings->setValue("NUMBER_SCANS_TO_LOCK", NUMBER_SCANS_TO_LOCK);
+    _settings->setValue("NUMBER_OF_PLOTS_TO_LOCK", NUMBER_OF_PLOTS_TO_LOCK);
+    _settings->setValue("NUMBER_OF_SCANS_TO_LOCK", NUMBER_OF_SCANS_TO_LOCK);
     _settings->endGroup();
 
     /* HOLD PARAMETERS */
     _settings->beginGroup("HOLD_PARAMETERS");
-    _settings->setValue("NUMBER_MISSING_PLOTS", NUMBER_MISSING_PLOTS);
+    _settings->setValue("NUMBER_OF_MISSING_PLOTS", NUMBER_OF_MISSING_PLOTS);
     _settings->setValue("MIN_VELOCITY_M_SECS", MIN_VELOCITY_M_SECS);
     _settings->setValue("MAX_VELOCITY_M_SECS", MAX_VELOCITY_M_SECS);
     _settings->setValue("MAX_ANGLE_DEG", MAX_ANGLE_DEG);

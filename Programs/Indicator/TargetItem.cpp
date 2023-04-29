@@ -10,11 +10,12 @@
 TargetItem::TargetItem(
     QPointF coords,
     TypeAirplaneObject type,
+    qreal directionAngle,
     qreal itemSize,
     QGraphicsItem* parent
 ): QGraphicsItem(parent),
-    _type(type),
-    _itemSize(itemSize)
+    mType(type),
+    mItemSIze(itemSize)
 {
     QPainterPath path;
 
@@ -23,21 +24,22 @@ TargetItem::TargetItem(
     path.moveTo(itemSize / 2, -itemSize / 2);
     path.lineTo(-itemSize / 2, itemSize / 2);
 
-    _indicator = new QGraphicsPathItem(path, this);
+    mIndicator = new QGraphicsPathItem(path, this);
 
-    _indicator->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    mIndicator->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
-    if (_type == TRACK || _type == PREDICTED_TRACK) {
+    if (mType == TRACK || mType == EXTRAPOLATED_TRACK) {
         setPos(coords.x(), -coords.y());
-    } else if (_type == PLOT || _type == PLOT_BY_TRACK) {
+        qDebug() << coords.x() << -coords.y();
+    } else if (mType == PLOT || mType == PLOT_BY_TRACK) {
         qreal x = coords.x() * sin(coords.y());
         qreal y = coords.x() * cos(coords.y());
 
         setPos(x, -y);
     }
 
-    auto pathItem = qgraphicsitem_cast<QGraphicsPathItem*>(_indicator);
-    switch(_type) {
+    auto pathItem = qgraphicsitem_cast<QGraphicsPathItem*>(mIndicator);
+    switch(mType) {
 
     case PLOT:
         pathItem->setPen(QPen(Qt::red, 2));
@@ -49,16 +51,32 @@ TargetItem::TargetItem(
 
     case TRACK:
         pathItem->setPen(QPen(Qt::blue, 2));
+
+        mHeadingLine = new QGraphicsLineItem(
+            {QPointF(0, 0), QPointF(30 * qCos(directionAngle), -30.0 * qSin(directionAngle))},
+            this
+        );
+
+        mHeadingLine->setPen(QPen(QColor(0, 190, 255)));
+        mHeadingLine->setFlag(QGraphicsItem::ItemIgnoresTransformations);
         break;
 
-    case PREDICTED_TRACK:
+    case EXTRAPOLATED_TRACK:
         pathItem->setPen(QPen(Qt::yellow, 2));
+        mHeadingLine = new QGraphicsLineItem(
+            {QPointF(0, 0), QPointF(30 * qCos(directionAngle), -30.0 * qSin(directionAngle))},
+            this
+        );
+
+        mHeadingLine->setPen(QPen(QColor(0, 190, 255)));
+        mHeadingLine->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
         break;
     }
 }
 
 QRectF TargetItem::boundingRect() const {
-    return {0, 0, _itemSize, _itemSize};
+    return {0, 0, mItemSIze, mItemSIze};
 }
 
 void TargetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
@@ -71,5 +89,5 @@ int TargetItem::type() const
 }
 
 TypeAirplaneObject TargetItem::getType() {
-    return _type;
+    return mType;
 }

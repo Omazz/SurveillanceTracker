@@ -11,7 +11,7 @@ public:
     explicit RadarView(QWidget* parent = nullptr);
 
 signals:
-    void zoomChanged(qreal factor);
+    void visiblePlotsChanged();
 
 protected:
     void wheelEvent(QWheelEvent* event) override;

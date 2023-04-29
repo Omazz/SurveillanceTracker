@@ -24,7 +24,9 @@ signals:
 
     void newPlot(qreal rho_km, qreal angle_rad);
 
-    void newTrack(qreal x_km, qreal y_km);
+    void newTrack(qreal x_km, qreal y_km, qreal directionAngle_rad);
+
+    void newExtrapolatedTrack(qreal x_km, qreal y_km, qreal directionAngle_rad);
 
 private:
     ByteBlock mKey;

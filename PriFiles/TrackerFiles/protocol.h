@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <list>
 #include <vector>
+#include <QByteArray>
 
 const static uint8_t OK = 200;
 const static uint8_t ERROR = 220;
@@ -80,6 +81,7 @@ struct Asterix48 {
     std::list<uint8_t> TargetReportDescriptor; // 1+
     uint32_t TimeOfDay = 0; // 24 бита
     uint32_t MeasuredPositionInSlantPolarCoordinates = 0;
+    bool polarCoordsIsExist = false;
     uint16_t Mode3ACodeInOctalRepresentation = 0;
     uint16_t FlightLevelInBinaryRepresentation = 0;
     std::list<RadarPlotCharacteristicsClass> RadarPlotCharacteristics; // 1+1+
@@ -89,6 +91,7 @@ struct Asterix48 {
     std::vector<uint64_t> BDSRegisterData;
     uint16_t TrackNumber = 0;
     uint32_t CalculatedPositionInCartesianCoordiantes = 0;
+    bool cartesianCoordsIsExist = false;
     uint32_t CalculatedTrackVelocityInPolarRepresentation = 0;
     std::list<uint8_t> TrackStatus;
     uint32_t TrackQuality = 0;
@@ -105,6 +108,9 @@ struct Asterix48 {
     uint16_t Mode2CodeConfidenceIndicator = 0;
     uint8_t ReservedExpansionField = 0;
     uint8_t SpecialPurposeField = 0;
+
+    QByteArray Data;
+    int PosTrackNumber = -1;
 };
 
 #endif // PROTOCOL_H

@@ -23,6 +23,9 @@ const qint16 RADAR_RANGE_KM = 500;
 const quint8 SECTOR_COUNT = 32;
 const int CIRCLE_RADIUS = 8;
 
+const int TIME_TO_REMOVE_PLOT = 5000;
+const int TIME_TO_REMOVE_TRACK = 50000;
+
 const quint8 PEN_INDICATOR_WIDTH = 1;
 
 class IndicatorWindow : public QMainWindow
@@ -43,16 +46,23 @@ public slots:
 
     void onNewPlot(qreal rho_km, qreal angle_rad);
 
-    void onNewTrack(qreal x_km, qreal y_km);
+    void onNewTrack(qreal x_km, qreal y_km, qreal directionAngle_rad);
+
+    void onNewExtrapolatedTrack(qreal x_km, qreal y_km, qreal directionAngle_rad);
+
+    void onVisiblePlotsChanged();
 
 private:
     Ui::IndicatorWindow *ui;
-    QGraphicsScene* _graphicsScene;
+    QGraphicsScene* mGraphicsScene;
 
-    QGraphicsLineItem* _line;
-    QVector<QGraphicsEllipseItem*> _sectors;
-    QList<std::pair<TargetItem*, QTimer*>> _targets;
+    QGraphicsLineItem* mLine;
+    QVector<QGraphicsEllipseItem*> mSectors;
+    QList<std::pair<TargetItem*, QTimer*>> mPlots;
+    QList<std::pair<TargetItem*, QTimer*>> mTracks;
 
-    MessageHandler* _messageHandler;
+    bool mPlotsIsVisible = true;
+
+    MessageHandler* mMessageHandler;
 };
 #endif // INDICATORWINDOW_H

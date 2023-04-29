@@ -33,33 +33,33 @@ void SettingsWindow::loadSettings() {
     ui->DSB_waitInfo->setValue(qRound(SettingsTracker::WAIT_INFO_MSECS));
 
     /* LOCK PARAMETERS */
-    if(SettingsTracker::NUMBER_PLOTS_TO_LOCK == 2 &&
-       SettingsTracker::NUMBER_SCANS_TO_LOCK == 2) {
+    if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 2 &&
+       SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 2) {
 
         ui->RB_2_2->setChecked(true);
 
-    } else if(SettingsTracker::NUMBER_PLOTS_TO_LOCK == 2 &&
-              SettingsTracker::NUMBER_SCANS_TO_LOCK == 3) {
+    } else if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 2 &&
+              SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 3) {
 
         ui->RB_2_3->setChecked(true);
 
-    } else if(SettingsTracker::NUMBER_PLOTS_TO_LOCK == 2 &&
-              SettingsTracker::NUMBER_SCANS_TO_LOCK == 4) {
+    } else if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 2 &&
+              SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 4) {
 
         ui->RB_2_4->setChecked(true);
 
-    } else if(SettingsTracker::NUMBER_PLOTS_TO_LOCK == 3 &&
-              SettingsTracker::NUMBER_SCANS_TO_LOCK == 3) {
+    } else if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 3 &&
+              SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 3) {
 
         ui->RB_3_3->setChecked(true);
 
-    } else if(SettingsTracker::NUMBER_PLOTS_TO_LOCK == 3 &&
-              SettingsTracker::NUMBER_SCANS_TO_LOCK == 4) {
+    } else if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 3 &&
+              SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 4) {
 
         ui->RB_3_4->setChecked(true);
 
-    } else if(SettingsTracker::NUMBER_PLOTS_TO_LOCK == 4 &&
-              SettingsTracker::NUMBER_SCANS_TO_LOCK == 4) {
+    } else if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 4 &&
+              SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 4) {
 
         ui->RB_4_4->setChecked(true);
 
@@ -67,7 +67,7 @@ void SettingsWindow::loadSettings() {
 
 
     /* HOLD PARAMETERS */
-    ui->SB_numberExtrapolations->setValue(SettingsTracker::NUMBER_MISSING_PLOTS);
+    ui->SB_numberExtrapolations->setValue(SettingsTracker::NUMBER_OF_MISSING_PLOTS);
     ui->DSB_velocityMin->setValue(SettingsTracker::MIN_VELOCITY_M_SECS);
     ui->DSB_velocityMax->setValue(SettingsTracker::MAX_VELOCITY_M_SECS);
     ui->DSB_difAngle->setValue(SettingsTracker::MAX_ANGLE_DEG);
@@ -98,27 +98,27 @@ void SettingsWindow::saveSettings() {
 
     /* LOCK PARAMETERS */
     if(ui->RB_2_2->isChecked()) {
-        SettingsTracker::NUMBER_PLOTS_TO_LOCK = 2;
-        SettingsTracker::NUMBER_SCANS_TO_LOCK = 2;
+        SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 2;
+        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 2;
     } else if(ui->RB_2_3->isChecked()) {
-        SettingsTracker::NUMBER_PLOTS_TO_LOCK = 2;
-        SettingsTracker::NUMBER_SCANS_TO_LOCK = 3;
+        SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 2;
+        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 3;
     } else if(ui->RB_2_4->isChecked()) {
-        SettingsTracker::NUMBER_PLOTS_TO_LOCK = 2;
-        SettingsTracker::NUMBER_SCANS_TO_LOCK = 4;
+        SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 2;
+        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 4;
     } else if(ui->RB_3_3->isChecked()) {
-        SettingsTracker::NUMBER_PLOTS_TO_LOCK = 3;
-        SettingsTracker::NUMBER_SCANS_TO_LOCK = 3;
+        SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 3;
+        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 3;
     } else if(ui->RB_3_4->isChecked()) {
-        SettingsTracker::NUMBER_PLOTS_TO_LOCK = 3;
-        SettingsTracker::NUMBER_SCANS_TO_LOCK = 4;
+        SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 3;
+        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 4;
     } else if(ui->RB_4_4->isChecked()) {
-        SettingsTracker::NUMBER_PLOTS_TO_LOCK = 4;
-        SettingsTracker::NUMBER_SCANS_TO_LOCK = 4;
+        SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 4;
+        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 4;
     }
 
     /* HOLD PARAMETERS */
-    SettingsTracker::NUMBER_MISSING_PLOTS = ui->SB_numberExtrapolations->value();
+    SettingsTracker::NUMBER_OF_MISSING_PLOTS = ui->SB_numberExtrapolations->value();
     SettingsTracker::MIN_VELOCITY_M_SECS = ui->DSB_velocityMin->value();
     SettingsTracker::MAX_VELOCITY_M_SECS = ui->DSB_velocityMax->value();
     SettingsTracker::MAX_ANGLE_DEG = ui->DSB_difAngle->value();
@@ -132,7 +132,7 @@ void SettingsWindow::saveSettings() {
 }
 
 void SettingsWindow::on_PB_load_clicked() {
-    QString fileName = QFileDialog::getOpenFileName(this, "", "OverviewTracker.conf", "*.conf");
+    QString fileName = QFileDialog::getOpenFileName(this, "", "SurveillanceTracker.conf", "*.conf");
 
     if(!fileName.isEmpty()) {
         QSettings settings(fileName, QSettings::IniFormat);
@@ -152,33 +152,33 @@ void SettingsWindow::on_PB_load_clicked() {
 
             /* LOCK PARAMETERS */
             settings.beginGroup("LOCK_PARAMETERS");
-            if(settings.value("NUMBER_PLOTS_TO_LOCK").toUInt() == 2 &&
-                    settings.value("NUMBER_SCANS_TO_LOCK").toUInt() == 2) {
+            if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 2 &&
+                    settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 2) {
 
                 ui->RB_2_2->setChecked(true);
 
-            } else if(settings.value("NUMBER_PLOTS_TO_LOCK").toUInt() == 2 &&
-                      settings.value("NUMBER_SCANS_TO_LOCK").toUInt() == 3) {
+            } else if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 2 &&
+                      settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 3) {
 
                 ui->RB_2_3->setChecked(true);
 
-            } else if(settings.value("NUMBER_PLOTS_TO_LOCK").toUInt() == 2 &&
-                      settings.value("NUMBER_SCANS_TO_LOCK").toUInt() == 4) {
+            } else if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 2 &&
+                      settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 4) {
 
                 ui->RB_2_4->setChecked(true);
 
-            } else if(settings.value("NUMBER_PLOTS_TO_LOCK").toUInt() == 3 &&
-                      settings.value("NUMBER_SCANS_TO_LOCK").toUInt() == 3) {
+            } else if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 3 &&
+                      settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 3) {
 
                 ui->RB_3_3->setChecked(true);
 
-            } else if(settings.value("NUMBER_PLOTS_TO_LOCK").toUInt() == 3 &&
-                      settings.value("NUMBER_SCANS_TO_LOCK").toUInt() == 4) {
+            } else if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 3 &&
+                      settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 4) {
 
                 ui->RB_3_4->setChecked(true);
 
-            } else if(settings.value("NUMBER_PLOTS_TO_LOCK").toUInt() == 4 &&
-                      settings.value("NUMBER_SCANS_TO_LOCK").toUInt() == 4) {
+            } else if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 4 &&
+                      settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 4) {
 
                 ui->RB_4_4->setChecked(true);
 
@@ -187,7 +187,7 @@ void SettingsWindow::on_PB_load_clicked() {
 
             /* HOLD PARAMETERS */
             settings.beginGroup("HOLD_PARAMETERS");
-            ui->SB_numberExtrapolations->setValue(settings.value("NUMBER_MISSING_PLOTS").toUInt());
+            ui->SB_numberExtrapolations->setValue(settings.value("NUMBER_OF_MISSING_PLOTS").toUInt());
             ui->DSB_velocityMin->setValue(settings.value("MIN_VELOCITY_M_SECS").toDouble());
             ui->DSB_velocityMax->setValue(settings.value("MAX_VELOCITY_M_SECS").toDouble());
             ui->DSB_difAngle->setValue(settings.value("MAX_ANGLE_DEG").toDouble());
@@ -205,7 +205,7 @@ void SettingsWindow::on_PB_load_clicked() {
 
 
 void SettingsWindow::on_PB_save_clicked() {
-    QString fileName = QFileDialog::getSaveFileName(this, "", "OverviewTracker.conf", "*.conf");
+    QString fileName = QFileDialog::getSaveFileName(this, "", "SurveillanceTracker.conf", "*.conf");
 
     if(!fileName.isEmpty()) {
 
@@ -235,29 +235,29 @@ void SettingsWindow::on_PB_save_clicked() {
             /* LOCK PARAMETERS */
             settings.beginGroup("LOCK_PARAMETERS");
             if(ui->RB_2_2->isChecked()) {
-                settings.setValue("NUMBER_PLOTS_TO_LOCK", 2);
-                settings.setValue("NUMBER_SCANS_TO_LOCK", 2);
+                settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 2);
+                settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 2);
             } else if(ui->RB_2_3->isChecked()) {
-                settings.setValue("NUMBER_PLOTS_TO_LOCK", 2);
-                settings.setValue("NUMBER_SCANS_TO_LOCK", 3);
+                settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 2);
+                settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 3);
             } else if(ui->RB_2_4->isChecked()) {
-                settings.setValue("NUMBER_PLOTS_TO_LOCK", 2);
-                settings.setValue("NUMBER_SCANS_TO_LOCK", 4);
+                settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 2);
+                settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 4);
             } else if(ui->RB_3_3->isChecked()) {
-                settings.setValue("NUMBER_PLOTS_TO_LOCK", 3);
-                settings.setValue("NUMBER_SCANS_TO_LOCK", 3);
+                settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 3);
+                settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 3);
             } else if(ui->RB_3_4->isChecked()) {
-                settings.setValue("NUMBER_PLOTS_TO_LOCK", 3);
-                settings.setValue("NUMBER_SCANS_TO_LOCK", 4);
+                settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 3);
+                settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 4);
             } else if(ui->RB_4_4->isChecked()) {
-                settings.setValue("NUMBER_PLOTS_TO_LOCK", 4);
-                settings.setValue("NUMBER_SCANS_TO_LOCK", 4);
+                settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 4);
+                settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 4);
             }
             settings.endGroup();
 
             /* HOLD PARAMETERS */
             settings.beginGroup("HOLD_PARAMETERS");
-            settings.setValue("NUMBER_MISSING_PLOTS", ui->SB_numberExtrapolations->value());
+            settings.setValue("NUMBER_OF_MISSING_PLOTS", ui->SB_numberExtrapolations->value());
             settings.setValue("MIN_VELOCITY_M_SECS", ui->DSB_velocityMin->value());
             settings.setValue("MAX_VELOCITY_M_SECS", ui->DSB_velocityMax->value());
             settings.setValue("MAX_ANGLE_DEG", ui->DSB_difAngle->value());

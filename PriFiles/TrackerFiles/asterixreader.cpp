@@ -334,6 +334,7 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
     }
 
     if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        result.polarCoordsIsExist = true;
         result.MeasuredPositionInSlantPolarCoordinates = (data[position] << 24) | (data[position + 1] << 16)
                                                          | (data[position + 2] << 8) | data[position + 3];
         position += 4;
@@ -454,12 +455,14 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
             }
         }
 
+        result.PosTrackNumber = position;
         if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
             result.TrackNumber = (data[position] << 8) | data[position + 1];
             position += 2;
         }
 
         if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            result.cartesianCoordsIsExist = true;
             result.CalculatedPositionInCartesianCoordiantes = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8) | data[position + 3];
             position += 4;
         }
@@ -578,5 +581,7 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
         }
     }
 
+    result.Data = QByteArray((const char*)(data), result.LEN);
     return result;
 }
+
