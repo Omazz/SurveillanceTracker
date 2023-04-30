@@ -4,7 +4,6 @@
 #include <QtCore>
 #include <QGraphicsItem>
 #include <QGraphicsView>
-#include "RadarTarget.h"
 
 enum TypeAirplaneObject {
     PLOT,
