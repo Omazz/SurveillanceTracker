@@ -6,41 +6,51 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 
-    setFixedSize(this->width(), this->height());
     ui->setupUi(this);
-    _graphicsScene = new QGraphicsScene();
-    ui->GW_locator->setScene(_graphicsScene);
-    _graphicsScene->setBackgroundBrush(QBrush(BLUE));
-    ui->GW_locator->scale(0.08, 0.08);
+    setFixedSize(this->width(), this->height());
+
+    mGraphicsScene = new QGraphicsScene();
+
+    mGraphicsScene->setSceneRect(
+        -RADAR_RANGE_KM, -RADAR_RANGE_KM,
+        RADAR_RANGE_KM * 2, RADAR_RANGE_KM * 2
+    );
+
+    ui->GW_locator->setScene(mGraphicsScene);
+    mGraphicsScene->setBackgroundBrush(QBrush(BLUE));
+    ui->GW_locator->scale(0.8, 0.8);
+
+    createGrid();
+
     ui->PB_buildingGraphics->setEnabled(false);
+
     connect(ui->LW_filters, &QListWidget::currentRowChanged, this, [this](int row) {
-        ui->SW_filters->setCurrentIndex(row);
+            ui->SW_filters->setCurrentIndex(row);
     });
-
-    zoom = new GraphicsViewZoom(ui->GW_locator);
-    zoom->setModifiers(Qt::NoModifier);
-
-    for (int i = 1; i <= NUMBER_CIRCLES; ++i) {
-        _graphicsScene->addEllipse(-i * MIN_CIRCLE_DIAMETER / 2, -i * MIN_CIRCLE_DIAMETER / 2,
-                                   i * MIN_CIRCLE_DIAMETER, i * MIN_CIRCLE_DIAMETER,
-                                   QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
-
-        QFont serifFont("Times", 14, QFont::Bold);
-        auto text = _graphicsScene->addSimpleText(QString::number(0.5 * i * MIN_CIRCLE_DIAMETER).append(" м"), serifFont);
-        text->setPen(QPen(Qt::white));
-        text->setBrush(QBrush(Qt::white));
-
-        text->setPos(10, 0.5 * i * MIN_CIRCLE_DIAMETER - 30);
-    }
-
-    for(qreal i = 0; 2.0 * M_PI - i > 0.1e-6; i += M_PI_4) {
-        qreal x_cord = 0.5 * NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * qSin(i);
-        qreal y_cord = 0.5 * NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * qCos(i);
-        _graphicsScene->addLine(QLine(0, 0, x_cord, y_cord),
-                                QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
-    }
-
 }
+
+void MainWindow::createGrid() {
+    qreal ringDist = SECTOR_RANGE_KM;
+    qreal sectorAngle = SECTOR_ANGLE_DEG;
+
+    QPen gridPen(RED_BROWN);
+    gridPen.setCosmetic(true);
+
+    for (qreal curDist = ringDist; curDist <= mGraphicsScene->width() / 2; curDist += ringDist) {
+        mGraphicsScene->addEllipse(
+            -curDist, -curDist,
+            curDist * 2, curDist * 2,
+            gridPen
+        );
+    }
+
+    for (qreal curAngle = 0; curAngle < 2 * M_PI; curAngle += qDegreesToRadians(sectorAngle)) {
+        qreal x = mGraphicsScene->width() / 2 * qCos(curAngle);
+        qreal y = mGraphicsScene->width() / 2 * qSin(curAngle);
+        mGraphicsScene->addLine(0, 0, x, y, gridPen);
+    }
+}
+
 
 MainWindow::~MainWindow()
 {
@@ -70,7 +80,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<QPointF> sigmaAlphaBetaFilter_MNK;
     QVector<QPointF> sigmaKalmanFilterCV;
 
-    for(int i = 0; i < _trajectoryOriginal.size(); ++i) {
+    for(int i = 0; i < mTrajectoryOriginal.size(); ++i) {
         QPointF currSigmaNoise(0, 0);
         QPointF currSigmaAlphaBetaFilter(0, 0);
         QPointF currSigmaAlphaBetaFilter_MNK(0, 0);
@@ -79,22 +89,22 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
         step.append(i);
 
         for(int indexModulation = 0; indexModulation < NUMBER_MODULATIONS; ++indexModulation) {
-            QPointF diffNoise = (_trajectoryWithNoise[indexModulation][i] - _trajectoryOriginal[i]);
+            QPointF diffNoise = (mTrackWithNoise[indexModulation][i] - mTrajectoryOriginal[i]);
             diffNoise.setX(diffNoise.x() * diffNoise.x());
             diffNoise.setY(diffNoise.y() * diffNoise.y());
             currSigmaNoise += diffNoise;
 
-            QPointF diffAB = (_trajectoryAlphaBetaFilter[indexModulation][i] - _trajectoryOriginal[i]);
+            QPointF diffAB = (mTrackAlphaBetaFilter[indexModulation][i] - mTrajectoryOriginal[i]);
             diffAB.setX(diffAB.x() * diffAB.x());
             diffAB.setY(diffAB.y() * diffAB.y());
             currSigmaAlphaBetaFilter += diffAB;
 
-            QPointF diffAB_MNK = (_trajectoryAlphaBetaFilterMNK[indexModulation][i] - _trajectoryOriginal[i]);
+            QPointF diffAB_MNK = (mTrackAlphaBetaFilterMNK[indexModulation][i] - mTrajectoryOriginal[i]);
             diffAB_MNK.setX(diffAB_MNK.x() * diffAB_MNK.x());
             diffAB_MNK.setY(diffAB_MNK.y() * diffAB_MNK.y());
             currSigmaAlphaBetaFilter_MNK += diffAB_MNK;
 
-            QPointF diffKalman_CV = (_trajectoryKalmanFilterCV[indexModulation][i] - _trajectoryOriginal[i]);
+            QPointF diffKalman_CV = (mTrackKalmanFilterCV[indexModulation][i] - mTrajectoryOriginal[i]);
             diffKalman_CV.setX(diffKalman_CV.x() * diffKalman_CV.x());
             diffKalman_CV.setY(diffKalman_CV.y() * diffKalman_CV.y());
             currSigmaKalmanFilterCV += diffKalman_CV;
@@ -146,17 +156,20 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
 
 void MainWindow::drawLineTrajectory() {
-    QPointF currentCoord(-NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5 * qSin(M_PI_4), -NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5 * qSin(M_PI_4));
-    QPointF endCoord(NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5 * qSin(M_PI_4), NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * 0.5* qSin(M_PI_4));
+    QPointF currentCoord(ui->SB_firstPointX->value(), -ui->SB_firstPointY->value());
+    QPointF endCoord(ui->SB_secondPointX->value(), -ui->SB_secondPointY->value());
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
-    qreal stepX = velocity * updateTime * qCos(M_PI / 4.0);
-    qreal stepY = velocity * updateTime * qSin(M_PI / 4.0);
-    _trajectoryOriginal.append(currentCoord);
+    qreal numberSteps = qSqrt(qPow(currentCoord.x()-endCoord.x(), 2)+qPow(currentCoord.y()-endCoord.y(), 2)) /
+                            (velocity * updateTime / 1000.0);
+    QPointF step = (endCoord - currentCoord) / numberSteps;
+    mTrajectoryOriginal.append(currentCoord);
 
-    while(currentCoord.x() < endCoord.x()) {
-        currentCoord += QPointF(stepX, stepY);
-        _trajectoryOriginal.append(currentCoord);
+    int currentStep = 0;
+    while(currentStep < numberSteps) {
+        currentCoord += step;
+        mTrajectoryOriginal.append(currentCoord);
+        currentStep++;
     }
 
     calculateVariablesTrajectories(updateTime);
@@ -165,18 +178,16 @@ void MainWindow::drawLineTrajectory() {
 }
 
 void MainWindow::drawTurnTrajectory() {
-    qreal radius = 0.5 * NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER;
-
-
+    qreal radius = ui->SB_radius->value();
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
-    qreal step = velocity * updateTime;
+    qreal step = velocity * updateTime / 1000.0;
     qreal stepAngle = step / radius;
     qreal currAngle = 0;
 
     do {
         currAngle += stepAngle;
-        _trajectoryOriginal.append(QPointF((radius * qCos(currAngle)) - radius, (radius * qSin(currAngle)) - radius));
+        mTrajectoryOriginal.append(QPointF((radius * qCos(currAngle)) - radius, (radius * qSin(currAngle)) - radius));
     } while(currAngle <  M_PI_2);
 
     calculateVariablesTrajectories(updateTime);
@@ -185,18 +196,18 @@ void MainWindow::drawTurnTrajectory() {
 }
 
 void MainWindow::drawCircleTrajectory() {
-    qreal radius = (NUMBER_CIRCLES + 0.5) / 2.0 * MIN_CIRCLE_DIAMETER / 2.0;
+    qreal radius = ui->SB_radius->value();
 
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
-    qreal step = velocity * updateTime;
+    qreal step = velocity * updateTime / 1000.0;
     qreal stepAngle = step / radius;
     qreal currAngle = 0;
 
-    _trajectoryOriginal.append(QPointF(radius, 0));
+    mTrajectoryOriginal.append(QPointF(radius, 0));
     do {
         currAngle += stepAngle;
-        _trajectoryOriginal.append(QPointF(radius * qCos(currAngle), radius * qSin(currAngle)));
+        mTrajectoryOriginal.append(QPointF(radius * qCos(currAngle), radius * qSin(currAngle)));
     } while(currAngle < 1.75 * M_PI);
 
     calculateVariablesTrajectories(updateTime);
@@ -208,7 +219,7 @@ QVector<QPointF> MainWindow::addNoiseToMeasurements(QVector<QPointF> measurement
     std::random_device randomDevice{};
     std::mt19937 generator{randomDevice()};
     std::normal_distribution<> normalDistributionRho{0, ui->DSB_sigmaRho->value()};
-    std::normal_distribution<> normalDistributionTheta{0, ui->DSB_sigmaTheta->value()};
+    std::normal_distribution<> normalDistributionTheta{0, ui->DSB_sigmaTheta->value() / 60.0};
 
     QVector<QPointF> measurementsWithNoise;
     bool flag = true;
@@ -218,7 +229,7 @@ QVector<QPointF> MainWindow::addNoiseToMeasurements(QVector<QPointF> measurement
         //qreal rhoWithNoise = rho + normalDistributionRho(generator);
         //qreal thetaWithNoise = theta + qDegreesToRadians(normalDistributionTheta(generator));
         qreal rhoWithNoise = rho + calculateNoise(ui->DSB_sigmaRho->value(), flag);
-        qreal thetaWithNoise = theta + qDegreesToRadians(calculateNoise(ui->DSB_sigmaTheta->value(), flag));
+        qreal thetaWithNoise = theta + qDegreesToRadians(calculateNoise(ui->DSB_sigmaTheta->value() / 60.0, flag));
 
         flag = !flag;
         measurementsWithNoise.append(QPointF(rhoWithNoise * qCos(thetaWithNoise),
@@ -241,18 +252,18 @@ qreal MainWindow::calculateNoise(const qreal sigma, bool flag) {
 
 void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
     for(int i = 0; i < NUMBER_MODULATIONS; ++i) {
-        _trajectoryWithNoise.append(addNoiseToMeasurements(_trajectoryOriginal));
+        mTrackWithNoise.append(addNoiseToMeasurements(mTrajectoryOriginal));
 
-        _trajectoryAlphaBetaFilter.append(AlphaBetaFilter::calculateFilteredTrajectory(_trajectoryWithNoise.last(),
+        mTrackAlphaBetaFilter.append(AlphaBetaFilter::calculateFilteredTrajectory(mTrackWithNoise.last(),
                                                                                        updateTime,
                                                                                        ui->SB_AB_Kmax->value()));
 
-        _trajectoryAlphaBetaFilterMNK.append(AlphaBetaFilter::calculateFilteredTrajectory_MNK(_trajectoryWithNoise.last(),
+        mTrackAlphaBetaFilterMNK.append(AlphaBetaFilter::calculateFilteredTrajectory_MNK(mTrackWithNoise.last(),
                                                                                               updateTime,
                                                                                               ui->SB_AB_MNK_Kmax->value(),
                                                                                               ui->SB_AB_MNK_MNKmax->value()));
 
-        _trajectoryKalmanFilterCV.append(KalmanFilter::calculateKalmanFilter_CV(_trajectoryWithNoise.last(),
+        mTrackKalmanFilterCV.append(KalmanFilter::calculateKalmanFilter_CV(mTrackWithNoise.last(),
                                                                                 updateTime,
                                                                                 ui->DSB_KalmanFilterCV_sigmaNoiseCoord->value(),
                                                                                 ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value(),
@@ -262,65 +273,65 @@ void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
 
 
 void MainWindow::drawVariablesTrajectories() {
-    for(int i = 0; i < _trajectoryOriginal.size() - 1; ++i) {
+    for(int i = 0; i < mTrajectoryOriginal.size(); ++i) {
+        if(ui->CB_original->isChecked()) {
+            mGraphicsScene->addEllipse(mTrajectoryOriginal[i].x() - 0.1,
+                                       mTrajectoryOriginal[i].y() - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::white, 0.1), QBrush(Qt::white));
+        }
 
-        _graphicsScene->addLine(QLine(_trajectoryOriginal[i].x(), _trajectoryOriginal[i].y(),
-                                      _trajectoryOriginal[i + 1].x(), _trajectoryOriginal[i + 1].y()),
-                                QPen(Qt::white, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
         if(ui->CB_withNoise->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryWithNoise[0][i].x(), _trajectoryWithNoise[0][i].y(),
-                                          _trajectoryWithNoise[0][i + 1].x(), _trajectoryWithNoise[0][i + 1].y()),
-                                    QPen(Qt::red, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
+            mGraphicsScene->addEllipse(mTrackWithNoise[0][i].x() - 0.1,
+                                       mTrackWithNoise[0][i].y() - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::red, 0.1), QBrush(Qt::red));
         }
 
         if(ui->CB_ABfilter->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryAlphaBetaFilter[0][i].x(), _trajectoryAlphaBetaFilter[0][i].y(),
-                                          _trajectoryAlphaBetaFilter[0][i + 1].x(), _trajectoryAlphaBetaFilter[0][i + 1].y()),
-                                    QPen(Qt::green, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
+            mGraphicsScene->addEllipse(mTrackAlphaBetaFilter[0][i].x() - 0.1,
+                                       mTrackAlphaBetaFilter[0][i].y() - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::green, 0.1), QBrush(Qt::green));
         }
 
         if(ui->CB_ABfilterMNK->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryAlphaBetaFilterMNK[0][i].x(), _trajectoryAlphaBetaFilterMNK[0][i].y(),
-                                          _trajectoryAlphaBetaFilterMNK[0][i + 1].x(), _trajectoryAlphaBetaFilterMNK[0][i + 1].y()),
-                                    QPen(Qt::blue, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
+            mGraphicsScene->addEllipse(mTrackAlphaBetaFilterMNK[0][i].x() - 0.1,
+                                       mTrackAlphaBetaFilterMNK[0][i].y() - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::blue, 0.1), QBrush(Qt::blue));
         }
 
         if(ui->CB_KalmanFilterCV->isChecked()) {
-            _graphicsScene->addLine(QLine(_trajectoryKalmanFilterCV[0][i].x(), _trajectoryKalmanFilterCV[0][i].y(),
-                                          _trajectoryKalmanFilterCV[0][i + 1].x(), _trajectoryKalmanFilterCV[0][i + 1].y()),
-                                    QPen(Qt::yellow, PEN_TRAJECTORY_WIDTH, Qt::PenStyle::SolidLine));
+            mGraphicsScene->addEllipse(mTrackKalmanFilterCV[0][i].x() - 0.1,
+                                       mTrackKalmanFilterCV[0][i].y() - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::yellow, 0.1), QBrush(Qt::yellow));
         }
     }
 }
 
 void MainWindow::clearModulation() {
-    _trajectoryOriginal.clear();
-    _trajectoryWithNoise.clear();
-    _trajectoryAlphaBetaFilter.clear();
-    _trajectoryAlphaBetaFilterMNK.clear();
-    _trajectoryKalmanFilterCV.clear();
+    mTrajectoryOriginal.clear();
+    mTrackWithNoise.clear();
+    mTrackAlphaBetaFilter.clear();
+    mTrackAlphaBetaFilterMNK.clear();
+    mTrackKalmanFilterCV.clear();
 
-    _graphicsScene->clear();
+    mGraphicsScene->clear();
 
-    for (int i = 1; i <= NUMBER_CIRCLES; ++i) {
-        _graphicsScene->addEllipse(-i * MIN_CIRCLE_DIAMETER / 2, -i * MIN_CIRCLE_DIAMETER / 2,
-                                   i * MIN_CIRCLE_DIAMETER, i * MIN_CIRCLE_DIAMETER,
-                                   QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
-        QFont serifFont("Times", 14, QFont::Bold);
-        auto text = _graphicsScene->addSimpleText(QString::number(0.5 * i * MIN_CIRCLE_DIAMETER).append(" м"), serifFont);
-        text->setPen(QPen(Qt::white));
-        text->setBrush(QBrush(Qt::white));
-
-        text->setPos(10, 0.5 * i * MIN_CIRCLE_DIAMETER - 30);
-    }
-
-    for(qreal i = 0; 2.0 * M_PI - i > 0.1e-6; i += M_PI_4) {
-        qreal x_cord = 0.5 * NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * qSin(i);
-        qreal y_cord = 0.5 * NUMBER_CIRCLES * MIN_CIRCLE_DIAMETER * qCos(i);
-        _graphicsScene->addLine(QLine(0, 0, x_cord, y_cord),
-                                QPen(RED, PEN_INDICATOR_WIDTH, Qt::SolidLine));
-    }
+    createGrid();
 }
 
 
+
+
+void MainWindow::on_RB_onLine_toggled(bool checked)
+{
+    ui->SB_firstPointX->setEnabled(checked);
+    ui->SB_firstPointY->setEnabled(checked);
+    ui->SB_secondPointX->setEnabled(checked);
+    ui->SB_secondPointY->setEnabled(checked);
+    ui->SB_radius->setEnabled(!checked);
+}
 

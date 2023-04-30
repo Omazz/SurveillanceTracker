@@ -6,7 +6,7 @@
 #include <QtCore>
 #include "../../PriFiles/FilterCheckingFiles/Filters/AlphaBetaFilter.h"
 #include "../../PriFiles/FilterCheckingFiles/Filters/KalmanFilter.h"
-#include "GraphicsViewZoom.h"
+#include "RadarView.h"
 #include "GraphicsBuilderWidget.h"
 
 
@@ -19,13 +19,15 @@ const QColor BLUE = QColor(0x2B2E4A);
 const QColor RED = QColor(0xE84545);
 const QColor RED_BROWN = QColor(0x903749);
 const QColor PURPLE = QColor(0x53354A);
+const QColor WHITE = QColor(0xF6F1F1);
+const QColor GRAY = QColor(0x464646);
 
-const qint16 MIN_CIRCLE_DIAMETER = 1000;
-const quint16 NUMBER_CIRCLES = 10;
-const quint8 PEN_INDICATOR_WIDTH = 5;
+const qint16 RADAR_RANGE_KM = 500;
+const qreal SECTOR_RANGE_KM = 50.0;
+const qreal SECTOR_ANGLE_DEG = 30.0;
 
 
-const quint8 PEN_TRAJECTORY_WIDTH = 8;
+const qreal PEN_TRAJECTORY_WIDTH = 1;
 
 const quint16 NUMBER_MODULATIONS = 1000;
 
@@ -42,7 +44,10 @@ private slots:
 
     void on_PB_buildingGraphics_clicked();
 
-private:
+    void on_RB_onLine_toggled(bool checked);
+
+private:;
+    void createGrid();
 
     void drawLineTrajectory();
 
@@ -60,14 +65,13 @@ private:
 
     void clearModulation();
 
-    QVector<QPointF> _trajectoryOriginal;
-    QVector<QVector<QPointF>> _trajectoryWithNoise;
-    QVector<QVector<QPointF>> _trajectoryAlphaBetaFilter;
-    QVector<QVector<QPointF>> _trajectoryAlphaBetaFilterMNK;
-    QVector<QVector<QPointF>> _trajectoryKalmanFilterCV;
+    QVector<QPointF> mTrajectoryOriginal;
+    QVector<QVector<QPointF>> mTrackWithNoise;
+    QVector<QVector<QPointF>> mTrackAlphaBetaFilter;
+    QVector<QVector<QPointF>> mTrackAlphaBetaFilterMNK;
+    QVector<QVector<QPointF>> mTrackKalmanFilterCV;
 
     Ui::MainWindow *ui;
-    QGraphicsScene* _graphicsScene;
-    GraphicsViewZoom* zoom;
+    QGraphicsScene* mGraphicsScene;
 };
 #endif // MAINWINDOW_H

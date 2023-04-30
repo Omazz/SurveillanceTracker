@@ -10,14 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     GUI/GraphicsBuilderWidget.cpp \
-    GUI/GraphicsViewZoom.cpp \
+    GUI/RadarView.cpp \
     GUI/mainwindow.cpp \
     main.cpp \
     qcustomplot/qcustomplot.cpp
 
 HEADERS += \
     GUI/GraphicsBuilderWidget.h \
-    GUI/GraphicsViewZoom.h \
+    GUI/RadarView.h \
     GUI/mainwindow.h \
     qcustomplot/qcustomplot.h
 

@@ -50,7 +50,7 @@ QVector<QPointF> AlphaBetaFilter::calculateFilteredTrajectory_MNK(QVector<QPoint
                                            trajectoryWithNoise[1],
                                            trajectoryWithNoise[2]};
     uint16_t k = 3;
-    QPointF filteredVelocity = (trajectoryWithNoise[2] - trajectoryWithNoise[0]) / (2 * updateTime);
+    QPointF filteredVelocity = (trajectoryWithNoise[2] - trajectoryWithNoise[0]) / (2.0 * updateTime);
     QPointF filteredCoord = trajectoryWithNoise[2];
     qreal alpha, beta;
 

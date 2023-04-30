@@ -121,12 +121,21 @@ QListWidget {
 QListWidget::item:selected {
   /*border-bottom: 1px solid #EEEEEE;*/
 }
-</string>
+
+
+QDoubleSpinBox:disabled {
+	background-color:#3F4B5C;
+   /*color: gray;*/
+}
+
+QSpinBox:disabled {
+    background-color:#3F4B5C;
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QFormLayout" name="formLayout">
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QGraphicsView" name="GW_locator">
+     <widget class="RadarView" name="GW_locator">
       <property name="minimumSize">
        <size>
         <width>860</width>
@@ -152,10 +161,7 @@ QListWidget::item:selected {
       <property name="title">
        <string/>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>20</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
         <layout class="QHBoxLayout" name="HL_buttons">
          <property name="sizeConstraint">
@@ -212,7 +218,7 @@ QListWidget::item:selected {
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>100</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="title">
@@ -230,6 +236,104 @@ QListWidget::item:selected {
            </widget>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>5</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QHBoxLayout" name="HL_firstPoint">
+                <item>
+                 <widget class="QLabel" name="L_firstPoint">
+                  <property name="text">
+                   <string>1-ая точка, км:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="SB_firstPointX">
+                  <property name="minimum">
+                   <number>-250</number>
+                  </property>
+                  <property name="maximum">
+                   <number>250</number>
+                  </property>
+                  <property name="value">
+                   <number>150</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="SB_firstPointY">
+                  <property name="minimum">
+                   <number>-250</number>
+                  </property>
+                  <property name="maximum">
+                   <number>250</number>
+                  </property>
+                  <property name="value">
+                   <number>150</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="HL_secondPoint">
+                <item>
+                 <widget class="QLabel" name="L_secondPoint">
+                  <property name="text">
+                   <string>2-ая точка, км:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="SB_secondPointX">
+                  <property name="minimum">
+                   <number>-250</number>
+                  </property>
+                  <property name="maximum">
+                   <number>250</number>
+                  </property>
+                  <property name="value">
+                   <number>150</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="SB_secondPointY">
+                  <property name="minimum">
+                   <number>-250</number>
+                  </property>
+                  <property name="maximum">
+                   <number>250</number>
+                  </property>
+                  <property name="value">
+                   <number>-150</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QRadioButton" name="RB_turn">
             <property name="text">
              <string>Поворот</string>
@@ -242,6 +346,83 @@ QListWidget::item:selected {
              <string>По окружности</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="HL_radius">
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>5</width>
+                <height>13</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="L_radius">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Радиус, км:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="SB_radius">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>68</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="minimum">
+               <number>25</number>
+              </property>
+              <property name="maximum">
+               <number>200</number>
+              </property>
+              <property name="value">
+               <number>150</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>100</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -290,31 +471,27 @@ QListWidget::item:selected {
           </item>
           <item row="1" column="1">
            <widget class="QDoubleSpinBox" name="DSB_sigmaRho">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
             <property name="maximum">
-             <double>50.000000000000000</double>
+             <double>15.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.500000000000000</double>
             </property>
             <property name="value">
-             <double>15.000000000000000</double>
+             <double>3.000000000000000</double>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="L_sigmaTheta">
             <property name="text">
-             <string>σ шума θ, ° :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="DSB_sigmaTheta">
-            <property name="maximum">
-             <double>5.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>0.100000000000000</double>
-            </property>
-            <property name="value">
-             <double>0.500000000000000</double>
+             <string>σ шума θ, ' :</string>
             </property>
            </widget>
           </item>
@@ -338,6 +515,22 @@ QListWidget::item:selected {
             </property>
            </widget>
           </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="DSB_sigmaTheta">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>60.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.500000000000000</double>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -353,6 +546,16 @@ QListWidget::item:selected {
           <string>Отображение траекторий</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="CB_original">
+            <property name="text">
+             <string>Исходная</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QCheckBox" name="CB_withNoise">
             <property name="text">
@@ -399,7 +602,7 @@ QListWidget::item:selected {
        <item>
         <widget class="QGroupBox" name="GB_filtersParams">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -415,6 +618,18 @@ QListWidget::item:selected {
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>80</height>
+             </size>
             </property>
             <property name="currentRow">
              <number>0</number>
@@ -447,7 +662,7 @@ QListWidget::item:selected {
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>300</height>
+              <height>0</height>
              </size>
             </property>
             <property name="currentIndex">
@@ -613,6 +828,13 @@ QListWidget::item:selected {
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RadarView</class>
+   <extends>QGraphicsView</extends>
+   <header>GUI/RadarView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
