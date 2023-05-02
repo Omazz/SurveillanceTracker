@@ -115,7 +115,7 @@ jobs:
       run: cd ./Tests/TestEncryptionTools/ && make
 
     - name: Run test cipher and mac
-      run: cd ./ProgramBuilds/TEST-EncryptionTools/ && ./EncryptionTools
+      run: cd ./ProgramBuilds/TEST-EncryptionTools/ && ./TestEncryptionTools
 
   test_asterix_handler:
     runs-on: ubuntu-latest
