@@ -33,7 +33,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-include(../../PriFiles/DataSettings/SettingsFiles.pri)
+include(../../PriFiles/Settings/Settings.pri)
 
 DISTFILES += \
     ../../ApplicationIcons/SettingsIcon.ico

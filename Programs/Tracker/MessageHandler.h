@@ -3,11 +3,11 @@
 
 #include <QObject>
 #include <QUdpSocket>
-#include "../../PriFiles/Сipher/mycrypto.hpp"
-#include "../../PriFiles/Сipher/Kuznyechik.hpp"
-#include "../../PriFiles/Сipher/gost341112.h"
-#include "../../PriFiles/DataSettings/SettingsTracker.h"
-#include "../../PriFiles/TrackerFiles/asterixreader.h"
+#include "../../PriFiles/EncryptionTools/mycrypto.hpp"
+#include "../../PriFiles/EncryptionTools/Kuznyechik.hpp"
+#include "../../PriFiles/EncryptionTools/gost341112.h"
+#include "../../PriFiles/Settings/SettingsTracker.h"
+#include "../../PriFiles/AsterixHandler/asterixreader.h"
 #include "Plot.h"
 
 

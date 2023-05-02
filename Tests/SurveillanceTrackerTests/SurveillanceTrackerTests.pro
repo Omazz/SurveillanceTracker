@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    ../TestAnalyzer \
-    ../TestCipher \
-    ../TestTracker
+    ../TestFilters \
+    ../TestEncryptionTools \
+    ../TestAsterixHandler

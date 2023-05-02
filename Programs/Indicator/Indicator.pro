@@ -46,7 +46,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     ../../ApplicationIcons/IndicatorIcon.ico
 
-include(../../PriFiles/TrackerFiles/TrackerFiles.pri)
-include(../../PriFiles/DataSettings/SettingsFiles.pri)
-include(../../PriFiles/Сipher/CipherFiles.pri)
+include(../../PriFiles/AsterixHandler/AsterixHandler.pri)
+include(../../PriFiles/Settings/Settings.pri)
+include(../../PriFiles/EncryptionTools/EncryptionTools.pri)
 

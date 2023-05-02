@@ -79,12 +79,14 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<QPointF> sigmaAlphaBetaFilter;
     QVector<QPointF> sigmaAlphaBetaFilter_MNK;
     QVector<QPointF> sigmaKalmanFilterCV;
+    QVector<QPointF> sigmaKalmanFilterCA;
 
     for(int i = 0; i < mTrajectoryOriginal.size(); ++i) {
         QPointF currSigmaNoise(0, 0);
         QPointF currSigmaAlphaBetaFilter(0, 0);
         QPointF currSigmaAlphaBetaFilter_MNK(0, 0);
         QPointF currSigmaKalmanFilterCV(0, 0);
+        QPointF currSigmaKalmanFilterCA(0, 0);
 
         step.append(i);
 
@@ -108,6 +110,11 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
             diffKalman_CV.setX(diffKalman_CV.x() * diffKalman_CV.x());
             diffKalman_CV.setY(diffKalman_CV.y() * diffKalman_CV.y());
             currSigmaKalmanFilterCV += diffKalman_CV;
+
+            QPointF diffKalman_CA = (mTrackKalmanFilterCA[indexModulation][i] - mTrajectoryOriginal[i]);
+            diffKalman_CA.setX(diffKalman_CA.x() * diffKalman_CA.x());
+            diffKalman_CA.setY(diffKalman_CA.y() * diffKalman_CA.y());
+            currSigmaKalmanFilterCA += diffKalman_CA;
         }
 
         sigmaNoise.append(QPointF(qSqrt(currSigmaNoise.x() / NUMBER_MODULATIONS),
@@ -121,6 +128,9 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
         sigmaKalmanFilterCV.append(QPointF(qSqrt(currSigmaKalmanFilterCV.x() / NUMBER_MODULATIONS),
                                            qSqrt(currSigmaKalmanFilterCV.y() / NUMBER_MODULATIONS)));
+
+        sigmaKalmanFilterCA.append(QPointF(qSqrt(currSigmaKalmanFilterCA.x() / NUMBER_MODULATIONS),
+                                           qSqrt(currSigmaKalmanFilterCA.y() / NUMBER_MODULATIONS)));
     }
 
 
@@ -129,6 +139,8 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<qreal> resSigmaAlphaBetaFilter;
     QVector<qreal> resSigmaAlphaBetaFilter_MNK;
     QVector<qreal> resSigmaKalmanFilterCV;
+    QVector<qreal> resSigmaKalmanFilterCA;
+
 
     for(int i = 0; i < step.size(); ++i) {
         resSigmaNoise.append(qSqrt(qPow(sigmaNoise[i].x(), 2)
@@ -142,26 +154,29 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
         resSigmaKalmanFilterCV.append(qSqrt(qPow(sigmaKalmanFilterCV[i].x(), 2)
                                             + qPow(sigmaKalmanFilterCV[i].y(), 2)));
+
+        resSigmaKalmanFilterCA.append(qSqrt(qPow(sigmaKalmanFilterCA[i].x(), 2)
+                                            + qPow(sigmaKalmanFilterCA[i].y(), 2)));
     }
 
 
     auto window = new GraphicsBuilderWidget();
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->setData("Состояние модели", "СКО, метры", step,
-                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK, resSigmaKalmanFilterCV},
-                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК", "Фильтр Калмана CV"});
+                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK, resSigmaKalmanFilterCV, resSigmaKalmanFilterCA},
+                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК", "Фильтр Калмана CV", "Фильтр Калмана CA"});
     window->setWindowModality(Qt::WindowModality::ApplicationModal);
     window->show();
 }
 
 
 void MainWindow::drawLineTrajectory() {
-    QPointF currentCoord(ui->SB_firstPointX->value(), -ui->SB_firstPointY->value());
-    QPointF endCoord(ui->SB_secondPointX->value(), -ui->SB_secondPointY->value());
+    QPointF currentCoord(ui->SB_firstPointX->value() * 1000.0, -ui->SB_firstPointY->value() * 1000.0);
+    QPointF endCoord(ui->SB_secondPointX->value() * 1000.0, -ui->SB_secondPointY->value() * 1000.0);
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
     qreal numberSteps = qSqrt(qPow(currentCoord.x()-endCoord.x(), 2)+qPow(currentCoord.y()-endCoord.y(), 2)) /
-                            (velocity * updateTime / 1000.0);
+                            (velocity * updateTime);
     QPointF step = (endCoord - currentCoord) / numberSteps;
     mTrajectoryOriginal.append(currentCoord);
 
@@ -178,10 +193,10 @@ void MainWindow::drawLineTrajectory() {
 }
 
 void MainWindow::drawTurnTrajectory() {
-    qreal radius = ui->SB_radius->value();
+    qreal radius = ui->SB_radius->value() * 1000.0;
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
-    qreal step = velocity * updateTime / 1000.0;
+    qreal step = velocity * updateTime;
     qreal stepAngle = step / radius;
     qreal currAngle = 0;
 
@@ -196,11 +211,11 @@ void MainWindow::drawTurnTrajectory() {
 }
 
 void MainWindow::drawCircleTrajectory() {
-    qreal radius = ui->SB_radius->value();
+    qreal radius = ui->SB_radius->value() * 1000.0;
 
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
-    qreal step = velocity * updateTime / 1000.0;
+    qreal step = velocity * updateTime;
     qreal stepAngle = step / radius;
     qreal currAngle = 0;
 
@@ -226,6 +241,9 @@ QVector<QPointF> MainWindow::addNoiseToMeasurements(QVector<QPointF> measurement
     for(int i = 0; i < measurements.size(); ++i) {
         qreal rho = sqrt(qPow(measurements[i].x(), 2) + qPow(measurements[i].y(), 2));
         qreal theta = qAtan2(measurements[i].y(), measurements[i].x());
+        if(qIsNull(measurements[i].y())) {
+            theta = 0;
+        }
         //qreal rhoWithNoise = rho + normalDistributionRho(generator);
         //qreal thetaWithNoise = theta + qDegreesToRadians(normalDistributionTheta(generator));
         qreal rhoWithNoise = rho + calculateNoise(ui->DSB_sigmaRho->value(), flag);
@@ -251,62 +269,136 @@ qreal MainWindow::calculateNoise(const qreal sigma, bool flag) {
 }
 
 void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
+
     for(int i = 0; i < NUMBER_MODULATIONS; ++i) {
         mTrackWithNoise.append(addNoiseToMeasurements(mTrajectoryOriginal));
 
-        mTrackAlphaBetaFilter.append(AlphaBetaFilter::calculateFilteredTrajectory(mTrackWithNoise.last(),
-                                                                                       updateTime,
-                                                                                       ui->SB_AB_Kmax->value()));
+        QVector<Target> targets;
+        for(int j = 0; j < mTrackWithNoise.last().size(); ++j) {
+            targets.append(Target(mTrackWithNoise.last()[j], j * updateTime));
+        }
 
-        mTrackAlphaBetaFilterMNK.append(AlphaBetaFilter::calculateFilteredTrajectory_MNK(mTrackWithNoise.last(),
-                                                                                              updateTime,
-                                                                                              ui->SB_AB_MNK_Kmax->value(),
-                                                                                              ui->SB_AB_MNK_MNKmax->value()));
+        mTrackAlphaBetaFilter.append(calcAlphaBetaFilter(targets,
+                                                         ui->SB_AB_Kmax->value()));
 
-        mTrackKalmanFilterCV.append(KalmanFilter::calculateKalmanFilter_CV(mTrackWithNoise.last(),
-                                                                                updateTime,
-                                                                                ui->DSB_KalmanFilterCV_sigmaNoiseCoord->value(),
-                                                                                ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value(),
-                                                                                ui->DSB_KalmanFilterCV_sigmaNoiseAcceleration->value()));
+        mTrackAlphaBetaFilterMNK.append(calcAlphaBetaLeastSquaresFilter(targets,
+                                                                        ui->SB_AB_MNK_Kmax->value(),
+                                                                        ui->SB_AB_MNK_MNKmax->value()));
+
+        mTrackKalmanFilterCV.append(calcKalmanConstVelocityFilter(targets,
+                                                                  ui->DSB_KalmanFilterCV_sigmaNoiseCoord->value(),
+                                                                  ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value()));
+
+        mTrackKalmanFilterCA.append(calcKalmanConstAccelerationFilter(targets,
+                                                                      ui->DSB_KalmanFilterCA_sigmaNoiseCoord->value(),
+                                                                      ui->DSB_KalmanFilterCA_sigmaNoiseVelocity->value(),
+                                                                      ui->DSB_KalmanFilterCA_sigmaNoiseAcceleration->value()));
+
     }
 }
 
+QVector<QPointF> MainWindow::calcAlphaBetaFilter(QVector<Target> targets, uint16_t k_max) {
+    QVector<QPointF> result;
+    AlphaBetaFilter abFilter(k_max);
+    for(int i = 0; i < 3; ++i) {
+        result.append(targets[i].coordinate);
+    }
+    abFilter.initialization({targets[0], targets[1], targets[2]});
+    for(int i = 3; i < targets.size(); ++i) {
+        result.append(abFilter.filterMeasuredValue(targets[i]).coordinate);
+    }
+    return result;
+}
+
+
+QVector<QPointF> MainWindow::calcAlphaBetaLeastSquaresFilter(QVector<Target> targets,
+                                                             uint16_t k_max, uint16_t numberToExtrapolation) {
+    QVector<QPointF> result;
+    AlphaBetaLeastSquaresFilter abLeastSquaresFilter(k_max, numberToExtrapolation);
+    for(int i = 0; i < 3; ++i) {
+        result.append(targets[i].coordinate);
+    }
+    abLeastSquaresFilter.initialization({targets[0], targets[1], targets[2]});
+    for(int i = 3; i < targets.size(); ++i) {
+        result.append(abLeastSquaresFilter.filterMeasuredValue(targets[i]).coordinate);
+    }
+    return result;
+}
+
+QVector<QPointF> MainWindow::calcKalmanConstVelocityFilter(QVector<Target> targets,
+                                                           qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity) {
+    QVector<QPointF> result;
+    KalmanConstVelocityFilter kalmanConstVelocityFilter(sigmaNoiseCoord,
+                                                        sigmaNoiseVelocity);
+    for(int i = 0; i < 3; ++i) {
+        result.append(targets[i].coordinate);
+    }
+    kalmanConstVelocityFilter.initialization({targets[0], targets[1], targets[2]});
+    for(int i = 3; i < targets.size(); ++i) {
+        result.append(kalmanConstVelocityFilter.filterMeasuredValue(targets[i]).coordinate);
+    }
+    return result;
+}
+
+QVector<QPointF> MainWindow::calcKalmanConstAccelerationFilter(QVector<Target> targets,
+                                                               qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity,
+                                                               qreal sigmaAcceleration) {
+    QVector<QPointF> result;
+    KalmanConstAccelerationFilter kalmanConstAccelerationFilter(sigmaNoiseCoord,
+                                                                sigmaNoiseVelocity,
+                                                                sigmaAcceleration);
+    for(int i = 0; i < 3; ++i) {
+        result.append(targets[i].coordinate);
+    }
+    kalmanConstAccelerationFilter.initialization({targets[0], targets[1], targets[2]});
+    for(int i = 3; i < targets.size(); ++i) {
+        result.append(kalmanConstAccelerationFilter.filterMeasuredValue(targets[i]).coordinate);
+    }
+    return result;
+}
 
 void MainWindow::drawVariablesTrajectories() {
     for(int i = 0; i < mTrajectoryOriginal.size(); ++i) {
         if(ui->CB_original->isChecked()) {
-            mGraphicsScene->addEllipse(mTrajectoryOriginal[i].x() - 0.1,
-                                       mTrajectoryOriginal[i].y() - 0.1,
+            mGraphicsScene->addEllipse((mTrajectoryOriginal[i].x() / 1000.0) - 0.1,
+                                       (mTrajectoryOriginal[i].y() / 1000.0) - 0.1,
                                        0.2, 0.2,
                                        QPen(Qt::white, 0.1), QBrush(Qt::white));
         }
 
         if(ui->CB_withNoise->isChecked()) {
-            mGraphicsScene->addEllipse(mTrackWithNoise[0][i].x() - 0.1,
-                                       mTrackWithNoise[0][i].y() - 0.1,
+            mGraphicsScene->addEllipse((mTrackWithNoise[0][i].x() / 1000.0) - 0.1,
+                                       (mTrackWithNoise[0][i].y() / 1000.0) - 0.1,
                                        0.2, 0.2,
                                        QPen(Qt::red, 0.1), QBrush(Qt::red));
         }
 
         if(ui->CB_ABfilter->isChecked()) {
-            mGraphicsScene->addEllipse(mTrackAlphaBetaFilter[0][i].x() - 0.1,
-                                       mTrackAlphaBetaFilter[0][i].y() - 0.1,
+            mGraphicsScene->addEllipse((mTrackAlphaBetaFilter[0][i].x() / 1000.0) - 0.1,
+                                       (mTrackAlphaBetaFilter[0][i].y() / 1000.0) - 0.1,
                                        0.2, 0.2,
                                        QPen(Qt::green, 0.1), QBrush(Qt::green));
         }
 
         if(ui->CB_ABfilterMNK->isChecked()) {
-            mGraphicsScene->addEllipse(mTrackAlphaBetaFilterMNK[0][i].x() - 0.1,
-                                       mTrackAlphaBetaFilterMNK[0][i].y() - 0.1,
+            mGraphicsScene->addEllipse((mTrackAlphaBetaFilterMNK[0][i].x() / 1000.0) - 0.1,
+                                       (mTrackAlphaBetaFilterMNK[0][i].y() / 1000.0) - 0.1,
                                        0.2, 0.2,
                                        QPen(Qt::blue, 0.1), QBrush(Qt::blue));
         }
 
         if(ui->CB_KalmanFilterCV->isChecked()) {
-            mGraphicsScene->addEllipse(mTrackKalmanFilterCV[0][i].x() - 0.1,
-                                       mTrackKalmanFilterCV[0][i].y() - 0.1,
+            mGraphicsScene->addEllipse((mTrackKalmanFilterCV[0][i].x() / 1000.0) - 0.1,
+                                       (mTrackKalmanFilterCV[0][i].y() / 1000.0) - 0.1,
                                        0.2, 0.2,
                                        QPen(Qt::yellow, 0.1), QBrush(Qt::yellow));
+        }
+
+        if(ui->CB_KalmanFilterCA->isChecked()) {
+            mGraphicsScene->addEllipse((mTrackKalmanFilterCA[0][i].x() / 1000.0) - 0.1,
+                                       (mTrackKalmanFilterCA[0][i].y() / 1000.0) - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::magenta, 0.1), QBrush(Qt::magenta));
         }
     }
 }
@@ -317,6 +409,7 @@ void MainWindow::clearModulation() {
     mTrackAlphaBetaFilter.clear();
     mTrackAlphaBetaFilterMNK.clear();
     mTrackKalmanFilterCV.clear();
+    mTrackKalmanFilterCA.clear();
 
     mGraphicsScene->clear();
 

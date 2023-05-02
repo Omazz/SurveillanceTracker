@@ -37,5 +37,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     ../../ApplicationIcons/RadarIcon.ico
 
-include(../../PriFiles/DataSettings/SettingsFiles.pri)
+include(../../PriFiles/Settings/Settings.pri)
 

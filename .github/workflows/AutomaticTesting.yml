@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test_tracker:
+  compile_tracker:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,17 +25,9 @@ jobs:
     
     - name: Compile 
       run: cd ./Programs/Tracker/ && make
-    
-    - name: Build qmake-file test tracker
-      run: cd ./Tests/TestTracker/ && qmake TestTracker.pro
-    
-    - name: Create executable file 
-      run: cd ./Tests/TestTracker/ && make
-
-    - name: Run test tracker
-      run: cd ./ProgramBuilds/TEST-Tracker/ && ./TestTracker
+  
      
-  test_analyzer:
+  compile_analyzer:
     runs-on: ubuntu-latest
 
     steps:
@@ -51,16 +43,8 @@ jobs:
     - name: Compile
       run: cd ./Programs/Analyzer/ && make
     
-    - name: Build qmake-file test analyzer
-      run: cd ./Tests/TestAnalyzer/ && qmake TestAnalyzer.pro
-    
-    - name: Create executable file
-      run: cd ./Tests/TestAnalyzer/ && make
 
-    - name: Run test analyzer
-      run: cd ./ProgramBuilds/TEST-Analyzer/ && ./TestAnalyzer
-
-  test_indicator:
+  compile_indicator:
     runs-on: ubuntu-latest
 
     steps:
@@ -79,7 +63,7 @@ jobs:
     - name: Compile
       run: cd ./Programs/Indicator/ && make
   
-  test_radar:
+  compile_radar:
     runs-on: ubuntu-latest
 
     steps:
@@ -98,7 +82,7 @@ jobs:
     - name: Compile
       run: cd ./Programs/Radar/ && make
       
-  test_settings:
+  compile_settings:
     runs-on: ubuntu-latest
 
     steps:
@@ -132,3 +116,41 @@ jobs:
 
     - name: Run test cipher and mac
       run: cd ./ProgramBuilds/TEST-Cipher/ && ./TestCipher
+
+  test_asterix_handler:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+  
+    - name: Build qmake-file test asterix handler
+      run: cd ./Tests/TestAsterixHandler/ && qmake TestAsterixHandler.pro
+    
+    - name: Create executable test asterix handler file
+      run: cd ./Tests/TestAsterixHandler/ && make
+
+    - name: Run test asterix handler
+      run: cd ./ProgramBuilds/TEST-AsterixHandler/ && ./TestAsterixHandler
+
+  test_filters:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+  
+    - name: Build qmake-file test filters
+      run: cd ./Tests/TestFilters/ && qmake TestFilters.pro
+    
+    - name: Create executable test filters file
+      run: cd ./Tests/TestFilters/ && make
+
+    - name: Run test filters
+      run: cd ./ProgramBuilds/TEST-Filters/ && ./TestFilters

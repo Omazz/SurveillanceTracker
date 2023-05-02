@@ -1,9 +1,9 @@
-Cipher:
-	./../../ProgramBuilds/TEST-Cipher/TestCipher
+EncryptionTools:
+	./../../ProgramBuilds/TEST-EncryptionTools/EncryptionTools
 	
-Tracker:
-	./../../ProgramBuilds/TEST-Tracker/TestTracker
+AsterixHandler:
+	./../../ProgramBuilds/TEST-AsterixHandler/AsterixHandler
 
-Analyzer:
-	./../../ProgramBuilds/TEST-Analyzer/TestAnalyzer
+Filters:
+	./../../ProgramBuilds/TEST-Filters/Filters
 

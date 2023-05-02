@@ -4,8 +4,10 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QtCore>
-#include "../../PriFiles/FilterCheckingFiles/Filters/AlphaBetaFilter.h"
-#include "../../PriFiles/FilterCheckingFiles/Filters/KalmanFilter.h"
+#include "../../PriFiles/Filters/AlphaBetaFilter.h"
+#include "../../PriFiles/Filters/AlphaBetaLeastSquaresFilter.h"
+#include "../../PriFiles/Filters/KalmanConstVelocityFilter.h"
+#include "../../PriFiles/Filters/KalmanConstAccelerationFilter.h"
 #include "RadarView.h"
 #include "GraphicsBuilderWidget.h"
 
@@ -65,11 +67,25 @@ private:;
 
     void clearModulation();
 
+    QVector<QPointF> calcAlphaBetaFilter(QVector<Target> targets, uint16_t k_max);
+
+    QVector<QPointF> calcAlphaBetaLeastSquaresFilter(QVector<Target> targets,
+                                                     uint16_t k_max, uint16_t numberToExtrapolation);
+
+    QVector<QPointF> calcKalmanConstVelocityFilter(QVector<Target> targets,
+                                                   qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity);
+
+    QVector<QPointF> calcKalmanConstAccelerationFilter(QVector<Target> targets,
+                                                   qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity,
+                                                   qreal sigmaAcceleration);
+
     QVector<QPointF> mTrajectoryOriginal;
     QVector<QVector<QPointF>> mTrackWithNoise;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilter;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilterMNK;
     QVector<QVector<QPointF>> mTrackKalmanFilterCV;
+    QVector<QVector<QPointF>> mTrackKalmanFilterCA;
+
 
     Ui::MainWindow *ui;
     QGraphicsScene* mGraphicsScene;
