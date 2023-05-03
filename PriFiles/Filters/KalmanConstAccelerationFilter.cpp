@@ -1,9 +1,11 @@
 #include "KalmanConstAccelerationFilter.h"
 
 
-KalmanConstAccelerationFilter::KalmanConstAccelerationFilter(qreal coordinateMSE,
-                                                     qreal velocityMSE,
-                                                     qreal accelerationMSE) {
+KalmanConstAccelerationFilter::KalmanConstAccelerationFilter(quint16 maximumNumberOfSteps,
+                                                             qreal coordinateMSE,
+                                                             qreal velocityMSE,
+                                                             qreal accelerationMSE) {
+    m_maximumNumberOfSteps = maximumNumberOfSteps;
     m_coordinateMSE = coordinateMSE;
     m_velocityMSE = velocityMSE;
     m_accelerationMSE = accelerationMSE;
@@ -30,7 +32,7 @@ KalmanConstAccelerationFilter::KalmanConstAccelerationFilter(qreal coordinateMSE
 void KalmanConstAccelerationFilter::initialization(QVector<Target> array) {
     m_velocity = (array.last().coordinate - array.first().coordinate) /
                     (array.last().time - array.first().time);
-
+    m_numberOfSteps = array.size();
     // A -- матрица перехода
     m_A = Matrix(6, 6);
     for(quint8 i = 0; i < 4; ++i) {
@@ -92,6 +94,7 @@ void KalmanConstAccelerationFilter::initialization(QVector<Target> array) {
 }
 
 Target KalmanConstAccelerationFilter::filterMeasuredValue(Target measurement) {
+    m_numberOfSteps++;
     Matrix z(2, 1);
     z.set(0, 0, measurement.coordinate.x());
     z.set(1, 0, measurement.coordinate.y());
@@ -105,7 +108,10 @@ Target KalmanConstAccelerationFilter::filterMeasuredValue(Target measurement) {
     m_A.set(1, 5, qPow(difTime, 2) / 2.0);
 
     m_x = m_A.multiply(m_x);
-    m_P = m_A.multiply(m_P).multiply(m_A.transpose()).sum(m_Q);
+
+    if(m_numberOfSteps < m_maximumNumberOfSteps) {
+        m_P = m_A.multiply(m_P).multiply(m_A.transpose()).sum(m_Q);
+    }
 
     Matrix K = m_P.multiply(m_H.transpose()).multiply(
                 (m_H.multiply(m_P).multiply(m_H.transpose()).sum(m_R)).calculateInverseMatrix()
@@ -116,7 +122,9 @@ Target KalmanConstAccelerationFilter::filterMeasuredValue(Target measurement) {
     QPointF filteredCoordinate = QPointF(m_x.get(0, 0), m_x.get(1, 0));
     m_velocity = QPointF(m_x.get(2, 0), m_x.get(3, 0));
 
-    m_P = m_I.difference(K.multiply(m_H)).multiply(m_P);
+    if((m_numberOfSteps + 1) < m_maximumNumberOfSteps) {
+        m_P = m_I.difference(K.multiply(m_H)).multiply(m_P);
+    }
 
     m_filteredTarget = Target(filteredCoordinate, measurement.time);
 

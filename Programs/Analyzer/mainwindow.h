@@ -8,8 +8,9 @@
 #include "../../PriFiles/Filters/AlphaBetaLeastSquaresFilter.h"
 #include "../../PriFiles/Filters/KalmanConstVelocityFilter.h"
 #include "../../PriFiles/Filters/KalmanConstAccelerationFilter.h"
+#include "../../PriFiles/Filters/AdaptiveKalmanConstVelocityFilter.h"
+#include "../../PriFiles/GraphUI/GraphicsBuilderWidget.h"
 #include "RadarView.h"
-#include "GraphicsBuilderWidget.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -20,6 +21,7 @@ const QColor BLACK = QColor(0x222831);
 const QColor BLUE = QColor(0x2B2E4A);
 const QColor RED = QColor(0xE84545);
 const QColor RED_BROWN = QColor(0x903749);
+const QColor RED_BROWN_RADAR = QColor(0xF0291A);
 const QColor PURPLE = QColor(0x53354A);
 const QColor WHITE = QColor(0xF6F1F1);
 const QColor GRAY = QColor(0x464646);
@@ -48,6 +50,8 @@ private slots:
 
     void on_RB_onLine_toggled(bool checked);
 
+    void on_ComB_filters_currentIndexChanged(int index);
+
 private:;
     void createGrid();
 
@@ -73,18 +77,22 @@ private:;
                                                      uint16_t k_max, uint16_t numberToExtrapolation);
 
     QVector<QPointF> calcKalmanConstVelocityFilter(QVector<Target> targets,
-                                                   qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity);
+                                                   uint16_t k_max, qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity);
 
     QVector<QPointF> calcKalmanConstAccelerationFilter(QVector<Target> targets,
-                                                   qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity,
-                                                   qreal sigmaAcceleration);
+                                                       uint16_t k_max, qreal sigmaNoiseCoord,
+                                                       qreal sigmaNoiseVelocity, qreal sigmaAcceleration);
 
+    QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets,
+                                                           uint16_t k_max, uint16_t numberTargetsToRecalcR,
+                                                           qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity);
     QVector<QPointF> mTrajectoryOriginal;
     QVector<QVector<QPointF>> mTrackWithNoise;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilter;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilterMNK;
     QVector<QVector<QPointF>> mTrackKalmanFilterCV;
     QVector<QVector<QPointF>> mTrackKalmanFilterCA;
+    QVector<QVector<QPointF>> mTrackAdaptiveKalmanFilterCV;
 
 
     Ui::MainWindow *ui;

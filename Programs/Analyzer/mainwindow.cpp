@@ -24,16 +24,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->PB_buildingGraphics->setEnabled(false);
 
-    connect(ui->LW_filters, &QListWidget::currentRowChanged, this, [this](int row) {
-            ui->SW_filters->setCurrentIndex(row);
-    });
+
 }
 
 void MainWindow::createGrid() {
     qreal ringDist = SECTOR_RANGE_KM;
     qreal sectorAngle = SECTOR_ANGLE_DEG;
 
-    QPen gridPen(RED_BROWN);
+    QPen gridPen(RED_BROWN_RADAR);
     gridPen.setCosmetic(true);
 
     for (qreal curDist = ringDist; curDist <= mGraphicsScene->width() / 2; curDist += ringDist) {
@@ -80,6 +78,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<QPointF> sigmaAlphaBetaFilter_MNK;
     QVector<QPointF> sigmaKalmanFilterCV;
     QVector<QPointF> sigmaKalmanFilterCA;
+    QVector<QPointF> sigmaAdaptiveKalmanFilterCV;
 
     for(int i = 0; i < mTrajectoryOriginal.size(); ++i) {
         QPointF currSigmaNoise(0, 0);
@@ -87,6 +86,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
         QPointF currSigmaAlphaBetaFilter_MNK(0, 0);
         QPointF currSigmaKalmanFilterCV(0, 0);
         QPointF currSigmaKalmanFilterCA(0, 0);
+        QPointF currSigmaAdaptiveKalmanFilterCV(0, 0);
 
         step.append(i);
 
@@ -115,6 +115,12 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
             diffKalman_CA.setX(diffKalman_CA.x() * diffKalman_CA.x());
             diffKalman_CA.setY(diffKalman_CA.y() * diffKalman_CA.y());
             currSigmaKalmanFilterCA += diffKalman_CA;
+
+            QPointF diffAdaptiveKalman_CV = (mTrackAdaptiveKalmanFilterCV[indexModulation][i] - mTrajectoryOriginal[i]);
+            diffAdaptiveKalman_CV.setX(diffAdaptiveKalman_CV.x() * diffAdaptiveKalman_CV.x());
+            diffAdaptiveKalman_CV.setY(diffAdaptiveKalman_CV.y() * diffAdaptiveKalman_CV.y());
+            currSigmaAdaptiveKalmanFilterCV += diffAdaptiveKalman_CV;
+
         }
 
         sigmaNoise.append(QPointF(qSqrt(currSigmaNoise.x() / NUMBER_MODULATIONS),
@@ -131,6 +137,9 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
         sigmaKalmanFilterCA.append(QPointF(qSqrt(currSigmaKalmanFilterCA.x() / NUMBER_MODULATIONS),
                                            qSqrt(currSigmaKalmanFilterCA.y() / NUMBER_MODULATIONS)));
+
+        sigmaAdaptiveKalmanFilterCV.append(QPointF(qSqrt(currSigmaAdaptiveKalmanFilterCV.x() / NUMBER_MODULATIONS),
+                                                   qSqrt(currSigmaAdaptiveKalmanFilterCV.y() / NUMBER_MODULATIONS)));
     }
 
 
@@ -140,7 +149,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<qreal> resSigmaAlphaBetaFilter_MNK;
     QVector<qreal> resSigmaKalmanFilterCV;
     QVector<qreal> resSigmaKalmanFilterCA;
-
+    QVector<qreal> resSigmaAdaptiveKalmanFilterCV;
 
     for(int i = 0; i < step.size(); ++i) {
         resSigmaNoise.append(qSqrt(qPow(sigmaNoise[i].x(), 2)
@@ -157,14 +166,18 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
         resSigmaKalmanFilterCA.append(qSqrt(qPow(sigmaKalmanFilterCA[i].x(), 2)
                                             + qPow(sigmaKalmanFilterCA[i].y(), 2)));
+
+        resSigmaAdaptiveKalmanFilterCV.append(qSqrt(qPow(sigmaAdaptiveKalmanFilterCV[i].x(), 2)
+                                                    + qPow(sigmaAdaptiveKalmanFilterCV[i].y(), 2)));
+
     }
 
 
     auto window = new GraphicsBuilderWidget();
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->setData("Состояние модели", "СКО, метры", step,
-                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK, resSigmaKalmanFilterCV, resSigmaKalmanFilterCA},
-                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК", "Фильтр Калмана CV", "Фильтр Калмана CA"});
+                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK, resSigmaKalmanFilterCV, resSigmaKalmanFilterCA, resSigmaAdaptiveKalmanFilterCV},
+                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК", "Фильтр Калмана CV", "Фильтр Калмана CA", "Адаптивный фильтр Калмана CV"});
     window->setWindowModality(Qt::WindowModality::ApplicationModal);
     window->show();
 }
@@ -286,13 +299,21 @@ void MainWindow::calculateVariablesTrajectories(qreal updateTime) {
                                                                         ui->SB_AB_MNK_MNKmax->value()));
 
         mTrackKalmanFilterCV.append(calcKalmanConstVelocityFilter(targets,
+                                                                  ui->SB_KalmanFilterCV_Kmax->value(),
                                                                   ui->DSB_KalmanFilterCV_sigmaNoiseCoord->value(),
                                                                   ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value()));
 
         mTrackKalmanFilterCA.append(calcKalmanConstAccelerationFilter(targets,
+                                                                      ui->SB_KalmanFilterCA_Kmax->value(),
                                                                       ui->DSB_KalmanFilterCA_sigmaNoiseCoord->value(),
                                                                       ui->DSB_KalmanFilterCA_sigmaNoiseVelocity->value(),
                                                                       ui->DSB_KalmanFilterCA_sigmaNoiseAcceleration->value()));
+
+        mTrackAdaptiveKalmanFilterCV.append(calcAdaptiveKalmanConstVelocityFilter(targets,
+                                                                                  ui->SB_AdaptiveKalmanFilterCV_Kmax->value(),
+                                                                                  ui->SB_AdaptiveKalmanFilterCV_numberMeasToRecalcR->value(),
+                                                                                  ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseCoord->value(),
+                                                                                  ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseVelocity->value()));
 
     }
 }
@@ -325,10 +346,11 @@ QVector<QPointF> MainWindow::calcAlphaBetaLeastSquaresFilter(QVector<Target> tar
     return result;
 }
 
-QVector<QPointF> MainWindow::calcKalmanConstVelocityFilter(QVector<Target> targets,
+QVector<QPointF> MainWindow::calcKalmanConstVelocityFilter(QVector<Target> targets, quint16 k_max,
                                                            qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity) {
     QVector<QPointF> result;
-    KalmanConstVelocityFilter kalmanConstVelocityFilter(sigmaNoiseCoord,
+    KalmanConstVelocityFilter kalmanConstVelocityFilter(k_max,
+                                                        sigmaNoiseCoord,
                                                         sigmaNoiseVelocity);
     for(int i = 0; i < 3; ++i) {
         result.append(targets[i].coordinate);
@@ -340,11 +362,12 @@ QVector<QPointF> MainWindow::calcKalmanConstVelocityFilter(QVector<Target> targe
     return result;
 }
 
-QVector<QPointF> MainWindow::calcKalmanConstAccelerationFilter(QVector<Target> targets,
+QVector<QPointF> MainWindow::calcKalmanConstAccelerationFilter(QVector<Target> targets, quint16 k_max,
                                                                qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity,
                                                                qreal sigmaAcceleration) {
     QVector<QPointF> result;
-    KalmanConstAccelerationFilter kalmanConstAccelerationFilter(sigmaNoiseCoord,
+    KalmanConstAccelerationFilter kalmanConstAccelerationFilter(k_max,
+                                                                sigmaNoiseCoord,
                                                                 sigmaNoiseVelocity,
                                                                 sigmaAcceleration);
     for(int i = 0; i < 3; ++i) {
@@ -353,6 +376,24 @@ QVector<QPointF> MainWindow::calcKalmanConstAccelerationFilter(QVector<Target> t
     kalmanConstAccelerationFilter.initialization({targets[0], targets[1], targets[2]});
     for(int i = 3; i < targets.size(); ++i) {
         result.append(kalmanConstAccelerationFilter.filterMeasuredValue(targets[i]).coordinate);
+    }
+    return result;
+}
+
+QVector<QPointF> MainWindow::calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets,
+                                                                   quint16 k_max, uint16_t numberTargetsToRecalcR,
+                                                                   qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity) {
+    QVector<QPointF> result;
+    AdaptiveKalmanConstVelocityFilter adaptiveKalmanConstVelocityFilter(k_max,
+                                                                        numberTargetsToRecalcR,
+                                                                        sigmaNoiseCoord,
+                                                                        sigmaNoiseVelocity);
+    for(int i = 0; i < 3; ++i) {
+        result.append(targets[i].coordinate);
+    }
+    adaptiveKalmanConstVelocityFilter.initialization({targets[0], targets[1], targets[2]});
+    for(int i = 3; i < targets.size(); ++i) {
+        result.append(adaptiveKalmanConstVelocityFilter.filterMeasuredValue(targets[i]).coordinate);
     }
     return result;
 }
@@ -400,6 +441,13 @@ void MainWindow::drawVariablesTrajectories() {
                                        0.2, 0.2,
                                        QPen(Qt::magenta, 0.1), QBrush(Qt::magenta));
         }
+
+        if(ui->CB_AdaptiveKalmanFilterCV->isChecked()) {
+            mGraphicsScene->addEllipse((mTrackAdaptiveKalmanFilterCV[0][i].x() / 1000.0) - 0.1,
+                                       (mTrackAdaptiveKalmanFilterCV[0][i].y() / 1000.0) - 0.1,
+                                       0.2, 0.2,
+                                       QPen(Qt::cyan, 0.1), QBrush(Qt::cyan));
+        }
     }
 }
 
@@ -410,6 +458,7 @@ void MainWindow::clearModulation() {
     mTrackAlphaBetaFilterMNK.clear();
     mTrackKalmanFilterCV.clear();
     mTrackKalmanFilterCA.clear();
+    mTrackAdaptiveKalmanFilterCV.clear();
 
     mGraphicsScene->clear();
 
@@ -426,5 +475,11 @@ void MainWindow::on_RB_onLine_toggled(bool checked)
     ui->SB_secondPointX->setEnabled(checked);
     ui->SB_secondPointY->setEnabled(checked);
     ui->SB_radius->setEnabled(!checked);
+}
+
+
+void MainWindow::on_ComB_filters_currentIndexChanged(int index)
+{
+    ui->SW_filters->setCurrentIndex(index);
 }
 

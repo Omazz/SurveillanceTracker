@@ -2,7 +2,7 @@
 #define GRAPHICSBUILDERWIDGET_H
 
 #include <QWidget>
-#include "qcustomplot/qcustomplot.h"
+#include "qcustomplot.h"
 
 namespace Ui {
 class GraphicsBuilderWidget;

@@ -8,7 +8,8 @@ class KalmanConstAccelerationFilter : public AbstractFilter
 {
 
 public:
-    KalmanConstAccelerationFilter(qreal coordinateMSE, qreal velocityMSE, qreal accelerationMSE);
+    KalmanConstAccelerationFilter(quint16 maximumNumberOfSteps,
+                                  qreal coordinateMSE, qreal velocityMSE, qreal accelerationMSE);
 
     void initialization(QVector<Target> array) override;
 
@@ -36,6 +37,9 @@ private:
     qreal m_coordinateMSE;
     qreal m_velocityMSE;
     qreal m_accelerationMSE;
+
+    quint16 m_numberOfSteps;
+    quint16 m_maximumNumberOfSteps;
 };
 
 #endif // KALMANCONSTACCELERATIONFILTER_H

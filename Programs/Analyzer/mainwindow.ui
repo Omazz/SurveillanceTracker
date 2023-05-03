@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Modeling Program</string>
+   <string>Analyzer</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow {
@@ -109,23 +109,43 @@ QSpinBox{
 	color: #EEEEEE;
 }
 
-QListWidget {
-     selection-color: #03C988;
-	  selection-background-color: #222831; 
-     padding-left: 5px;
-     padding-right: 5px;
-	  background-color: #222831; 
-	  color: #EEEEEE;
+QComboBox {
+    background-color: #2B2E4A;
+    color: #EEEEEE;
+    padding-left: 5px;
+    padding-right: 5px;
+    selection-color: #03C988;
+    selection-background-color: #222831;
 }
 
-QListWidget::item:selected {
-  /*border-bottom: 1px solid #EEEEEE;*/
+QComboBox::drop-down {
+    background-color: #222831;
+    border: 0px;
 }
 
+
+QComboBox::item {
+    color: #EEEEEE;
+    background-color: #2B2E4A;
+}
+
+QComboBox::item:selected {
+    background-color: #03C988;
+}
+
+QComboBox::down-arrow {
+	image: url(../../ApplicationIcons/arrow.png);
+	width: 10px;
+	height: 10px;
+}
+
+QComboBox::drop-down:open {
+    background-color: #2B2E4A;
+    border: 1px solid #C0C0C0;
+}
 
 QDoubleSpinBox:disabled {
 	background-color:#3F4B5C;
-   /*color: gray;*/
 }
 
 QSpinBox:disabled {
@@ -526,8 +546,8 @@ QSpinBox:disabled {
          <property name="title">
           <string>Отображение траекторий</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
+         <layout class="QFormLayout" name="formLayout_6">
+          <item row="0" column="0">
            <widget class="QCheckBox" name="CB_original">
             <property name="text">
              <string>Исходная</string>
@@ -537,7 +557,7 @@ QSpinBox:disabled {
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="1">
            <widget class="QCheckBox" name="CB_withNoise">
             <property name="text">
              <string>Зашумленная</string>
@@ -547,7 +567,7 @@ QSpinBox:disabled {
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0">
            <widget class="QCheckBox" name="CB_ABfilter">
             <property name="text">
              <string>α-β фильтр</string>
@@ -557,7 +577,7 @@ QSpinBox:disabled {
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="1">
            <widget class="QCheckBox" name="CB_ABfilterMNK">
             <property name="text">
              <string>α-β фильтр МНК</string>
@@ -567,20 +587,30 @@ QSpinBox:disabled {
             </property>
            </widget>
           </item>
-          <item>
+          <item row="2" column="0">
            <widget class="QCheckBox" name="CB_KalmanFilterCV">
             <property name="text">
-             <string>Фильтр Калмана CV</string>
+             <string>Калман CV</string>
             </property>
             <property name="checked">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="2" column="1">
            <widget class="QCheckBox" name="CB_KalmanFilterCA">
             <property name="text">
-             <string>Фильтр Калмана CA</string>
+             <string>Калман CA</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="CB_AdaptiveKalmanFilterCV">
+            <property name="text">
+             <string>Адаптивный Калман CV</string>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -603,7 +633,7 @@ QSpinBox:disabled {
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QListWidget" name="LW_filters">
+           <widget class="QComboBox" name="ComB_filters">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -613,17 +643,11 @@ QSpinBox:disabled {
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>0</height>
+              <height>35</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>80</height>
-             </size>
-            </property>
-            <property name="currentRow">
-             <number>0</number>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <item>
              <property name="text">
@@ -645,6 +669,11 @@ QSpinBox:disabled {
               <string>Фильтр Калмана CA</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Адаптивный фильтр Калмана CV  </string>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
@@ -662,7 +691,7 @@ QSpinBox:disabled {
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="P_ABfilter">
              <layout class="QFormLayout" name="formLayout_3">
@@ -679,7 +708,7 @@ QSpinBox:disabled {
                  <number>5</number>
                 </property>
                 <property name="maximum">
-                 <number>150</number>
+                 <number>300</number>
                 </property>
                 <property name="value">
                  <number>25</number>
@@ -703,7 +732,7 @@ QSpinBox:disabled {
                  <number>5</number>
                 </property>
                 <property name="maximum">
-                 <number>150</number>
+                 <number>300</number>
                 </property>
                 <property name="value">
                  <number>25</number>
@@ -731,14 +760,7 @@ QSpinBox:disabled {
             </widget>
             <widget class="QWidget" name="P_KalmanFilterCV">
              <layout class="QFormLayout" name="formLayout_5">
-              <item row="0" column="0">
-               <widget class="QLabel" name="L_KalmanFilterCV_sigmaNoiseCoord">
-                <property name="text">
-                 <string>σ шума  коориданты, м:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
+              <item row="1" column="1">
                <widget class="QDoubleSpinBox" name="DSB_KalmanFilterCV_sigmaNoiseCoord">
                 <property name="minimum">
                  <double>0.010000000000000</double>
@@ -754,14 +776,14 @@ QSpinBox:disabled {
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="L_KalmanFilterCV_sigmaNoiseVelocity">
                 <property name="text">
                  <string>σ шума скорости , м/c:</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
+              <item row="2" column="1">
                <widget class="QDoubleSpinBox" name="DSB_KalmanFilterCV_sigmaNoiseVelocity">
                 <property name="minimum">
                  <double>0.010000000000000</double>
@@ -777,18 +799,65 @@ QSpinBox:disabled {
                 </property>
                </widget>
               </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="P_KalmanFIlterCA">
-             <layout class="QFormLayout" name="formLayout">
               <item row="0" column="0">
-               <widget class="QLabel" name="L_KalmanFilterCA_sigmaNoiseCoord">
+               <widget class="QLabel" name="L_KalmanFilterCV_Kmax">
+                <property name="text">
+                 <string>Предельное k:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="L_KalmanFilterCV_sigmaNoiseCoord">
                 <property name="text">
                  <string>σ шума  коориданты, м:</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
+               <widget class="QSpinBox" name="SB_KalmanFilterCV_Kmax">
+                <property name="minimum">
+                 <number>5</number>
+                </property>
+                <property name="maximum">
+                 <number>300</number>
+                </property>
+                <property name="value">
+                 <number>25</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="P_KalmanFIlterCA">
+             <layout class="QFormLayout" name="formLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="L_KalmanFilterCA_Kmax">
+                <property name="text">
+                 <string>Предельное k:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="SB_KalmanFilterCA_Kmax">
+                <property name="minimum">
+                 <number>5</number>
+                </property>
+                <property name="maximum">
+                 <number>300</number>
+                </property>
+                <property name="value">
+                 <number>25</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="L_KalmanFilterCA_sigmaNoiseCoord">
+                <property name="text">
+                 <string>σ шума  коориданты, м:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
                <widget class="QDoubleSpinBox" name="DSB_KalmanFilterCA_sigmaNoiseCoord">
                 <property name="minimum">
                  <double>0.010000000000000</double>
@@ -800,18 +869,18 @@ QSpinBox:disabled {
                  <double>0.100000000000000</double>
                 </property>
                 <property name="value">
-                 <double>20.000000000000000</double>
+                 <double>10.000000000000000</double>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="L_KalmanFilterCA_sigmaNoiseVelocity">
                 <property name="text">
                  <string>σ шума скорости , м/c:</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
+              <item row="2" column="1">
                <widget class="QDoubleSpinBox" name="DSB_KalmanFilterCA_sigmaNoiseVelocity">
                 <property name="minimum">
                  <double>0.010000000000000</double>
@@ -827,14 +896,14 @@ QSpinBox:disabled {
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="3" column="0">
                <widget class="QLabel" name="L_KalmanFilterCA_sigmaNoiseAcceleration">
                 <property name="text">
                  <string>σ шума ускорения , м/c²:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
+              <item row="3" column="1">
                <widget class="QDoubleSpinBox" name="DSB_KalmanFilterCA_sigmaNoiseAcceleration">
                 <property name="minimum">
                  <double>0.000000000000000</double>
@@ -847,6 +916,102 @@ QSpinBox:disabled {
                 </property>
                 <property name="value">
                  <double>8.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="P_AdaptiveKalmanFilterCV">
+             <layout class="QFormLayout" name="formLayout_7">
+              <item row="0" column="0">
+               <widget class="QLabel" name="L_AdaptiveKalmanFilterCV_Kmax">
+                <property name="text">
+                 <string>Предельное k:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="SB_AdaptiveKalmanFilterCV_Kmax">
+                <property name="minimum">
+                 <number>5</number>
+                </property>
+                <property name="maximum">
+                 <number>300</number>
+                </property>
+                <property name="value">
+                 <number>25</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="L_AdaptiveKalmanFilterCV_sigmaNoiseCoord">
+                <property name="text">
+                 <string>σ шума  коориданты, м:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QDoubleSpinBox" name="DSB_AdaptiveKalmanFilterCV_sigmaNoiseCoord">
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>50.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>10.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="L_AdaptiveKalmanFilterCV_sigmaNoiseVelocity">
+                <property name="text">
+                 <string>σ шума скорости , м/c:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QDoubleSpinBox" name="DSB_AdaptiveKalmanFilterCV_sigmaNoiseVelocity">
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>50.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>5.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="L_AdaptiveKalmanFilterCV_numberMeasToRecalcR">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Кол-во шагов для R:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="SB_AdaptiveKalmanFilterCV_numberMeasToRecalcR">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>5</number>
+                </property>
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>10</number>
                 </property>
                </widget>
               </item>
@@ -884,23 +1049,13 @@ QSpinBox:disabled {
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1200</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
   <customwidget>
    <class>RadarView</class>
    <extends>QGraphicsView</extends>
-   <header>GUI/RadarView.h</header>
+   <header>RadarView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

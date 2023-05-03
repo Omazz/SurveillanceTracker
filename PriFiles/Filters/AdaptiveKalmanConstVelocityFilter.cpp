@@ -1,8 +1,10 @@
-#include "KalmanConstVelocityFilter.h"
+#include "AdaptiveKalmanConstVelocityFilter.h"
 
-KalmanConstVelocityFilter::KalmanConstVelocityFilter(quint16 maximumNumberOfSteps,
-                                                     qreal coordinateMSE,
-                                                     qreal velocityMSE) {
+AdaptiveKalmanConstVelocityFilter::AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps,
+                                                                     quint16 numberTargetsToRecalculateR,
+                                                                     qreal coordinateMSE,
+                                                                     qreal velocityMSE) {
+    m_numberTargetsToRecalculateR = numberTargetsToRecalculateR;
     m_maximumNumberOfSteps = maximumNumberOfSteps;
     m_coordinateMSE = coordinateMSE;
     m_velocityMSE = velocityMSE;
@@ -26,11 +28,15 @@ KalmanConstVelocityFilter::KalmanConstVelocityFilter(quint16 maximumNumberOfStep
 
 }
 
-void KalmanConstVelocityFilter::initialization(QVector<Target> array) {
+void AdaptiveKalmanConstVelocityFilter::initialization(QVector<Target> array) {
     m_velocity = (array.last().coordinate - array.first().coordinate) /
                     (array.last().time - array.first().time);
 
     m_numberOfSteps = array.size();
+    for(int i = 0; i < array.size(); ++i) {
+        m_measurementsToRecalculateR.append(array[i].coordinate);
+        m_filteredTargetsToRecalculateR.append(array[i].coordinate);
+    }
 
     // A -- матрица перехода
     m_A = Matrix(4, 4);
@@ -72,7 +78,7 @@ void KalmanConstVelocityFilter::initialization(QVector<Target> array) {
     m_P = m_A.multiply(m_P).multiply(m_A.transpose()).sum(m_Q);
 }
 
-Target KalmanConstVelocityFilter::filterMeasuredValue(Target measurement) {
+Target AdaptiveKalmanConstVelocityFilter::filterMeasuredValue(Target measurement) {
     m_numberOfSteps++;
     Matrix z(2, 1);
     z.set(0, 0, measurement.coordinate.x());
@@ -102,17 +108,41 @@ Target KalmanConstVelocityFilter::filterMeasuredValue(Target measurement) {
 
     m_filteredTarget = Target(filteredCoordinate, measurement.time);
 
+    m_measurementsToRecalculateR.append(measurement.coordinate);
+    m_filteredTargetsToRecalculateR.append(m_filteredTarget.coordinate);
+    if(m_measurementsToRecalculateR.size() > m_numberTargetsToRecalculateR) {
+        m_measurementsToRecalculateR.dequeue();
+        m_filteredTargetsToRecalculateR.dequeue();
+        recalculateR();
+    }
+
     return m_filteredTarget;
 }
 
-Target KalmanConstVelocityFilter::updateExtrapolation(qreal time) {
+Target AdaptiveKalmanConstVelocityFilter::updateExtrapolation(qreal time) {
     return filterMeasuredValue(extrapolateOnTime(time));
 }
 
-Target KalmanConstVelocityFilter::extrapolateOnTime(qreal time) const {
+Target AdaptiveKalmanConstVelocityFilter::extrapolateOnTime(qreal time) const {
     return Target(m_filteredTarget.coordinate + (m_velocity * (time - m_filteredTarget.time)), time);
 }
 
-QPointF KalmanConstVelocityFilter::getVelocity() const {
+QPointF AdaptiveKalmanConstVelocityFilter::getVelocity() const {
     return m_velocity;
 }
+
+void AdaptiveKalmanConstVelocityFilter::recalculateR() {
+    QPointF coordinateMSE(0, 0);
+    for(int i = 0; i < m_measurementsToRecalculateR.size(); ++i) {
+        QPointF temp = m_filteredTargetsToRecalculateR[i] - m_measurementsToRecalculateR[i];
+        temp.setX(qPow(temp.x(), 2));
+        temp.setY(qPow(temp.y(), 2));
+        coordinateMSE += temp;
+    }
+
+    coordinateMSE /= m_filteredTargetsToRecalculateR.size();
+    qreal mse = qSqrt(coordinateMSE.x() + coordinateMSE.y());
+    m_R.set(0, 0, qSqrt(mse));
+    m_R.set(1, 1, qSqrt(mse));
+}
+

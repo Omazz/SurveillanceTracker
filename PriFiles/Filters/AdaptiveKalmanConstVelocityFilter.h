@@ -1,12 +1,13 @@
-#ifndef KALMANCONSTVELOCITYFILTER_H
-#define KALMANCONSTVELOCITYFILTER_H
+#ifndef ADAPTIVEKALMANCONSTVELOCITYFILTER_H
+#define ADAPTIVEKALMANCONSTVELOCITYFILTER_H
 
 #include "AbstractFilter.h"
 #include "Matrix.h"
 
-class KalmanConstVelocityFilter : public AbstractFilter {
+class AdaptiveKalmanConstVelocityFilter : public AbstractFilter {
 public:
-    KalmanConstVelocityFilter(quint16 maximumNumberOfSteps, qreal coordinateMSE, qreal velocityMSE);
+    AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps, quint16 numberTargetsToRecalculateR,
+                                      qreal coordinateMSE, qreal velocityMSE);
 
     void initialization(QVector<Target> array) override;
 
@@ -19,6 +20,8 @@ public:
     QPointF getVelocity() const override;
 
 private:
+    void recalculateR();
+
     Target m_filteredTarget;
     QPointF m_velocity;
 
@@ -34,8 +37,11 @@ private:
     qreal m_coordinateMSE;
     qreal m_velocityMSE;
 
+    quint16 m_numberTargetsToRecalculateR;
+    QQueue<QPointF> m_measurementsToRecalculateR;
+    QQueue<QPointF> m_filteredTargetsToRecalculateR;
+
     quint16 m_numberOfSteps;
     quint16 m_maximumNumberOfSteps;
 };
-
-#endif // KALMANCONSTVELOCITYFILTER_H
+#endif // ADAPTIVEKALMANCONSTVELOCITYFILTER_H

@@ -1,4 +1,5 @@
 SOURCES += \
+    $$PWD/AdaptiveKalmanConstVelocityFilter.cpp \
     $$PWD/AlphaBetaFilter.cpp \
     $$PWD/AlphaBetaLeastSquaresFilter.cpp \
     $$PWD/KalmanConstAccelerationFilter.cpp \
@@ -7,6 +8,7 @@ SOURCES += \
     
 HEADERS += \
     $$PWD/AbstractFilter.h \
+    $$PWD/AdaptiveKalmanConstVelocityFilter.h \
     $$PWD/AlphaBetaFilter.h \
     $$PWD/AlphaBetaLeastSquaresFilter.h \
     $$PWD/KalmanConstAccelerationFilter.h \
