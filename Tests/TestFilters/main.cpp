@@ -5,6 +5,7 @@
 #include "TestAlphaBetaLeastSquaresFilter.h"
 #include "TestKalmanConstVelocityFilter.h"
 #include "TestKalmanConstAccelerationFilter.h"
+#include "TestAdaptiveKalmanConstVelocityFilter.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,5 +21,7 @@ int main(int argc, char *argv[])
 
     int code5 = QTest::qExec(new TestKalmanConstAccelerationFilter);
 
-    exit(code1 + code2 + code3 + code4 + code5);
+    int code6 = QTest::qExec(new TestAdaptiveKalmanConstVelocityFilter);
+
+    exit(code1 + code2 + code3 + code4 + code5 + code6);
 }

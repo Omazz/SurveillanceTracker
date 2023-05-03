@@ -14,7 +14,7 @@ void TestKalmanConstAccelerationFilter::filterTrack_linearWithoutNoise() {
         inputTrajectory.append(Target(QPointF(5 * i, 10 * i), 5 * i));
     }
 
-    KalmanConstAccelerationFilter filter(15, 5, 3);
+    KalmanConstAccelerationFilter filter(15, 15, 5, 3);
     filter.initialization({inputTrajectory[0], inputTrajectory[1], inputTrajectory[2]});
     QVector<Target> filteredTrajectory;
     filteredTrajectory += inputTrajectory[0];
@@ -49,7 +49,7 @@ void TestKalmanConstAccelerationFilter::filterTrack_linearWithNoise() {
                            5 * i));
     }
 
-    KalmanConstAccelerationFilter filter(15, 5, 3);
+    KalmanConstAccelerationFilter filter(15, 15, 5, 3);
     filter.initialization({inputTrajectory[0], inputTrajectory[1], inputTrajectory[2]});
     QVector<Target> filteredTrajectory;
     filteredTrajectory += inputTrajectory[0];

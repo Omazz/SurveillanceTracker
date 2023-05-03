@@ -1,12 +1,12 @@
-#include "TestKalmanConstVelocityFilter.h"
+#include "TestAdaptiveKalmanConstVelocityFilter.h"
 
-TestKalmanConstVelocityFilter::TestKalmanConstVelocityFilter(QObject *parent)
+TestAdaptiveKalmanConstVelocityFilter::TestAdaptiveKalmanConstVelocityFilter(QObject *parent)
     : QObject{parent}
 {
 
 }
 
-void TestKalmanConstVelocityFilter::filterTrack_linearWithoutNoise() {
+void TestAdaptiveKalmanConstVelocityFilter::filterTrack_linearWithoutNoise() {
 
     QVector<Target> inputTrajectory;
 
@@ -14,7 +14,7 @@ void TestKalmanConstVelocityFilter::filterTrack_linearWithoutNoise() {
         inputTrajectory.append(Target(QPointF(5 * i, 10 * i), 5 * i));
     }
 
-    KalmanConstVelocityFilter filter(15, 15, 5);
+    AdaptiveKalmanConstVelocityFilter filter(15, 15, 5, 1);
     filter.initialization({inputTrajectory[0], inputTrajectory[1], inputTrajectory[2]});
     QVector<Target> filteredTrajectory;
     filteredTrajectory += inputTrajectory[0];
@@ -38,7 +38,7 @@ void TestKalmanConstVelocityFilter::filterTrack_linearWithoutNoise() {
     QCOMPARE(result < 0.5, true);
 }
 
-void TestKalmanConstVelocityFilter::filterTrack_linearWithNoise() {
+void TestAdaptiveKalmanConstVelocityFilter::filterTrack_linearWithNoise() {
 
     QVector<Target> inputTrajectory;
 
@@ -49,7 +49,7 @@ void TestKalmanConstVelocityFilter::filterTrack_linearWithNoise() {
                            5 * i));
     }
 
-    KalmanConstVelocityFilter filter(15, 15, 5);
+    AdaptiveKalmanConstVelocityFilter filter(15, 15, 5, 1);
     filter.initialization({inputTrajectory[0], inputTrajectory[1], inputTrajectory[2]});
     QVector<Target> filteredTrajectory;
     filteredTrajectory += inputTrajectory[0];

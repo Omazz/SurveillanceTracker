@@ -9,6 +9,7 @@ CONFIG -= app_bundle
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        TestAdaptiveKalmanConstVelocityFilter.cpp \
         TestAlphaBetaFilter.cpp \
         TestAlphaBetaLeastSquaresFilter.cpp \
         TestKalmanConstAccelerationFilter.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
         TestMatrix.cpp
 
 HEADERS += \
+    TestAdaptiveKalmanConstVelocityFilter.h \
     TestAlphaBetaFilter.h \
     TestAlphaBetaLeastSquaresFilter.h \
     TestKalmanConstAccelerationFilter.h \
