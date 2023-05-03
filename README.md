@@ -101,11 +101,11 @@ __SurveillanceTracker__ представляет собой программны
 
 При этом, можно компилировать не все модули, а указывать конкретную цель:
 
-> make sub----TestAnalyzer
+> make sub----TestFilters
 
-> make sub----TestCipher
+> make sub----TestEncryptionTools
 
-> make sub----TestTracker
+> make sub----TestAsterixHandler
 
 Для запуска тестов необходимо выполнить следующие действия:
 1) Перейти в директорию __Tests/SurveillanceTrackerTests/__.
@@ -113,8 +113,8 @@ __SurveillanceTracker__ представляет собой программны
 
 Сделать это можно, воспользовавшись соответствующей командой:
 
-> make TestAnalyzer -f RunTests
+> make TestFilters -f RunTests
 
-> make TestCipher -f RunTests
+> make TestEncryptionTools -f RunTests
 
-> make TestTracker -f RunTests
+> make TestAsterixHandler -f RunTests
