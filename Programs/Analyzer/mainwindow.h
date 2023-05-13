@@ -73,19 +73,20 @@ private:;
 
     QVector<QPointF> calcAlphaBetaFilter(QVector<Target> targets, uint16_t k_max);
 
-    QVector<QPointF> calcAlphaBetaLeastSquaresFilter(QVector<Target> targets,
-                                                     uint16_t k_max, uint16_t numberToExtrapolation);
+    QVector<QPointF> calcAlphaBetaLeastSquaresFilter(QVector<Target> targets, uint16_t k_max,
+                                                     uint16_t numberToExtrapolation);
 
-    QVector<QPointF> calcKalmanConstVelocityFilter(QVector<Target> targets,
-                                                   uint16_t k_max, qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity);
+    QVector<QPointF> calcKalmanConstVelocityFilter(QVector<Target> targets, uint16_t k_max,
+                                                   qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
+                                                   qreal sigmaNoiseVelocity);
 
-    QVector<QPointF> calcKalmanConstAccelerationFilter(QVector<Target> targets,
-                                                       uint16_t k_max, qreal sigmaNoiseCoord,
+    QVector<QPointF> calcKalmanConstAccelerationFilter(QVector<Target> targets, uint16_t k_max,
+                                                       qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
                                                        qreal sigmaNoiseVelocity, qreal sigmaAcceleration);
 
-    QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets,
-                                                           uint16_t k_max, uint16_t numberTargetsToRecalcR,
-                                                           qreal sigmaNoiseCoord, qreal sigmaNoiseVelocity);
+    QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets, uint16_t k_max,
+                                                           qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
+                                                           qreal sigmaNoiseVelocity);
     QVector<QPointF> mTrajectoryOriginal;
     QVector<QVector<QPointF>> mTrackWithNoise;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilter;

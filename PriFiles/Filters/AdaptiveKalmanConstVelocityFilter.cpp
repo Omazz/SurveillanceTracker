@@ -1,12 +1,11 @@
 #include "AdaptiveKalmanConstVelocityFilter.h"
 
 AdaptiveKalmanConstVelocityFilter::AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps,
-                                                                     quint16 numberTargetsToRecalculateR,
-                                                                     qreal coordinateMSE,
+                                                                     qreal rhoMSE, qreal thetaMSE,
                                                                      qreal velocityMSE) {
-    m_numberTargetsToRecalculateR = numberTargetsToRecalculateR;
     m_maximumNumberOfSteps = maximumNumberOfSteps;
-    m_coordinateMSE = coordinateMSE;
+    m_rhoMSE = rhoMSE;
+    m_thetaMSE = thetaMSE;
     m_velocityMSE = velocityMSE;
 
     // Start initialization filter
@@ -20,12 +19,6 @@ AdaptiveKalmanConstVelocityFilter::AdaptiveKalmanConstVelocityFilter(quint16 max
     m_H = Matrix(2, 4);
     m_H.set(0, 0, 1);
     m_H.set(1, 1, 1);
-
-    // R -- взвешенная матрица шума
-    m_R = Matrix(2, 2);
-    m_R.set(0, 0, qPow(coordinateMSE, 2));
-    m_R.set(1, 1, qPow(coordinateMSE, 2));
-
 }
 
 void AdaptiveKalmanConstVelocityFilter::initialization(QVector<Target> array) {
@@ -33,10 +26,22 @@ void AdaptiveKalmanConstVelocityFilter::initialization(QVector<Target> array) {
                     (array.last().time - array.first().time);
 
     m_numberOfSteps = array.size();
-    for(int i = 0; i < array.size(); ++i) {
-        m_measurementsToRecalculateR.append(array[i].coordinate);
-        m_filteredTargetsToRecalculateR.append(array[i].coordinate);
+
+    // R -- взвешенная матрица шума
+    m_R = Matrix(2, 2);
+
+    qreal rho = qSqrt(qPow(array.last().coordinate.x(), 2) + qPow(array.last().coordinate.y(), 2));
+    qreal theta = qAtan2(array.last().coordinate.y(), array.last().coordinate.x());
+    if(qIsNull(array.last().coordinate.y())) {
+        theta = 0;
     }
+    theta = M_PI_2 - theta;
+    if(theta < 0) {
+        theta += (2.0 * M_PI);
+    }
+
+    m_R.set(0, 0, qPow(m_rhoMSE*qSin(theta),2)+qPow(rho*m_thetaMSE*qCos(theta),2));
+    m_R.set(1, 1, qPow(m_rhoMSE*qCos(theta),2)+qPow(rho*m_thetaMSE*qSin(theta),2));
 
     // A -- матрица перехода
     m_A = Matrix(4, 4);
@@ -71,8 +76,8 @@ void AdaptiveKalmanConstVelocityFilter::initialization(QVector<Target> array) {
 
     // P -- ковариационная матрица
     m_P = Matrix(4, 4);
-    m_P.set(0, 0, pow(m_coordinateMSE, 2.0));
-    m_P.set(1, 1, pow(m_coordinateMSE, 2.0));
+    m_P.set(0, 0, qPow(m_rhoMSE*qSin(theta),2)+qPow(rho*m_thetaMSE*qCos(theta),2));
+    m_P.set(1, 1, qPow(m_rhoMSE*qCos(theta),2)+qPow(rho*m_thetaMSE*qSin(theta),2));
     m_P.set(2, 2, pow(m_velocityMSE, 2.0));
     m_P.set(3, 3, pow(m_velocityMSE, 2.0));
     m_P = m_A.multiply(m_P).multiply(m_A.transpose()).sum(m_Q);
@@ -108,13 +113,7 @@ Target AdaptiveKalmanConstVelocityFilter::filterMeasuredValue(Target measurement
 
     m_filteredTarget = Target(filteredCoordinate, measurement.time);
 
-    m_measurementsToRecalculateR.append(measurement.coordinate);
-    m_filteredTargetsToRecalculateR.append(m_filteredTarget.coordinate);
-    if(m_measurementsToRecalculateR.size() > m_numberTargetsToRecalculateR) {
-        m_measurementsToRecalculateR.dequeue();
-        m_filteredTargetsToRecalculateR.dequeue();
-        recalculateR();
-    }
+    recalculateMatrixR();
 
     return m_filteredTarget;
 }
@@ -131,18 +130,19 @@ QPointF AdaptiveKalmanConstVelocityFilter::getVelocity() const {
     return m_velocity;
 }
 
-void AdaptiveKalmanConstVelocityFilter::recalculateR() {
-    QPointF coordinateMSE(0, 0);
-    for(int i = 0; i < m_measurementsToRecalculateR.size(); ++i) {
-        QPointF temp = m_filteredTargetsToRecalculateR[i] - m_measurementsToRecalculateR[i];
-        temp.setX(qPow(temp.x(), 2));
-        temp.setY(qPow(temp.y(), 2));
-        coordinateMSE += temp;
+void AdaptiveKalmanConstVelocityFilter::recalculateMatrixR() {
+    qreal rho = qSqrt(qPow(m_filteredTarget.coordinate.x(), 2) + qPow(m_filteredTarget.coordinate.y(), 2));
+    qreal theta = qAtan2(m_filteredTarget.coordinate.y(), m_filteredTarget.coordinate.x());
+    if(qIsNull(m_filteredTarget.coordinate.y())) {
+        theta = 0;
+    }
+    theta = M_PI_2 - theta;
+    if(theta < 0) {
+        theta += (2.0 * M_PI);
     }
 
-    coordinateMSE /= m_filteredTargetsToRecalculateR.size();
-    qreal mse = qSqrt(coordinateMSE.x() + coordinateMSE.y());
-    m_R.set(0, 0, qSqrt(mse));
-    m_R.set(1, 1, qSqrt(mse));
+    m_R.set(0, 0, qPow(m_rhoMSE*qSin(theta),2)+qPow(rho*m_thetaMSE*qCos(theta),2));
+    m_R.set(1, 1, qPow(m_rhoMSE*qCos(theta),2)+qPow(rho*m_thetaMSE*qSin(theta),2));
+
 }
 

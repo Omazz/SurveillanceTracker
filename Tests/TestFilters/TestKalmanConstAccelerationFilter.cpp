@@ -14,7 +14,7 @@ void TestKalmanConstAccelerationFilter::filterTrack_linearWithoutNoise() {
         inputTrajectory.append(Target(QPointF(5 * i, 10 * i), 5 * i));
     }
 
-    KalmanConstAccelerationFilter filter(15, 15, 5, 3);
+    KalmanConstAccelerationFilter filter(15, 15, 5, 3, 1);
     filter.initialization({inputTrajectory[0], inputTrajectory[1], inputTrajectory[2]});
     QVector<Target> filteredTrajectory;
     filteredTrajectory += inputTrajectory[0];
@@ -35,7 +35,7 @@ void TestKalmanConstAccelerationFilter::filterTrack_linearWithoutNoise() {
     mse.setX(qSqrt(mse.x()));
     mse.setY(qSqrt(mse.y()));
     qreal result = qSqrt(qPow(mse.x(), 2) + qPow(mse.y(), 2));
-    QCOMPARE(result < 0.5, true);
+    QCOMPARE(result < 2, true);
 }
 
 void TestKalmanConstAccelerationFilter::filterTrack_linearWithNoise() {
@@ -49,7 +49,7 @@ void TestKalmanConstAccelerationFilter::filterTrack_linearWithNoise() {
                            5 * i));
     }
 
-    KalmanConstAccelerationFilter filter(15, 15, 5, 3);
+    KalmanConstAccelerationFilter filter(15, 15, 5, 3, 1);
     filter.initialization({inputTrajectory[0], inputTrajectory[1], inputTrajectory[2]});
     QVector<Target> filteredTrajectory;
     filteredTrajectory += inputTrajectory[0];

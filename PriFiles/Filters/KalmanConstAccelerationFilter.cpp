@@ -2,11 +2,12 @@
 
 
 KalmanConstAccelerationFilter::KalmanConstAccelerationFilter(quint16 maximumNumberOfSteps,
-                                                             qreal coordinateMSE,
+                                                             qreal rhoMSE, qreal thetaMSE,
                                                              qreal velocityMSE,
                                                              qreal accelerationMSE) {
     m_maximumNumberOfSteps = maximumNumberOfSteps;
-    m_coordinateMSE = coordinateMSE;
+    m_rhoMSE = rhoMSE;
+    m_thetaMSE = thetaMSE;
     m_velocityMSE = velocityMSE;
     m_accelerationMSE = accelerationMSE;
 
@@ -21,18 +22,30 @@ KalmanConstAccelerationFilter::KalmanConstAccelerationFilter(quint16 maximumNumb
     m_H = Matrix(2, 6);
     m_H.set(0, 0, 1);
     m_H.set(1, 1, 1);
-
-    // R -- взвешенная матрица шума
-    m_R = Matrix(2, 2);
-    m_R.set(0, 0, qPow(coordinateMSE, 2));
-    m_R.set(1, 1, qPow(coordinateMSE, 2));
-
 }
 
 void KalmanConstAccelerationFilter::initialization(QVector<Target> array) {
     m_velocity = (array.last().coordinate - array.first().coordinate) /
                     (array.last().time - array.first().time);
     m_numberOfSteps = array.size();
+
+    // R -- взвешенная матрица шума
+    m_R = Matrix(2, 2);
+
+    qreal rho = qSqrt(qPow(array.last().coordinate.x(), 2) + qPow(array.last().coordinate.y(), 2));
+    qreal theta = qAtan2(array.last().coordinate.y(), array.last().coordinate.x());
+    if(qIsNull(array.last().coordinate.y())) {
+        theta = 0;
+    }
+    theta = M_PI_2 - theta;
+    if(theta < 0) {
+        theta += (2.0 * M_PI);
+    }
+
+    m_R.set(0, 0, qPow(m_rhoMSE*qSin(theta),2)+qPow(rho*m_thetaMSE*qCos(theta),2));
+    m_R.set(1, 1, qPow(m_rhoMSE*qCos(theta),2)+qPow(rho*m_thetaMSE*qSin(theta),2));
+
+
     // A -- матрица перехода
     m_A = Matrix(6, 6);
     for(quint8 i = 0; i < 4; ++i) {
@@ -84,8 +97,8 @@ void KalmanConstAccelerationFilter::initialization(QVector<Target> array) {
 
     // P -- ковариационная матрица
     m_P = Matrix(6, 6);
-    m_P.set(0, 0, pow(m_coordinateMSE, 2.0));
-    m_P.set(1, 1, pow(m_coordinateMSE, 2.0));
+    m_P.set(0, 0, qPow(m_rhoMSE*qSin(theta),2)+qPow(rho*m_thetaMSE*qCos(theta),2));
+    m_P.set(1, 1, qPow(m_rhoMSE*qCos(theta),2)+qPow(rho*m_thetaMSE*qSin(theta),2));
     m_P.set(2, 2, pow(m_velocityMSE, 2.0));
     m_P.set(3, 3, pow(m_velocityMSE, 2.0));
     m_P.set(4, 4, pow(m_accelerationMSE, 2.0));

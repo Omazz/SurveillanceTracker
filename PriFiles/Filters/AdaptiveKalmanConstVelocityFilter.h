@@ -6,8 +6,8 @@
 
 class AdaptiveKalmanConstVelocityFilter : public AbstractFilter {
 public:
-    AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps, quint16 numberTargetsToRecalculateR,
-                                      qreal coordinateMSE, qreal velocityMSE);
+    AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps,
+                                      qreal rhoMSE, qreal thetaMSE, qreal velocityMSE);
 
     void initialization(QVector<Target> array) override;
 
@@ -20,7 +20,7 @@ public:
     QPointF getVelocity() const override;
 
 private:
-    void recalculateR();
+    void recalculateMatrixR();
 
     Target m_filteredTarget;
     QPointF m_velocity;
@@ -34,12 +34,9 @@ private:
     Matrix m_x; ///< x -- вектор состояния
     Matrix m_P; ///< P -- ковариационная матрица
 
-    qreal m_coordinateMSE;
+    qreal m_rhoMSE;
+    qreal m_thetaMSE;
     qreal m_velocityMSE;
-
-    quint16 m_numberTargetsToRecalculateR;
-    QQueue<QPointF> m_measurementsToRecalculateR;
-    QQueue<QPointF> m_filteredTargetsToRecalculateR;
 
     quint16 m_numberOfSteps;
     quint16 m_maximumNumberOfSteps;
