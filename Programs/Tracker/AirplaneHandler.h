@@ -43,7 +43,7 @@ private:
 
     bool tryCreateTrackBy4Plots(Plot plot);
 
-    MessageHandler* mMessageHandler;
+    MessageHandler* m_messageHandler;
 
     qreal TIME_TO_REMOVE_TRACK =
             (qreal)(SettingsTracker::NUMBER_OF_MISSING_PLOTS * SettingsTracker::SCAN_MSECS) + SettingsTracker::WAIT_INFO_MSECS;
@@ -53,10 +53,10 @@ private:
                         + SettingsTracker::WAIT_INFO_MSECS;
 
 
-    QList<Plot> mPlots;
-    QList<Airplane*> mAirplanes;
+    QList<Plot> m_plots;
+    QList<Airplane*> m_airplanes;
 
-    QTimer* mTimer;
+    QTimer* m_timer;
 };
 
 #endif // AIRPLANEHANDLER_H

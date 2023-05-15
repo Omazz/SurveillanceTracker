@@ -19,23 +19,23 @@ AirplaneHandler::AirplaneHandler() {
              << "\nAngle, deg: " << SettingsTracker::MANEUVER_ANGLE_DEG
              << "\n\nEnd settings!\n";
 
-    mMessageHandler = new MessageHandler(this);
-    connect(mMessageHandler, &MessageHandler::newPlot, this, &AirplaneHandler::onNewPlot);
+    m_messageHandler = new MessageHandler(this);
+    connect(m_messageHandler, &MessageHandler::newPlot, this, &AirplaneHandler::onNewPlot);
 
-    mTimer = new QTimer(this);
-    mTimer->setTimerType(Qt::PreciseTimer);
-    connect(mTimer, &QTimer::timeout, this, &AirplaneHandler::checkPlotsAndTracks);
-    mTimer->setInterval(TIME_TO_CHECK_MSECS);
-    mTimer->start();
+    m_timer = new QTimer(this);
+    m_timer->setTimerType(Qt::PreciseTimer);
+    connect(m_timer, &QTimer::timeout, this, &AirplaneHandler::checkPlotsAndTracks);
+    m_timer->setInterval(TIME_TO_CHECK_MSECS);
+    m_timer->start();
 }
 
 void AirplaneHandler::onNewPlot(Plot plot) {
 
-    mMessageHandler->sendDatagram(plot.asterixPlot().Data);
+    m_messageHandler->sendDatagram(plot.asterixPlot().Data);
 
     if(tryAddToTrack(plot) == false) {
         if(tryCreateTrack(plot) == false) {
-            mPlots.push_back(plot);
+            m_plots.push_back(plot);
         } else {
             //mMessageHandler->sendDatagram(plot.asterixPlot().Data);
         }
@@ -48,7 +48,7 @@ void AirplaneHandler::checkPlotsAndTracks() {
     qreal currentTime = QDateTime::currentMSecsSinceEpoch();
 
     /* Работа с плотами */
-    QMutableListIterator<Plot> plotsIterator(mPlots);
+    QMutableListIterator<Plot> plotsIterator(m_plots);
     while(plotsIterator.hasNext()) {
         Plot currentPlot = plotsIterator.next();
         if((currentTime - (1000.0 * currentPlot.time())) > TIME_TO_REMOVE_PLOT) {
@@ -57,7 +57,7 @@ void AirplaneHandler::checkPlotsAndTracks() {
     }
 
     /* Работа с траекторией */
-    QMutableListIterator<Airplane*> airplanesIterator(mAirplanes);
+    QMutableListIterator<Airplane*> airplanesIterator(m_airplanes);
     while(airplanesIterator.hasNext()) {
         Airplane* currentAirplane = airplanesIterator.next();
 
@@ -66,7 +66,7 @@ void AirplaneHandler::checkPlotsAndTracks() {
 
             qreal difTime = currentTime - (1000.0 * currentAirplane->measuredPlot().time());
 
-            mMessageHandler->sendDatagram(currentAirplane->getExtrapolationPlot());
+            m_messageHandler->sendDatagram(currentAirplane->getExtrapolationPlot());
 
             if(difTime > TIME_TO_REMOVE_TRACK) {
                 airplanesIterator.remove();
@@ -97,7 +97,7 @@ bool AirplaneHandler::tryCreateTrack(Plot plot) {
 }
 
 bool AirplaneHandler::tryAddToTrack(Plot plot) {
-    QMutableListIterator<Airplane*> airplanesIterator(mAirplanes);
+    QMutableListIterator<Airplane*> airplanesIterator(m_airplanes);
     while(airplanesIterator.hasNext()) {
         Airplane* currentAirplane = airplanesIterator.next();
 
@@ -107,8 +107,8 @@ bool AirplaneHandler::tryAddToTrack(Plot plot) {
 
         qreal difTime = plot.time() - airplanePlot.time();
 
-        qreal coefMinR = 1.0 - (SettingsTracker::COEF_STROBE_HOLD * currentAirplane->counterExtrapolations());
-        qreal coefMaxR = 1.0 + (SettingsTracker::COEF_STROBE_HOLD * currentAirplane->counterExtrapolations());
+        qreal coefMinR = 1.0 - ((SettingsTracker::COEF_STROBE_HOLD-1.0) * currentAirplane->counterExtrapolations());
+        qreal coefMaxR = 1.0 + ((SettingsTracker::COEF_STROBE_HOLD-1.0) * currentAirplane->counterExtrapolations());
         qreal Rmin = SettingsTracker::MIN_VELOCITY_M_SECS * difTime * coefMinR - ADDITION_TO_STROBE_HOLD_M;
         qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime * coefMaxR + ADDITION_TO_STROBE_HOLD_M;
 
@@ -117,7 +117,7 @@ bool AirplaneHandler::tryAddToTrack(Plot plot) {
         qreal differenceAngles = abs(angleBetweenTwoPoints - currentAirplane->directionAngle());
 
         qreal maxDeviationAngle = qDegreesToRadians(SettingsTracker::MAX_ANGLE_DEG) *
-                (1.0 + (SettingsTracker::COEF_STROBE_HOLD * currentAirplane->counterExtrapolations()));
+                (1.0 + ((SettingsTracker::COEF_STROBE_HOLD-1.0) * currentAirplane->counterExtrapolations()));
 
         if((differenceAngles - M_PI) > 0.1e-6) {
            differenceAngles = (2.0 * M_PI) - differenceAngles;
@@ -135,7 +135,7 @@ bool AirplaneHandler::tryAddToTrack(Plot plot) {
 
             currentAirplane->setTrack(plot);
 
-            mMessageHandler->sendDatagram(currentAirplane->getFilteredPlot());
+            m_messageHandler->sendDatagram(currentAirplane->getFilteredPlot());
 
             return true;
         }
@@ -153,8 +153,8 @@ void AirplaneHandler::incrementTrackNumber() {
 
 
 bool AirplaneHandler::tryCreateTrackBy2Plots(Plot plot) {
-    for(int i = mPlots.size() - 1; i >= 0; i--) {
-        Plot currentPlot = mPlots[i];
+    for(int i = m_plots.size() - 1; i >= 0; i--) {
+        Plot currentPlot = m_plots[i];
         qreal difX = pow(currentPlot.x() - plot.x(), 2.0);
         qreal difY = pow(currentPlot.y() - plot.y(), 2.0);
 
@@ -173,13 +173,13 @@ bool AirplaneHandler::tryCreateTrackBy2Plots(Plot plot) {
 
             Airplane* track = new Airplane({currentPlot, plot}, CURRENT_TRACK_NUMBER);
 
-            mAirplanes.append(track);
+            m_airplanes.append(track);
 
-            mMessageHandler->sendDatagram(track->getFilteredPlot());
+            m_messageHandler->sendDatagram(track->getFilteredPlot());
 
             incrementTrackNumber();
 
-            mPlots.removeAt(i);
+            m_plots.removeAt(i);
 
             return true;
         }
@@ -192,8 +192,8 @@ bool AirplaneHandler::tryCreateTrackBy3Plots(Plot plot) {
     Plot secondPlot;
     bool flag = false;
     int i;
-    for(i = mPlots.size() - 1; i >= 0; i--) {
-        Plot currentPlot = mPlots[i];
+    for(i = m_plots.size() - 1; i >= 0; i--) {
+        Plot currentPlot = m_plots[i];
         qreal difX = pow(currentPlot.x() - plot.x(), 2.0);
         qreal difY = pow(currentPlot.y() - plot.y(), 2.0);
 
@@ -225,7 +225,7 @@ bool AirplaneHandler::tryCreateTrackBy3Plots(Plot plot) {
     flag = false;
 
     for( ; i >= 0; i--) {
-        Plot currentPlot = mPlots[i];
+        Plot currentPlot = m_plots[i];
         qreal difX = pow(currentPlot.x() - secondPlot.x(), 2.0);
         qreal difY = pow(currentPlot.y() - secondPlot.y(), 2.0);
 
@@ -253,21 +253,21 @@ bool AirplaneHandler::tryCreateTrackBy3Plots(Plot plot) {
 
     Airplane* track = new Airplane({firstPlot, secondPlot, plot}, CURRENT_TRACK_NUMBER);
 
-    mAirplanes.append(track);
+    m_airplanes.append(track);
 
-    mMessageHandler->sendDatagram(track->getFilteredPlot());
+    m_messageHandler->sendDatagram(track->getFilteredPlot());
 
     incrementTrackNumber();
 
-    for(int i = 0; i < mPlots.size(); ++i) {
-        if(mPlots[i] == firstPlot) {
-            mPlots.removeAt(i);
+    for(int i = 0; i < m_plots.size(); ++i) {
+        if(m_plots[i] == firstPlot) {
+            m_plots.removeAt(i);
         }
     }
 
-    for(int i = 0; i < mPlots.size(); ++i) {
-        if(mPlots[i] == secondPlot) {
-            mPlots.removeAt(i);
+    for(int i = 0; i < m_plots.size(); ++i) {
+        if(m_plots[i] == secondPlot) {
+            m_plots.removeAt(i);
         }
     }
 
@@ -278,8 +278,8 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
     Plot thirdPlot;
     bool flag = false;
     int i;
-    for(i = mPlots.size() - 1; i >= 0; i--) {
-        Plot currentPlot = mPlots[i];
+    for(i = m_plots.size() - 1; i >= 0; i--) {
+        Plot currentPlot = m_plots[i];
         qreal difX = pow(currentPlot.x() - plot.x(), 2.0);
         qreal difY = pow(currentPlot.y() - plot.y(), 2.0);
 
@@ -310,7 +310,7 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
     flag = false;
 
     for( ; i >= 0; i--) {
-        Plot currentPlot = mPlots[i];
+        Plot currentPlot = m_plots[i];
         qreal difX = pow(currentPlot.x() - thirdPlot.x(), 2.0);
         qreal difY = pow(currentPlot.y() - thirdPlot.y(), 2.0);
 
@@ -341,7 +341,7 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
     flag = false;
 
     for( ; i >= 0; i--) {
-        Plot currentPlot = mPlots[i];
+        Plot currentPlot = m_plots[i];
         qreal difX = pow(currentPlot.x() - secondPlot.x(), 2.0);
         qreal difY = pow(currentPlot.y() - secondPlot.y(), 2.0);
 
@@ -369,27 +369,27 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
 
     Airplane* track = new Airplane({firstPlot, secondPlot, thirdPlot, plot}, CURRENT_TRACK_NUMBER);
 
-    mAirplanes.append(track);
+    m_airplanes.append(track);
 
-    mMessageHandler->sendDatagram(track->getFilteredPlot());
+    m_messageHandler->sendDatagram(track->getFilteredPlot());
 
     incrementTrackNumber();
 
-    for(int i = 0; i < mPlots.size(); ++i) {
-        if(mPlots[i] == firstPlot) {
-            mPlots.removeAt(i);
+    for(int i = 0; i < m_plots.size(); ++i) {
+        if(m_plots[i] == firstPlot) {
+            m_plots.removeAt(i);
         }
     }
 
-    for(int i = 0; i < mPlots.size(); ++i) {
-        if(mPlots[i] == secondPlot) {
-            mPlots.removeAt(i);
+    for(int i = 0; i < m_plots.size(); ++i) {
+        if(m_plots[i] == secondPlot) {
+            m_plots.removeAt(i);
         }
     }
 
-    for(int i = 0; i < mPlots.size(); ++i) {
-        if(mPlots[i] == thirdPlot) {
-            mPlots.removeAt(i);
+    for(int i = 0; i < m_plots.size(); ++i) {
+        if(m_plots[i] == thirdPlot) {
+            m_plots.removeAt(i);
         }
     }
 

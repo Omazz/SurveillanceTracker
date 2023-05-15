@@ -180,9 +180,37 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
 
     auto window = new GraphicsBuilderWidget();
     window->setAttribute(Qt::WA_DeleteOnClose);
+    QVector<QVector<qreal>> arrays = {resSigmaNoise};
+    QVector<QString> strings = {"Шум"};
+
+    if(ui->CB_ABfilter->isChecked()) {
+        arrays.append(resSigmaAlphaBetaFilter);
+        strings.append("Альфа-бета фильтр");
+    }
+
+    if(ui->CB_ABfilterMNK->isChecked()) {
+        arrays.append(resSigmaAlphaBetaFilter_MNK);
+        strings.append("Альфа-бета фильтр МНК");
+    }
+
+    if(ui->CB_KalmanFilterCV->isChecked()) {
+        arrays.append(resSigmaKalmanFilterCV);
+        strings.append("Фильтр Калмана CV");
+    }
+
+    if(ui->CB_KalmanFilterCA->isChecked()) {
+        arrays.append(resSigmaKalmanFilterCA);
+        strings.append("Фильтр Калмана CA");
+    }
+
+    if(ui->CB_AdaptiveKalmanFilterCV->isChecked()) {
+        arrays.append(resSigmaAdaptiveKalmanFilterCV);
+        strings.append("Адаптивный фильтр Калмана CV");
+    }
+
     window->setData("Состояние модели", "СКО, метры", step,
-                    {resSigmaNoise, resSigmaAlphaBetaFilter, resSigmaAlphaBetaFilter_MNK, resSigmaKalmanFilterCV, resSigmaKalmanFilterCA, resSigmaAdaptiveKalmanFilterCV},
-                    {"Шум", "Альфа-бета фильтр", "Альфа-бета фильтр МНК", "Фильтр Калмана CV", "Фильтр Калмана CA", "Адаптивный фильтр Калмана CV"});
+                    arrays,
+                    strings);
     window->setWindowModality(Qt::WindowModality::ApplicationModal);
 
     window->show();

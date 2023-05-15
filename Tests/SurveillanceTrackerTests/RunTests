@@ -8,4 +8,7 @@ TestAsterixHandler:
 
 TestFilters:
 	./../../ProgramBuilds/TEST-Filters/TestFilters
+	
+TestSettingsTracker:
+	./../../ProgramBuilds/TEST-SettingsTracker/TestSettingsTracker
 

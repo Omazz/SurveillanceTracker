@@ -3,4 +3,5 @@ TEMPLATE = subdirs
 SUBDIRS += \
     ../TestFilters \
     ../TestEncryptionTools \
-    ../TestAsterixHandler
+    ../TestAsterixHandler \
+    ../TestSettings
