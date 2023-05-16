@@ -32,7 +32,7 @@ public:
     void incrementTrackNumber();
 
 public slots:
-    void onNewPlot(Plot plot);
+    bool onNewPlot(Plot plot);
 
     void checkPlotsAndTracks();
 

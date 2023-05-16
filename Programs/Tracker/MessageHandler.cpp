@@ -10,11 +10,10 @@ MessageHandler::MessageHandler(QObject* parent) : QObject(parent)
     connect(mSocket, &QUdpSocket::readyRead, this, &MessageHandler::readDatagram);
 }
 
-
-
-
 void MessageHandler::sendDatagram(QByteArray dataToSend) {
-
+    if(dataToSend.isEmpty()) {
+        return;
+    }
     //mSocket->writeDatagram(dataToSend.data(), dataToSend.size(), QHostAddress::LocalHost, 12223);
     ByteBlock blocksToSend((BYTE*)dataToSend.data(), dataToSend.size());
     ByteBlock encryptionBlocks;

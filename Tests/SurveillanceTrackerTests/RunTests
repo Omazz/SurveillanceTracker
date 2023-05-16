@@ -1,4 +1,4 @@
-all: TestEncryptionTools TestAsterixHandler TestFilters
+all: TestEncryptionTools TestAsterixHandler TestFilters TestSettingsTracker TestTracker
 
 TestEncryptionTools:
 	./../../ProgramBuilds/TEST-EncryptionTools/TestEncryptionTools
@@ -11,4 +11,7 @@ TestFilters:
 	
 TestSettingsTracker:
 	./../../ProgramBuilds/TEST-SettingsTracker/TestSettingsTracker
+
+TestTracker:
+	./../../ProgramBuilds/TEST-Tracker/TestTracker
 

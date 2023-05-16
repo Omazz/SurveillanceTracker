@@ -155,5 +155,43 @@ jobs:
     - name: Create executable test filters file
       run: cd ./Tests/TestFilters/ && make
 
-    - name: Run test filters
-      run: cd ./ProgramBuilds/TEST-Filters/ && ./TestFilters
+  test_settings:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+  
+    - name: Build qmake-file test settings
+      run: cd ./Tests/TestSettings/ && qmake TestSettings.pro
+    
+    - name: Create executable test settings file
+      run: cd ./Tests/TestSettings/ && make
+
+    - name: Run test settings
+      run: cd ./ProgramBuilds/TEST-Settings/ && ./TestSettings
+      
+  test_tracker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install libpcap
+      run: sudo apt-get install libpcap-dev
+      
+    - name: Install Qt
+      run: sudo apt install -y qtcreator qtbase5-dev qt5-qmake cmake
+    
+    - name: Get repository code
+      uses: actions/checkout@v3
+  
+    - name: Build qmake-file test tracker
+      run: cd ./Tests/TestTracker/ && qmake TestTracker.pro
+    
+    - name: Create executable test tracker file
+      run: cd ./Tests/TestTracker/ && make
+
+    - name: Run test tracker
+      run: cd ./ProgramBuilds/TEST-Tracker/ && ./TestTracker

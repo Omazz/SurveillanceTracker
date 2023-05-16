@@ -4,4 +4,5 @@ SUBDIRS += \
     ../TestFilters \
     ../TestEncryptionTools \
     ../TestAsterixHandler \
-    ../TestSettings
+    ../TestSettings \
+    ../TestTracker
