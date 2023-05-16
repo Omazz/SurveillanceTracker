@@ -172,7 +172,7 @@ jobs:
       run: cd ./Tests/TestSettings/ && make
 
     - name: Run test settings
-      run: cd ./ProgramBuilds/TEST-Settings/ && ./TestSettings
+      run: cd ./ProgramBuilds/TEST-SettingsTracker/ && ./TestSettingsTracker
       
   test_tracker:
     runs-on: ubuntu-latest
