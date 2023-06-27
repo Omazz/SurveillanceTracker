@@ -10,11 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     RadarView.cpp \
+    TargetItem.cpp \
     mainwindow.cpp \
     main.cpp
 
 HEADERS += \
     RadarView.h \
+    TargetItem.h \
     mainwindow.h
 
 FORMS += \

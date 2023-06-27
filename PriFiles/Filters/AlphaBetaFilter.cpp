@@ -10,8 +10,8 @@ void AlphaBetaFilter::initialization(QVector<Target> array) {
 
     m_numberOfSteps = array.size();
 
-    m_alpha = 2.0 * ((2.0 * m_numberOfSteps) - 1.0) / (m_numberOfSteps * (m_numberOfSteps + 1.0));
-    m_beta = 6.0 / (m_numberOfSteps * (m_numberOfSteps + 1.0));
+    m_alpha = static_cast<qreal>(2.0 * ((2.0 * m_numberOfSteps) - 1.0) / (m_numberOfSteps * (m_numberOfSteps + 1.0)));
+    m_beta = static_cast<qreal>(6.0 / (m_numberOfSteps * (m_numberOfSteps + 1.0)));
 
     m_filteredTarget = array.last();
 }
@@ -20,8 +20,8 @@ Target AlphaBetaFilter::filterMeasuredValue(Target measurement) {
     Target extrapolation = extrapolateOnTime(measurement.time);
 
     if(m_numberOfSteps < m_maximumNumberOfSteps) {
-        m_alpha = 2.0 * ((2.0 * m_numberOfSteps) - 1.0) / (m_numberOfSteps * (m_numberOfSteps + 1.0));
-        m_beta = 6.0 / (m_numberOfSteps * (m_numberOfSteps + 1.0));
+        m_alpha = static_cast<qreal>(2.0 * ((2.0 * m_numberOfSteps) - 1.0) / (m_numberOfSteps * (m_numberOfSteps + 1.0)));
+        m_beta = static_cast<qreal>(6.0 / (m_numberOfSteps * (m_numberOfSteps + 1.0)));
     }
 
     QPointF filteredCoordinate = extrapolation.coordinate +

@@ -42,8 +42,8 @@ void RadarView::keyPressEvent(QKeyEvent* event) {
         resetTransform();
         zoom(1 / ZOOM_FACTOR);
     } else if(event->key() == Qt::Key_R || event->key() == 1050) { // 1050 -- это К (русская раскладка)
-        m_dragged = !m_dragged;
-        if(m_dragged) {
+        m_isDraggedMode = !m_isDraggedMode;
+        if(m_isDraggedMode) {
             setDragMode(QGraphicsView::ScrollHandDrag);
         } else {
             setDragMode(QGraphicsView::RubberBandDrag);
@@ -81,6 +81,6 @@ void RadarView::mouseReleaseEvent(QMouseEvent* event) {
             }
         }
         setDragMode(QGraphicsView::ScrollHandDrag);
-        m_dragged = !m_dragged;
+        m_isDraggedMode = !m_isDraggedMode;
     }
 }

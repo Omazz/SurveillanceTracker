@@ -83,44 +83,32 @@ bool AirplaneHandler::tryCreateTrack(Plot plot) {
 }
 
 bool AirplaneHandler::tryAddToTrack(Plot plot) {
+    qreal currentTime = static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) / 1000.0;
+    qreal x = plot.x();
+    qreal y = plot.y();
+
     QMutableListIterator<Airplane*> airplanesIterator(m_airplanes);
     while(airplanesIterator.hasNext()) {
         Airplane* currentAirplane = airplanesIterator.next();
 
-        Plot airplanePlot = currentAirplane->filteredPlot();
-        qreal difX = pow(airplanePlot.x() - plot.x(), 2.0);
-        qreal difY = pow(airplanePlot.y() - plot.y(), 2.0);
+        Plot extrapolatedPlot = currentAirplane->doExtrapolation(currentTime).first;
+        qreal x0 = extrapolatedPlot.x();
+        qreal y0 = extrapolatedPlot.y();
+        qreal rho = extrapolatedPlot.range();
+        qreal meanDeviation = qSqrt(qPow(SettingsTracker::MEAN_DEVIATION_RHO_M, 2) +
+                                    qPow(rho * SettingsTracker::MEAN_DEVIATION_ANGLE_RAD, 2));
+        qreal numberExtrapolations = currentAirplane->counterExtrapolations();
+        qreal increaseCoef = 1.0 + ((SettingsTracker::COEF_STROBE_HOLD - 1.0) * numberExtrapolations);
+        qreal R = 3.5 * meanDeviation * increaseCoef;
 
-        qreal difTime = plot.time() - airplanePlot.time();
+        qreal differenceDopplerFreq = qAbs(extrapolatedPlot.frequencyDoppler() - plot.frequencyDoppler());
+        qreal differenceAmplitude = qAbs(extrapolatedPlot.amplitude() - plot.amplitude());
 
-        qreal coefMinR = 1.0 - ((SettingsTracker::COEF_STROBE_HOLD-1.0) * currentAirplane->counterExtrapolations());
-        qreal coefMaxR = 1.0 + ((SettingsTracker::COEF_STROBE_HOLD-1.0) * currentAirplane->counterExtrapolations());
-        qreal Rmin = SettingsTracker::MIN_VELOCITY_M_SECS * difTime * coefMinR - ADDITION_TO_STROBE_HOLD_M;
-        qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime * coefMaxR + ADDITION_TO_STROBE_HOLD_M;
-
-        qreal angleBetweenTwoPoints = qDegreesToRadians(Plot::fromDecartToPolar(plot.y() - airplanePlot.y(),
-                                                                                plot.x() - airplanePlot.x()).second);
-        qreal differenceAngles = abs(angleBetweenTwoPoints - currentAirplane->directionAngle());
-
-        qreal maxDeviationAngle = qDegreesToRadians(SettingsTracker::MAX_ANGLE_DEG) *
-                (1.0 + ((SettingsTracker::COEF_STROBE_HOLD-1.0) * currentAirplane->counterExtrapolations()));
-
-        if((differenceAngles - M_PI) > 0.1e-6) {
-           differenceAngles = (2.0 * M_PI) - differenceAngles;
-        }
-
-        qreal differenceDopplerFreq = qAbs(airplanePlot.frequencyDoppler() - plot.frequencyDoppler());
-
-        qreal differenceAmplitude = qAbs(airplanePlot.amplitude() - plot.amplitude());
-
-        if(((difX + difY) >= qPow(Rmin, 2.0)) &&
-           ((difX + difY) <= qPow(Rmax, 2.0)) &&
-            (differenceAngles < maxDeviationAngle)) {// &&
+        if((qPow(x-x0, 2) + qPow(y-y0, 2)) <= qPow(R, 2.0)) {// &&
 //            (differenceDopplerFreq < TrackerSettings::MAX_DIF_DOPPLER_FREQ_HOLD_HZ) &&
 //            (differenceAmplitude < TrackerSettings::MAX_DIF_AMPLITUDE_HOLD)) {
 
             currentAirplane->setTrack(plot);
-
             m_messageHandler->sendDatagram(currentAirplane->getFilteredPlot());
 
             return true;

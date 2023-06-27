@@ -11,6 +11,7 @@
 #include "../../PriFiles/Filters/AdaptiveKalmanConstVelocityFilter.h"
 #include "../../PriFiles/GraphUI/GraphicsBuilderWidget.h"
 #include "RadarView.h"
+#include "TargetItem.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -27,8 +28,7 @@ const QColor WHITE = QColor(0xF6F1F1);
 const QColor GRAY = QColor(0x464646);
 
 const qint16 RADAR_RANGE_KM = 500;
-const qreal SECTOR_RANGE_KM = 50.0;
-const qreal SECTOR_ANGLE_DEG = 30.0;
+const quint8 SECTOR_COUNT = 32;
 
 
 const qreal PEN_TRAJECTORY_WIDTH = 1;
@@ -87,6 +87,9 @@ private:;
     QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets, uint16_t k_max,
                                                            qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
                                                            qreal sigmaNoiseVelocity);
+
+    QPointF polarToCart(qreal rho, qreal theta);
+
     QVector<QPointF> mTrajectoryOriginal;
     QVector<QVector<QPointF>> mTrackWithNoise;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilter;
@@ -97,6 +100,6 @@ private:;
 
 
     Ui::MainWindow *ui;
-    QGraphicsScene* mGraphicsScene;
+    QGraphicsScene* m_graphicsScene;
 };
 #endif // MAINWINDOW_H

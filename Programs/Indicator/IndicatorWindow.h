@@ -5,7 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSimpleTextItem>
 #include <QtCore>
-
+#include <QTimer>
 #include "MessageHandler.h"
 #include "RadarView.h"
 #include "TargetItem.h"
@@ -27,6 +27,17 @@ const int TIME_TO_REMOVE_PLOT = 5000;
 const int TIME_TO_REMOVE_TRACK = 50000;
 
 const quint8 PEN_INDICATOR_WIDTH = 1;
+
+
+struct TargetWithTimer{
+    QSharedPointer<TargetItem> target;
+    QSharedPointer<QTimer> timer;
+
+    TargetWithTimer(TargetItem* t, QTimer* tm) :
+            target(t),
+            timer(tm)
+    {}
+};
 
 class IndicatorWindow : public QMainWindow
 {
@@ -52,17 +63,21 @@ public slots:
 
     void onVisiblePlotsChanged();
 
+    void onTimeoutPlot();
+
+    void onTimeoutTrack();
+
 private:
     Ui::IndicatorWindow *ui;
-    QGraphicsScene* mGraphicsScene;
+    QGraphicsScene* m_graphicsScene;
+    QGraphicsLineItem* m_line;
+    QVector<QGraphicsEllipseItem*> m_sectors;
 
-    QGraphicsLineItem* mLine;
-    QVector<QGraphicsEllipseItem*> mSectors;
-    QList<std::pair<TargetItem*, QTimer*>> mPlots;
-    QList<std::pair<TargetItem*, QTimer*>> mTracks;
+    QList<TargetWithTimer> m_plots;
+    QList<TargetWithTimer> m_tracks;
 
-    bool mPlotsIsVisible = true;
+    bool m_plotsIsVisible = true;
 
-    MessageHandler* mMessageHandler;
+    QScopedPointer<MessageHandler> m_messageHandler;
 };
 #endif // INDICATORWINDOW_H

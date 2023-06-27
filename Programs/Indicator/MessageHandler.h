@@ -29,10 +29,10 @@ signals:
     void newExtrapolatedTrack(qreal x_km, qreal y_km, qreal directionAngle_rad);
 
 private:
-    ByteBlock mKey;
-    ByteBlock mIV;
-    Streebog mStreebog;
-    QUdpSocket* _socket;
+    ByteBlock m_key;
+    ByteBlock m_iv;
+    Streebog m_streebog;
+    QScopedPointer<QUdpSocket> m_socket;
 };
 
 #endif // MESSAGEHANDLER_H

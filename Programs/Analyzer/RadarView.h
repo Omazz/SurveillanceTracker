@@ -21,8 +21,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
-    bool m_dragged = true;
-    QPointF m_previousMousePos;
+    bool m_isDraggedMode = true;
+    QPointF is_previousMousePosition;
 
     void zoom(qreal factor);
 };

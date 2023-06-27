@@ -66,7 +66,7 @@ void MessageHandler::readDatagram() {
 
 
             if(record48.TargetReportDescriptor.size() == 0 ||
-               record48.TargetReportDescriptor.front() != PRIMARY_SURVEILLIANCE ) {
+               (record48.TargetReportDescriptor.front() != 0xA0)) {//(record48.TargetReportDescriptor.front() != PRIMARY_SURVEILLIANCE)) {
                return;
             }
 
@@ -74,12 +74,12 @@ void MessageHandler::readDatagram() {
 
             emit newPlot(convertFromDatagramToPlot(record48));
 
-//            qDebug() << Qt::hex
-//                     << "\nRecord Asterix48"
-//                     << "\nFSPEC:" << record48.FSPEC
-//                     << "\nDataSourceIdentifier:" << record48.DataSourceIdentifier
-//                     << "\nTimeOfDay:" << record48.TimeOfDay
-//                     << "\nMeasuredPositionInSlantPolarCoordinates:" << record48.MeasuredPositionInSlantPolarCoordinates << "\n";
+            qDebug() << Qt::hex
+                     << "\nRecord Asterix48"
+                     << "\nFSPEC:" << record48.FSPEC
+                     << "\nDataSourceIdentifier:" << record48.DataSourceIdentifier
+                     << "\nTimeOfDay:" << record48.TimeOfDay
+                     << "\nMeasuredPositionInSlantPolarCoordinates:" << record48.MeasuredPositionInSlantPolarCoordinates << "\n";
         }
     }
 }

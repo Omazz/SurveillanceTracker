@@ -11,14 +11,15 @@ qreal SettingsTracker::SCAN_MSECS;
 qreal SettingsTracker::WAIT_INFO_MSECS;
 
 /* LOCK PARAMETERS */
+qreal SettingsTracker::MIN_VELOCITY_M_SECS;
+qreal SettingsTracker::MAX_VELOCITY_M_SECS;
 quint8 SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK;
 quint8 SettingsTracker::NUMBER_OF_SCANS_TO_LOCK;
 
 /* HOLD PARAMETERS */
+qreal SettingsTracker::MEAN_DEVIATION_RHO_M;
+qreal SettingsTracker::MEAN_DEVIATION_ANGLE_RAD;
 quint8 SettingsTracker::NUMBER_OF_MISSING_PLOTS;
-qreal SettingsTracker::MIN_VELOCITY_M_SECS;
-qreal SettingsTracker::MAX_VELOCITY_M_SECS;
-qreal SettingsTracker::MAX_ANGLE_DEG;
 qreal SettingsTracker::COEF_STROBE_HOLD;
 
 /* MANEUVER PARAMETERS */
@@ -35,7 +36,6 @@ void SettingsTracker::initialization() {
     _settings = new QSettings("PetProjects", "SurveillanceTracker");
 
     if(_settings->childGroups().isEmpty()) {
-
         /* ENCRYPTION PARAMETERS */
         KEY = DEFAULT_KEY;
         INITIALIZING_VECTOR = DEFAULT_INITIALIZING_VECTOR;
@@ -45,14 +45,15 @@ void SettingsTracker::initialization() {
         WAIT_INFO_MSECS = DEFAULT_WAIT_INFO_MSECS;
 
         /* LOCK PARAMETERS */
+        MIN_VELOCITY_M_SECS = DEFAULT_MIN_VELOCITY_M_SECS;
+        MAX_VELOCITY_M_SECS = DEFAULT_MAX_VELOCITY_M_SECS;
         NUMBER_OF_PLOTS_TO_LOCK = DEFAULT_NUMBER_OF_PLOTS_TO_LOCK;
         NUMBER_OF_SCANS_TO_LOCK = DEFAULT_NUMBER_OF_SCANS_TO_LOCK;
 
         /* HOLD PARAMETERS */
+        MEAN_DEVIATION_RHO_M = DEFAULT_MEAN_DEVIATION_RHO_M;
+        MEAN_DEVIATION_ANGLE_RAD = qDegreesToRadians(DEFAULT_MEAN_DEVIATION_ANGLE_ARCMIN / 60.0);
         NUMBER_OF_MISSING_PLOTS = DEFAULT_NUMBER_OF_MISSING_PLOTS;
-        MIN_VELOCITY_M_SECS = DEFAULT_MIN_VELOCITY_M_SECS;
-        MAX_VELOCITY_M_SECS = DEFAULT_MAX_VELOCITY_M_SECS;
-        MAX_ANGLE_DEG = DEFAULT_MAX_ANGLE_DEG;
         COEF_STROBE_HOLD = DEFAULT_COEF_STROBE_HOLD;
 
         /* MANEUVER PARAMETERS */
@@ -73,16 +74,17 @@ void SettingsTracker::initialization() {
 
         /* LOCK PARAMETERS */
         _settings->beginGroup("LOCK_PARAMETERS");
+        _settings->setValue("MIN_VELOCITY_M_SECS", MIN_VELOCITY_M_SECS);
+        _settings->setValue("MAX_VELOCITY_M_SECS", MAX_VELOCITY_M_SECS);
         _settings->setValue("NUMBER_OF_PLOTS_TO_LOCK", NUMBER_OF_PLOTS_TO_LOCK);
         _settings->setValue("NUMBER_OF_SCANS_TO_LOCK", NUMBER_OF_SCANS_TO_LOCK);
         _settings->endGroup();
 
         /* HOLD PARAMETERS */
         _settings->beginGroup("HOLD_PARAMETERS");
+        _settings->setValue("MEAN_DEVIATION_RHO_M", MEAN_DEVIATION_RHO_M);
+        _settings->setValue("MEAN_DEVIATION_ANGLE_ARCMIN", qRound(qRadiansToDegrees(MEAN_DEVIATION_ANGLE_RAD) * 60.0));
         _settings->setValue("NUMBER_OF_MISSING_PLOTS", NUMBER_OF_MISSING_PLOTS);
-        _settings->setValue("MIN_VELOCITY_M_SECS", MIN_VELOCITY_M_SECS);
-        _settings->setValue("MAX_VELOCITY_M_SECS", MAX_VELOCITY_M_SECS);
-        _settings->setValue("MAX_ANGLE_DEG", MAX_ANGLE_DEG);
         _settings->setValue("COEF_STROBE_HOLD", COEF_STROBE_HOLD);
         _settings->endGroup();
 
@@ -92,14 +94,13 @@ void SettingsTracker::initialization() {
         _settings->setValue("MANEUVER_ANGLE_DEG", MANEUVER_ANGLE_DEG);
         _settings->endGroup();
     } else {
-
         /* ENCRYPTION PARAMETERS */
         _settings->beginGroup("ENCRYPTION_PARAMETERS");
         KEY = _settings->value("KEY", DEFAULT_KEY).toString();
         INITIALIZING_VECTOR = _settings->value("INITIALIZING_VECTOR", DEFAULT_INITIALIZING_VECTOR).toString();
         _settings->endGroup();
 
-        /* ANTENNA SYSTEM PARAMETERS*/
+        /* ANTENNA SYSTEM PARAMETERS */
         _settings->beginGroup("ANTENNA_SYSTEM_PARAMETERS");
         SCAN_MSECS = _settings->value("SCAN_MSECS", DEFAULT_SCAN_MSECS).toDouble();
         WAIT_INFO_MSECS = _settings->value("WAIT_INFO_MSECS", DEFAULT_WAIT_INFO_MSECS).toDouble();
@@ -107,16 +108,17 @@ void SettingsTracker::initialization() {
 
         /* LOCK PARAMETERS */
         _settings->beginGroup("LOCK_PARAMETERS");
+        MIN_VELOCITY_M_SECS = _settings->value("MIN_VELOCITY_M_SECS", DEFAULT_MIN_VELOCITY_M_SECS).toDouble();
+        MAX_VELOCITY_M_SECS = _settings->value("MAX_VELOCITY_M_SECS", DEFAULT_MAX_VELOCITY_M_SECS).toDouble();
         NUMBER_OF_PLOTS_TO_LOCK = _settings->value("NUMBER_OF_PLOTS_TO_LOCK", DEFAULT_NUMBER_OF_PLOTS_TO_LOCK).toUInt();
         NUMBER_OF_SCANS_TO_LOCK = _settings->value("NUMBER_OF_SCANS_TO_LOCK", DEFAULT_NUMBER_OF_SCANS_TO_LOCK).toUInt();
         _settings->endGroup();
 
         /* HOLD PARAMETERS */
         _settings->beginGroup("HOLD_PARAMETERS");
+        MEAN_DEVIATION_RHO_M = _settings->value("MEAN_DEVIATION_RHO_M", DEFAULT_MEAN_DEVIATION_RHO_M).toDouble();
+        MEAN_DEVIATION_ANGLE_RAD = qDegreesToRadians(_settings->value("MEAN_DEVIATION_ANGLE_ARCMIN", DEFAULT_MEAN_DEVIATION_ANGLE_ARCMIN).toDouble() / 60.0);
         NUMBER_OF_MISSING_PLOTS = _settings->value("NUMBER_OF_MISSING_PLOTS", DEFAULT_NUMBER_OF_MISSING_PLOTS).toUInt();
-        MIN_VELOCITY_M_SECS = _settings->value("MIN_VELOCITY_M_SECS", DEFAULT_MIN_VELOCITY_M_SECS).toDouble();
-        MAX_VELOCITY_M_SECS = _settings->value("MAX_VELOCITY_M_SECS", DEFAULT_MAX_VELOCITY_M_SECS).toDouble();
-        MAX_ANGLE_DEG = _settings->value("MAX_ANGLE_DEG", DEFAULT_MAX_ANGLE_DEG).toDouble();
         COEF_STROBE_HOLD = _settings->value("COEF_STROBE_HOLD", DEFAULT_COEF_STROBE_HOLD).toDouble();
         _settings->endGroup();
 
@@ -143,16 +145,17 @@ void SettingsTracker::saveParameters() {
 
     /* LOCK PARAMETERS */
     _settings->beginGroup("LOCK_PARAMETERS");
+    _settings->setValue("MIN_VELOCITY_M_SECS", MIN_VELOCITY_M_SECS);
+    _settings->setValue("MAX_VELOCITY_M_SECS", MAX_VELOCITY_M_SECS);
     _settings->setValue("NUMBER_OF_PLOTS_TO_LOCK", NUMBER_OF_PLOTS_TO_LOCK);
     _settings->setValue("NUMBER_OF_SCANS_TO_LOCK", NUMBER_OF_SCANS_TO_LOCK);
     _settings->endGroup();
 
     /* HOLD PARAMETERS */
     _settings->beginGroup("HOLD_PARAMETERS");
+    _settings->setValue("MEAN_DEVIATION_RHO_M", MEAN_DEVIATION_RHO_M);
+    _settings->setValue("MEAN_DEVIATION_ANGLE_ARCMIN", qRound(qRadiansToDegrees(MEAN_DEVIATION_ANGLE_RAD) * 60.0));
     _settings->setValue("NUMBER_OF_MISSING_PLOTS", NUMBER_OF_MISSING_PLOTS);
-    _settings->setValue("MIN_VELOCITY_M_SECS", MIN_VELOCITY_M_SECS);
-    _settings->setValue("MAX_VELOCITY_M_SECS", MAX_VELOCITY_M_SECS);
-    _settings->setValue("MAX_ANGLE_DEG", MAX_ANGLE_DEG);
     _settings->setValue("COEF_STROBE_HOLD", COEF_STROBE_HOLD);
     _settings->endGroup();
 

@@ -33,6 +33,8 @@ void SettingsWindow::loadSettings() {
     ui->DSB_waitInfo->setValue(qRound(SettingsTracker::WAIT_INFO_MSECS));
 
     /* LOCK PARAMETERS */
+    ui->DSB_velocityMin->setValue(SettingsTracker::MIN_VELOCITY_M_SECS);
+    ui->DSB_velocityMax->setValue(SettingsTracker::MAX_VELOCITY_M_SECS);
     if(SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK == 2 &&
        SettingsTracker::NUMBER_OF_SCANS_TO_LOCK == 2) {
 
@@ -65,12 +67,10 @@ void SettingsWindow::loadSettings() {
 
     }
 
-
     /* HOLD PARAMETERS */
+    ui->SB_meanDeviationRho->setValue(SettingsTracker::MEAN_DEVIATION_RHO_M);
+    ui->SB_meanDeviationAngle->setValue(qRound(qRadiansToDegrees(SettingsTracker::MEAN_DEVIATION_ANGLE_RAD) * 60.0));
     ui->SB_numberExtrapolations->setValue(SettingsTracker::NUMBER_OF_MISSING_PLOTS);
-    ui->DSB_velocityMin->setValue(SettingsTracker::MIN_VELOCITY_M_SECS);
-    ui->DSB_velocityMax->setValue(SettingsTracker::MAX_VELOCITY_M_SECS);
-    ui->DSB_difAngle->setValue(SettingsTracker::MAX_ANGLE_DEG);
     ui->DSB_coefStrobeHold->setValue(SettingsTracker::COEF_STROBE_HOLD);
 
     /* MANEUVER PARAMETERS */
@@ -97,6 +97,8 @@ void SettingsWindow::saveSettings() {
     SettingsTracker::WAIT_INFO_MSECS = ui->DSB_waitInfo->value();
 
     /* LOCK PARAMETERS */
+    SettingsTracker::MIN_VELOCITY_M_SECS = ui->DSB_velocityMin->value();
+    SettingsTracker::MAX_VELOCITY_M_SECS = ui->DSB_velocityMax->value();
     if(ui->RB_2_2->isChecked()) {
         SettingsTracker::NUMBER_OF_PLOTS_TO_LOCK = 2;
         SettingsTracker::NUMBER_OF_SCANS_TO_LOCK = 2;
@@ -118,10 +120,9 @@ void SettingsWindow::saveSettings() {
     }
 
     /* HOLD PARAMETERS */
+    SettingsTracker::MEAN_DEVIATION_RHO_M = ui->SB_meanDeviationRho->value();
+    SettingsTracker::MEAN_DEVIATION_ANGLE_RAD = qDegreesToRadians(ui->SB_meanDeviationAngle->value() / 60.0);
     SettingsTracker::NUMBER_OF_MISSING_PLOTS = ui->SB_numberExtrapolations->value();
-    SettingsTracker::MIN_VELOCITY_M_SECS = ui->DSB_velocityMin->value();
-    SettingsTracker::MAX_VELOCITY_M_SECS = ui->DSB_velocityMax->value();
-    SettingsTracker::MAX_ANGLE_DEG = ui->DSB_difAngle->value();
     SettingsTracker::COEF_STROBE_HOLD = ui->DSB_coefStrobeHold->value();
 
     /* MANEUVER PARAMETERS */
@@ -152,6 +153,8 @@ void SettingsWindow::on_PB_load_clicked() {
 
             /* LOCK PARAMETERS */
             settings.beginGroup("LOCK_PARAMETERS");
+            ui->DSB_velocityMin->setValue(settings.value("MIN_VELOCITY_M_SECS").toDouble());
+            ui->DSB_velocityMax->setValue(settings.value("MAX_VELOCITY_M_SECS").toDouble());
             if(settings.value("NUMBER_OF_PLOTS_TO_LOCK").toUInt() == 2 &&
                     settings.value("NUMBER_OF_SCANS_TO_LOCK").toUInt() == 2) {
 
@@ -187,10 +190,9 @@ void SettingsWindow::on_PB_load_clicked() {
 
             /* HOLD PARAMETERS */
             settings.beginGroup("HOLD_PARAMETERS");
+            ui->SB_meanDeviationRho->setValue(settings.value("MEAN_DEVIATION_RHO_M").toUInt());
+            ui->SB_meanDeviationAngle->setValue(settings.value("MEAN_DEVIATION_ANGLE_ARCMIN").toUInt());
             ui->SB_numberExtrapolations->setValue(settings.value("NUMBER_OF_MISSING_PLOTS").toUInt());
-            ui->DSB_velocityMin->setValue(settings.value("MIN_VELOCITY_M_SECS").toDouble());
-            ui->DSB_velocityMax->setValue(settings.value("MAX_VELOCITY_M_SECS").toDouble());
-            ui->DSB_difAngle->setValue(settings.value("MAX_ANGLE_DEG").toDouble());
             ui->DSB_coefStrobeHold->setValue(settings.value("COEF_STROBE_HOLD").toDouble());
             settings.endGroup();
 
@@ -234,6 +236,8 @@ void SettingsWindow::on_PB_save_clicked() {
 
             /* LOCK PARAMETERS */
             settings.beginGroup("LOCK_PARAMETERS");
+            settings.setValue("MIN_VELOCITY_M_SECS", ui->DSB_velocityMin->value());
+            settings.setValue("MAX_VELOCITY_M_SECS", ui->DSB_velocityMax->value());
             if(ui->RB_2_2->isChecked()) {
                 settings.setValue("NUMBER_OF_PLOTS_TO_LOCK", 2);
                 settings.setValue("NUMBER_OF_SCANS_TO_LOCK", 2);
@@ -257,10 +261,9 @@ void SettingsWindow::on_PB_save_clicked() {
 
             /* HOLD PARAMETERS */
             settings.beginGroup("HOLD_PARAMETERS");
+            settings.setValue("MEAN_DEVIATION_RHO_M", ui->SB_meanDeviationRho->value());
+            settings.setValue("MEAN_DEVIATION_ANGLE_ARCMIN", ui->SB_meanDeviationAngle->value());
             settings.setValue("NUMBER_OF_MISSING_PLOTS", ui->SB_numberExtrapolations->value());
-            settings.setValue("MIN_VELOCITY_M_SECS", ui->DSB_velocityMin->value());
-            settings.setValue("MAX_VELOCITY_M_SECS", ui->DSB_velocityMax->value());
-            settings.setValue("MAX_ANGLE_DEG", ui->DSB_difAngle->value());
             settings.setValue("COEF_STROBE_HOLD", ui->DSB_coefStrobeHold->value());
             settings.endGroup();
 

@@ -23,8 +23,8 @@ private:
 
     qreal m_alpha;
     qreal m_beta;
-    quint16 m_numberOfSteps;
-    quint16 m_maximumNumberOfSteps;
+    qreal m_numberOfSteps;
+    qreal m_maximumNumberOfSteps;
 };
 
 #endif // ALPHABETAFILTER_H

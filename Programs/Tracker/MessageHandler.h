@@ -13,6 +13,7 @@
 
 static const quint8 PRIMARY_SURVEILLIANCE = 0x20;
 static const quint8 SECONDARY_SURVEILLIANCE = 0x40;
+static const quint8 TEST_SURVEILLIANCE = 0xA0;
 
 class MessageHandler : public QObject
 {

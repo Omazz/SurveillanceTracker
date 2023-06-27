@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::RadarWindow *ui;
-    QUdpSocket* _udpSocket;
-    bool _isWorking = true;
+    QScopedPointer<QUdpSocket> m_udpSocket;
+    bool m_isWorking = true;
 };
 #endif // RadarWindow_H

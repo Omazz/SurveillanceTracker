@@ -9,15 +9,23 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setFixedSize(this->width(), this->height());
 
-    mGraphicsScene = new QGraphicsScene();
+    m_graphicsScene = new QGraphicsScene();
 
-    mGraphicsScene->setSceneRect(
+    m_graphicsScene->setSceneRect(
         -RADAR_RANGE_KM, -RADAR_RANGE_KM,
         RADAR_RANGE_KM * 2, RADAR_RANGE_KM * 2
     );
 
-    ui->GW_locator->setScene(mGraphicsScene);
-    mGraphicsScene->setBackgroundBrush(QBrush(BLUE));
+    ui->GW_locator->setScene(m_graphicsScene);
+    m_graphicsScene->setBackgroundBrush(QBrush(GRAY));
+    ui->GW_locator->scale(0.8, 0.8);
+
+
+    qreal rho = m_graphicsScene->height() / 2 + 50;
+
+
+    ui->GW_locator->setScene(m_graphicsScene);
+    m_graphicsScene->setBackgroundBrush(QBrush(BLUE));
     ui->GW_locator->scale(0.8, 0.8);
 
     createGrid();
@@ -28,14 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::createGrid() {
-    qreal ringDist = SECTOR_RANGE_KM;
-    qreal sectorAngle = SECTOR_ANGLE_DEG;
+    qreal ringDist = 50;
+    qreal sectorAngle = 30;
 
-    QPen gridPen(RED_BROWN_RADAR);
+    QPen gridPen(WHITE);
     gridPen.setCosmetic(true);
 
-    for (qreal curDist = ringDist; curDist <= mGraphicsScene->width() / 2; curDist += ringDist) {
-        mGraphicsScene->addEllipse(
+    for (qreal curDist = ringDist; curDist <= m_graphicsScene->width() / 2; curDist += ringDist) {
+        m_graphicsScene->addEllipse(
             -curDist, -curDist,
             curDist * 2, curDist * 2,
             gridPen
@@ -43,12 +51,11 @@ void MainWindow::createGrid() {
     }
 
     for (qreal curAngle = 0; curAngle < 2 * M_PI; curAngle += qDegreesToRadians(sectorAngle)) {
-        qreal x = mGraphicsScene->width() / 2 * qCos(curAngle);
-        qreal y = mGraphicsScene->width() / 2 * qSin(curAngle);
-        mGraphicsScene->addLine(0, 0, x, y, gridPen);
+        qreal x = m_graphicsScene->width() / 2 * qCos(curAngle);
+        qreal y = m_graphicsScene->width() / 2 * qSin(curAngle);
+        m_graphicsScene->addLine(0, 0, x, y, gridPen);
     }
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -88,7 +95,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
         QPointF currSigmaKalmanFilterCA(0, 0);
         QPointF currSigmaAdaptiveKalmanFilterCV(0, 0);
 
-        step.append(i);
+        step.append(i * ui->DSB_updateTime->value());
 
         for(int indexModulation = 0; indexModulation < NUMBER_MODULATIONS; ++indexModulation) {
             QPointF diffNoise = (mTrackWithNoise[indexModulation][i] - mTrajectoryOriginal[i]);
@@ -181,7 +188,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     auto window = new GraphicsBuilderWidget();
     window->setAttribute(Qt::WA_DeleteOnClose);
     QVector<QVector<qreal>> arrays = {resSigmaNoise};
-    QVector<QString> strings = {"Шум"};
+    QVector<QString> strings = {"Зашумленная траектория"};
 
     if(ui->CB_ABfilter->isChecked()) {
         arrays.append(resSigmaAlphaBetaFilter);
@@ -208,7 +215,7 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
         strings.append("Адаптивный фильтр Калмана CV");
     }
 
-    window->setData("Состояние модели", "СКО, метры", step,
+    window->setData("Время, с", "СКО, метры", step,
                     arrays,
                     strings);
     window->setWindowModality(Qt::WindowModality::ApplicationModal);
@@ -453,52 +460,70 @@ QVector<QPointF> MainWindow::calcAdaptiveKalmanConstVelocityFilter(QVector<Targe
 void MainWindow::drawVariablesTrajectories() {
     for(int i = 0; i < mTrajectoryOriginal.size(); ++i) {
         if(ui->CB_original->isChecked()) {
-            mGraphicsScene->addEllipse((mTrajectoryOriginal[i].x() / 1000.0) - 0.1,
-                                       (-mTrajectoryOriginal[i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::white, 0.1), QBrush(Qt::white));
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrajectoryOriginal[i].x() / 1000.0,
+                                                        -mTrajectoryOriginal[i].y() / 1000.0),
+                                     Qt::green));
         }
 
         if(ui->CB_withNoise->isChecked()) {
-            mGraphicsScene->addEllipse((mTrackWithNoise[0][i].x() / 1000.0) - 0.1,
-                                       (-mTrackWithNoise[0][i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::red, 0.1), QBrush(Qt::red));
+//            m_graphicsScene->addEllipse((mTrackWithNoise[0][i].x()) - 0.1,
+//                                       (-mTrackWithNoise[0][i].y()) - 0.1,
+//                                       0.2, 0.2,
+//                                       QPen(Qt::red, 0.1), QBrush(Qt::red));
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrackWithNoise[0][i].x() / 1000.0,
+                                                           -mTrackWithNoise[0][i].y() / 1000.0),
+                                     Qt::red));
         }
 
         if(ui->CB_ABfilter->isChecked()) {
-            mGraphicsScene->addEllipse((mTrackAlphaBetaFilter[0][i].x() / 1000.0) - 0.1,
-                                       (-mTrackAlphaBetaFilter[0][i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::green, 0.1), QBrush(Qt::green));
+//            m_graphicsScene->addEllipse((mTrackAlphaBetaFilter[0][i].x()) - 0.1,
+//                                       (-mTrackAlphaBetaFilter[0][i].y()) - 0.1,
+//                                       0.2, 0.2,
+//                                       QPen(Qt::green, 0.1), QBrush(Qt::green));
+
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrackAlphaBetaFilter[0][i].x() / 1000.0,
+                                                           -mTrackAlphaBetaFilter[0][i].y() / 1000.0),
+                                     Qt::blue));
         }
 
         if(ui->CB_ABfilterMNK->isChecked()) {
-            mGraphicsScene->addEllipse((mTrackAlphaBetaFilterMNK[0][i].x() / 1000.0) - 0.1,
-                                       (-mTrackAlphaBetaFilterMNK[0][i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::blue, 0.1), QBrush(Qt::blue));
+//            m_graphicsScene->addEllipse((mTrackAlphaBetaFilterMNK[0][i].x() / 1000.0) - 0.1,
+//                                       (-mTrackAlphaBetaFilterMNK[0][i].y() / 1000.0) - 0.1,
+//                                       0.2, 0.2,
+//                                       QPen(Qt::blue, 0.1), QBrush(Qt::blue));
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrackAlphaBetaFilterMNK[0][i].x() / 1000.0,
+                                                           -mTrackAlphaBetaFilterMNK[0][i].y() / 1000.0),
+                                     Qt::blue));
         }
 
         if(ui->CB_KalmanFilterCV->isChecked()) {
-            mGraphicsScene->addEllipse((mTrackKalmanFilterCV[0][i].x() / 1000.0) - 0.1,
-                                       (-mTrackKalmanFilterCV[0][i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::yellow, 0.1), QBrush(Qt::yellow));
+//            m_graphicsScene->addEllipse((mTrackKalmanFilterCV[0][i].x() / 1000.0) - 0.1,
+//                                       (-mTrackKalmanFilterCV[0][i].y() / 1000.0) - 0.1,
+//                                       0.2, 0.2,
+//                                       QPen(Qt::yellow, 0.1), QBrush(Qt::yellow));
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrackKalmanFilterCV[0][i].x() / 1000.0,
+                                                           -mTrackKalmanFilterCV[0][i].y() / 1000.0),
+                                     Qt::blue));
         }
 
         if(ui->CB_KalmanFilterCA->isChecked()) {
-            mGraphicsScene->addEllipse((mTrackKalmanFilterCA[0][i].x() / 1000.0) - 0.1,
-                                       (-mTrackKalmanFilterCA[0][i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::magenta, 0.1), QBrush(Qt::magenta));
+//            m_graphicsScene->addEllipse((mTrackKalmanFilterCA[0][i].x() / 1000.0) - 0.1,
+//                                       (-mTrackKalmanFilterCA[0][i].y() / 1000.0) - 0.1,
+//                                       0.2, 0.2,
+//                                       QPen(Qt::magenta, 0.1), QBrush(Qt::magenta));
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrackKalmanFilterCA[0][i].x() / 1000.0,
+                                                           -mTrackKalmanFilterCA[0][i].y() / 1000.0),
+                                     Qt::magenta));
         }
 
         if(ui->CB_AdaptiveKalmanFilterCV->isChecked()) {
-            mGraphicsScene->addEllipse((mTrackAdaptiveKalmanFilterCV[0][i].x() / 1000.0) - 0.1,
-                                       (-mTrackAdaptiveKalmanFilterCV[0][i].y() / 1000.0) - 0.1,
-                                       0.2, 0.2,
-                                       QPen(Qt::cyan, 0.1), QBrush(Qt::cyan));
+//            m_graphicsScene->addEllipse((mTrackAdaptiveKalmanFilterCV[0][i].x() / 1000.0) - 0.1,
+//                                       (-mTrackAdaptiveKalmanFilterCV[0][i].y() / 1000.0) - 0.1,
+//                                       0.2, 0.2,
+//                                       QPen(Qt::cyan, 0.1), QBrush(Qt::cyan));
+            m_graphicsScene->addItem(new TargetItem(QPointF(mTrackAdaptiveKalmanFilterCV[0][i].x() / 1000.0,
+                                                           -mTrackAdaptiveKalmanFilterCV[0][i].y() / 1000.0),
+                                     Qt::cyan));
         }
     }
 }
@@ -512,7 +537,7 @@ void MainWindow::clearModulation() {
     mTrackKalmanFilterCA.clear();
     mTrackAdaptiveKalmanFilterCV.clear();
 
-    mGraphicsScene->clear();
+    m_graphicsScene->clear();
 
     createGrid();
 }
@@ -535,3 +560,6 @@ void MainWindow::on_ComB_filters_currentIndexChanged(int index)
     ui->SW_filters->setCurrentIndex(index);
 }
 
+QPointF MainWindow::polarToCart(qreal rho, qreal theta) {
+    return {rho * qCos(theta - M_PI_2), rho * qSin(theta - M_PI_2)};
+}

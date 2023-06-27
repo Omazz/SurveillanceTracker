@@ -5,10 +5,9 @@
 RadarWindow::RadarWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::RadarWindow)
+    , m_udpSocket(new QUdpSocket())
 {
     ui->setupUi(this);
-
-    _udpSocket = new QUdpSocket(this);
 
     setFixedSize(width(), height());
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
@@ -61,7 +60,7 @@ void RadarWindow::on_PB_start_clicked() {
     QTime startTime;
     bool firstRecord = true;
     int counter = 0;
-    while(_isWorking) {
+    while(m_isWorking) {
         struct pcap_pkthdr packet_header;
         const u_char* packet = pcap_next(handle, &packet_header);
         counter++;
@@ -106,7 +105,7 @@ void RadarWindow::on_PB_start_clicked() {
         stringToPrint.push_back(QString::number(counter).append(") Record: "));
         stringToPrint.push_back(QString("0x%1 ").arg(packet[pos_asterix]));
 
-        if(_udpSocket->writeDatagram((const char*) (packet + pos_asterix), packet_header.caplen - pos_asterix, address, port)) {
+        if(m_udpSocket->writeDatagram((const char*) (packet + pos_asterix), packet_header.caplen - pos_asterix, address, port)) {
             ui->TB_log->append(stringToPrint);
 
         } else {
@@ -124,5 +123,5 @@ void RadarWindow::closeEvent(QCloseEvent* event)
 {
     Q_UNUSED(event)
     //_udpSocket->close();
-    _isWorking = false;
+    m_isWorking = false;
 }
