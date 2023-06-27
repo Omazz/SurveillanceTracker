@@ -51,9 +51,16 @@ void TestSettingsTracker::initialization_checkField_MAX_VELOCITY_M_SECS(){
     QCOMPARE((SettingsTracker::MAX_VELOCITY_M_SECS >= 95) && (SettingsTracker::MAX_VELOCITY_M_SECS <= 350), true);
 }
 
-void TestSettingsTracker::initialization_checkField_MAX_ANGLE_DEG(){
+
+void TestSettingsTracker::initialization_checkField_MEAN_DEVIATION_RHO_M() {
     SettingsTracker::initialization();
-    QCOMPARE((SettingsTracker::MAX_ANGLE_DEG >= 5) && (SettingsTracker::MAX_ANGLE_DEG <= 120), true);
+    QCOMPARE((SettingsTracker::MEAN_DEVIATION_RHO_M >= 10) && (SettingsTracker::MEAN_DEVIATION_RHO_M <= 150), true);
+}
+
+void TestSettingsTracker::initialization_checkField_MEAN_DEVIATION_ANGLE_ARCMIN() {
+    SettingsTracker::initialization();
+    qreal angleDeviation = qRound(qRadiansToDegrees(SettingsTracker::MEAN_DEVIATION_ANGLE_RAD) * 60.0);
+    QCOMPARE((angleDeviation >= 3) && (angleDeviation <= 48), true);
 }
 
 void TestSettingsTracker::initialization_checkField_COEF_STROBE_HOLD(){

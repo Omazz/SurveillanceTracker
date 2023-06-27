@@ -33,7 +33,9 @@ private slots:
 
     void initialization_checkField_MAX_VELOCITY_M_SECS();
 
-    void initialization_checkField_MAX_ANGLE_DEG();
+    void initialization_checkField_MEAN_DEVIATION_RHO_M();
+
+    void initialization_checkField_MEAN_DEVIATION_ANGLE_ARCMIN();
 
     void initialization_checkField_COEF_STROBE_HOLD();
 
