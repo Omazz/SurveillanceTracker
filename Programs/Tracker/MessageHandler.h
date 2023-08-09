@@ -3,9 +3,6 @@
 
 #include <QObject>
 #include <QUdpSocket>
-#include "../../PriFiles/EncryptionTools/mycrypto.hpp"
-#include "../../PriFiles/EncryptionTools/Kuznyechik.hpp"
-#include "../../PriFiles/EncryptionTools/gost341112.h"
 #include "../../PriFiles/Settings/SettingsTracker.h"
 #include "../../PriFiles/AsterixHandler/asterixreader.h"
 #include "Plot.h"
@@ -32,10 +29,7 @@ signals:
     void newPlot(Plot plot);
 
 private:
-    ByteBlock mKey;
-    ByteBlock mIV;
-    Streebog mStreebog;
-    QUdpSocket* mSocket;
+    QUdpSocket* m_socket;
 };
 
 #endif // MESSAGEHANDLER_H

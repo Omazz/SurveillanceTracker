@@ -6,7 +6,7 @@
 
 class AdaptiveKalmanConstVelocityFilter : public AbstractFilter {
 public:
-    AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps,
+    AdaptiveKalmanConstVelocityFilter(quint16 numberRecalcsP, quint16 numberRecalcsR,
                                       qreal rhoMSE, qreal thetaMSE, qreal velocityMSE);
 
     void initialization(QVector<Target> array) override;
@@ -38,7 +38,8 @@ private:
     qreal m_thetaMSE;
     qreal m_velocityMSE;
 
-    quint16 m_numberOfSteps;
-    quint16 m_maximumNumberOfSteps;
+    quint16 m_counterSteps;
+    quint16 m_numberRecalcsP;
+    quint16 m_numberRecalcsR;
 };
 #endif // ADAPTIVEKALMANCONSTVELOCITYFILTER_H

@@ -6,16 +6,6 @@ TestSettingsTracker::TestSettingsTracker(QObject *parent)
 
 }
 
-void TestSettingsTracker::initialization_checkField_KEY(){
-    SettingsTracker::initialization();
-    QCOMPARE(!SettingsTracker::KEY.isEmpty(), true);
-}
-
-void TestSettingsTracker::initialization_checkField_INITIALIZING_VECTOR(){
-    SettingsTracker::initialization();
-    QCOMPARE(!SettingsTracker::INITIALIZING_VECTOR.isEmpty(), true);
-}
-
 void TestSettingsTracker::initialization_checkField_SCAN_MSECS(){
     SettingsTracker::initialization();
     QCOMPARE((SettingsTracker::SCAN_MSECS >= 1000) && (SettingsTracker::SCAN_MSECS <= 10000), true);

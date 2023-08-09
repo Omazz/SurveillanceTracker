@@ -32,16 +32,14 @@ MOC_DIR = ../../ProgramBuilds/PROGRAM-Analyzer
 
 UI_DIR = ../../ProgramBuilds/PROGRAM-Analyzer
 
-
-DISTFILES += \
-    ../../ApplicationIcons/AnalyzerIcon.ico
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+DISTFILES += \
+    ../../ApplicationIcons/AnalyzerIcon.ico
+
 include(../../PriFiles/Filters/Filters.pri)
-
 include(../../PriFiles/GraphUI/GraphUI.pri)
-
+include(../../PriFiles/LoadingScreen/LoadingScreen.pri)

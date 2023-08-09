@@ -5,41 +5,41 @@ Plot::Plot() {
 }
 
 Plot::Plot(qreal distance, qreal angle, qreal frequencyDoppler, qreal amplitude, qreal time, Asterix48 asterixPlot)
-    : mRange(std::move(distance)),
-      mAngle(std::move(angle)),
-      mFrequencyDoppler(std::move(frequencyDoppler)),
-      mAmplitude(std::move(amplitude)),
-      mTime(std::move(time)) {
-    mAsterixPlot = asterixPlot;
-    mCartesianCoords = QPointF(mRange * qSin(qDegreesToRadians(mAngle)),
-                               mRange * qCos(qDegreesToRadians(mAngle)));
+    : m_range(std::move(distance)),
+      m_angle(std::move(angle)),
+      m_frequencyDoppler(std::move(frequencyDoppler)),
+      m_amplitude(std::move(amplitude)),
+      m_time(std::move(time)) {
+    m_asterixPlot = asterixPlot;
+    m_cartesianCoords = QPointF(m_range * qSin(qDegreesToRadians(m_angle)),
+                               m_range * qCos(qDegreesToRadians(m_angle)));
 }
 
 Plot::Plot(QPointF cartesianCoords, qreal frequencyDoppler, qreal amplitude, qreal time, Asterix48 asterixPlot)
-    : mCartesianCoords(std::move(cartesianCoords)),
-      mFrequencyDoppler(std::move(frequencyDoppler)),
-      mAmplitude(std::move(amplitude)),
-      mTime(std::move(time)) {
-    mAsterixPlot = asterixPlot;
-    std::pair<qreal, qreal> polarCoords = fromDecartToPolar(mCartesianCoords.x(), mCartesianCoords.y());
-    mRange = polarCoords.first;
-    mAngle = polarCoords.second;
+    : m_cartesianCoords(std::move(cartesianCoords)),
+      m_frequencyDoppler(std::move(frequencyDoppler)),
+      m_amplitude(std::move(amplitude)),
+      m_time(std::move(time)) {
+    m_asterixPlot = asterixPlot;
+    std::pair<qreal, qreal> polarCoords = fromDecartToPolar(m_cartesianCoords.x(), m_cartesianCoords.y());
+    m_range = polarCoords.first;
+    m_angle = polarCoords.second;
 }
 
 qreal Plot::time() const {
-    return mTime;
+    return m_time;
 }
 
 qreal Plot::x() const {
-    return mCartesianCoords.x();
+    return m_cartesianCoords.x();
 }
 
 qreal Plot::y() const {
-    return mCartesianCoords.y();
+    return m_cartesianCoords.y();
 }
 
 QPointF Plot::cartesianCoords() const {
-    return mCartesianCoords;
+    return m_cartesianCoords;
 }
 
 std::pair<qreal, qreal> Plot::fromDecartToPolar(qreal x, qreal y) {
@@ -67,25 +67,25 @@ std::pair<qreal, qreal> Plot::fromDecartToPolar(qreal x, qreal y) {
 }
 
 qreal Plot::range() const {
-    return mRange;
+    return m_range;
 }
 
 qreal Plot::angle() const {
-    return mAngle;
+    return m_angle;
 }
 
 qreal Plot::frequencyDoppler() const
 {
-    return mFrequencyDoppler;
+    return m_frequencyDoppler;
 }
 
 qreal Plot::amplitude() const
 {
-    return mAmplitude;
+    return m_amplitude;
 }
 
 Asterix48 Plot::asterixPlot() const {
-    return mAsterixPlot;
+    return m_asterixPlot;
 }
 
 

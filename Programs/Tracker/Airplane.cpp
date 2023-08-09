@@ -7,65 +7,65 @@ Airplane::Airplane(QObject *parent)
 }
 
 Airplane::Airplane(QVector<Plot> initPlots, quint16 trackNumber, QObject* parent)
-    : QObject(parent), mTrackNumber(trackNumber) {
+    : QObject(parent), m_trackNumber(trackNumber) {
 
-    mVelocity = (initPlots.last().cartesianCoords() - initPlots.first().cartesianCoords()) /
+    m_velocity = (initPlots.last().cartesianCoords() - initPlots.first().cartesianCoords()) /
                     (initPlots.last().time() - initPlots.first().time());
 
-    mDirectionAngle = qDegreesToRadians(Plot::fromDecartToPolar(mVelocity.y(), mVelocity.x()).second);
+    m_directionAngle = qDegreesToRadians(Plot::fromDecartToPolar(m_velocity.y(), m_velocity.x()).second);
 
-    mOldVelocity = velocity();
+    m_oldVelocity = velocity();
 
-    mFilteredPlot = initPlots.last();
+    m_filteredPlot = initPlots.last();
 
-    mOldAngle = mFilteredPlot.angle();
+    m_oldAngle = m_filteredPlot.angle();
 
     initializationMNK(initPlots);
 
-    mMeasuredPlot = initPlots.last();
+    m_measuredPlot = initPlots.last();
 
-    mNumberSteps = 3;
-    mNumberStepsMax = 7;
+    m_numberSteps = 3;
+    m_numberStepsMax = 7;
 }
 
 void Airplane::setTrack(Plot measuredPlot) {
-    mCounterExtrapolations = 0;
+    m_counterExtrapolations = 0;
 
-    mMeasuredPlot = measuredPlot;
+    m_measuredPlot = measuredPlot;
 
-    if(mNumberSteps < mNumberStepsMax) {
-        mAlpha = static_cast<qreal>((2.0 * ((2.0 * mNumberSteps) - 1.0)) / (mNumberSteps * (mNumberSteps + 1.0)));
-        mBeta = static_cast<qreal>(6.0 / (mNumberSteps * (mNumberSteps + 1.0)));
+    if(m_numberSteps < m_numberStepsMax) {
+        m_alpha = static_cast<qreal>((2.0 * ((2.0 * m_numberSteps) - 1.0)) / (m_numberSteps * (m_numberSteps + 1.0)));
+        m_beta = static_cast<qreal>(6.0 / (m_numberSteps * (m_numberSteps + 1.0)));
     }
 
-    mNumberSteps++;
+    m_numberSteps++;
 
-    mOldVelocity = velocity();
-    mOldAngle = mFilteredPlot.angle();
-    qreal oldTime = mFilteredPlot.time();
+    m_oldVelocity = velocity();
+    m_oldAngle = m_filteredPlot.angle();
+    qreal oldTime = m_filteredPlot.time();
     qreal currentTime = static_cast<qreal>(QDateTime::currentMSecsSinceEpoch() / 1000.0);
 
     std::pair<Plot, QPointF> resultExtrapolation = doExtrapolation(currentTime);
     Plot extrapolatedPlot = resultExtrapolation.first;
     QPointF extrapolatedVelocity = resultExtrapolation.second;
 
-    mFilteredPlot = Plot(extrapolatedPlot.cartesianCoords() +
-                            (mAlpha * (measuredPlot.cartesianCoords() - extrapolatedPlot.cartesianCoords())),
+    m_filteredPlot = Plot(extrapolatedPlot.cartesianCoords() +
+                            (m_alpha * (measuredPlot.cartesianCoords() - extrapolatedPlot.cartesianCoords())),
                          measuredPlot.frequencyDoppler(),
                          measuredPlot.amplitude(),
                          measuredPlot.time(),
                          measuredPlot.asterixPlot());
 
-    mVelocity = extrapolatedVelocity + (mBeta / (currentTime - oldTime)
+    m_velocity = extrapolatedVelocity + (m_beta / (currentTime - oldTime)
                                         * (measuredPlot.cartesianCoords() - extrapolatedPlot.cartesianCoords()));
 
-    mDirectionAngle = qDegreesToRadians(Plot::fromDecartToPolar(mVelocity.y(), mVelocity.x()).second);
+    m_directionAngle = qDegreesToRadians(Plot::fromDecartToPolar(m_velocity.y(), m_velocity.x()).second);
 
-    replaceQueue(mFilteredPlot);
+    replaceQueue(m_filteredPlot);
 }
 
 bool Airplane:: isManeuverAngle() const {
-    qreal differenceAngles = qAbs(mFilteredPlot.angle() - mOldAngle);
+    qreal differenceAngles = qAbs(m_filteredPlot.angle() - m_oldAngle);
     if(differenceAngles > 180.0) {
        differenceAngles = 360.0 - differenceAngles;
     }
@@ -73,22 +73,22 @@ bool Airplane:: isManeuverAngle() const {
 }
 
 bool Airplane:: isManeuverVelocity() const {
-    return qAbs(velocity() - mOldVelocity) >= SettingsTracker::MANEUVER_VELOCITY_M_SECS;
+    return qAbs(velocity() - m_oldVelocity) >= SettingsTracker::MANEUVER_VELOCITY_M_SECS;
 }
 
 void Airplane::initializationMNK(QVector<Plot> initPlots) {
     int i = (initPlots.size() == 4) ? 1 : 0;
     for(; i < initPlots.size(); ++i) {
-        coordsMNK.enqueue(initPlots[i]);
+        m_coordsMNK.enqueue(initPlots[i]);
     }
 }
 
 void Airplane::replaceQueue(Plot plot) {
-    if(coordsMNK.size() == 3) {
-        coordsMNK.dequeue();
-        coordsMNK.append(plot);
+    if(m_coordsMNK.size() == 3) {
+        m_coordsMNK.dequeue();
+        m_coordsMNK.append(plot);
     } else {
-        coordsMNK.append(plot);
+        m_coordsMNK.append(plot);
     }
 }
 
@@ -98,102 +98,101 @@ std::pair<Plot, QPointF> Airplane::doExtrapolation(qreal currentTimeSecs) {
     QPointF sumCoords(0, 0), sumCoordsT(0, 0);
     QVector<qreal> time;
 
-    for(int i = 0; i < coordsMNK.size(); ++i) {
-        time.append(coordsMNK[i].time() - coordsMNK[0].time());
+    for(int i = 0; i < m_coordsMNK.size(); ++i) {
+        time.append(m_coordsMNK[i].time() - m_coordsMNK[0].time());
         sumT += time[i];
         sumT2 += qPow(time[i], 2);
-        sumCoords += coordsMNK[i].cartesianCoords();
-        sumCoordsT += (coordsMNK[i].cartesianCoords() * time[i]);
+        sumCoords += m_coordsMNK[i].cartesianCoords();
+        sumCoordsT += (m_coordsMNK[i].cartesianCoords() * time[i]);
     }
 
-    QPointF extrapolatedVelocity = ((coordsMNK.size() * sumCoordsT) - (sumCoords * sumT)) /
-                                        ((coordsMNK.size() * sumT2) - (sumT * sumT));
-    QPointF firstCoord = (sumCoords - (extrapolatedVelocity * sumT)) / coordsMNK.size();
-    QPointF extrapolatedCoord = firstCoord + (extrapolatedVelocity * (currentTimeSecs - coordsMNK[0].time()));
+    QPointF extrapolatedVelocity = ((m_coordsMNK.size() * sumCoordsT) - (sumCoords * sumT)) /
+                                        ((m_coordsMNK.size() * sumT2) - (sumT * sumT));
+    QPointF firstCoord = (sumCoords - (extrapolatedVelocity * sumT)) / m_coordsMNK.size();
+    QPointF extrapolatedCoord = firstCoord + (extrapolatedVelocity * (currentTimeSecs - m_coordsMNK[0].time()));
     Plot extrapolatedPlot = Plot(extrapolatedCoord,
-                                 mFilteredPlot.frequencyDoppler(),
-                                 mFilteredPlot.amplitude(),
+                                 m_filteredPlot.frequencyDoppler(),
+                                 m_filteredPlot.amplitude(),
                                  currentTimeSecs,
-                                 mFilteredPlot.asterixPlot());
+                                 m_filteredPlot.asterixPlot());
 
     return std::pair<Plot, QPointF>(extrapolatedPlot, extrapolatedVelocity);
 }
 
 void Airplane::updateExtrapolationPlot() {
-    mOldAngle = mFilteredPlot.angle();
-    mOldVelocity = velocity();
+    m_oldAngle = m_filteredPlot.angle();
+    m_oldVelocity = velocity();
     qreal currentTime = static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) / 1000.0;
 
     std::pair<Plot, QPointF> resultExtrapolation = doExtrapolation(currentTime);
     Plot extrapolatedPlot = resultExtrapolation.first;
     QPointF extrapolatedVelocity = resultExtrapolation.second;
 
-    mFilteredPlot = extrapolatedPlot;
-    mVelocity = extrapolatedVelocity;
+    m_filteredPlot = extrapolatedPlot;
+    m_velocity = extrapolatedVelocity;
 
-    mCounterExtrapolations++;
+    m_counterExtrapolations++;
 
-    replaceQueue(mFilteredPlot);
+    replaceQueue(m_filteredPlot);
 }
 
 const Plot &Airplane::measuredPlot() const {
-    return mMeasuredPlot;
+    return m_measuredPlot;
 }
 
 const Plot &Airplane::filteredPlot() const {
-    return mFilteredPlot;
+    return m_filteredPlot;
 }
 
 qreal Airplane::timeToNextPlot() const {
-    return mFilteredPlot.time() + (SettingsTracker::SCAN_MSECS / 1000.0);
+    return m_filteredPlot.time() + (SettingsTracker::SCAN_MSECS / 1000.0);
 }
 
 
 qreal Airplane::velocity() const {
-    return qSqrt(qPow(mVelocity.x(), 2) + qPow(mVelocity.y(), 2));
+    return qSqrt(qPow(m_velocity.x(), 2) + qPow(m_velocity.y(), 2));
 }
 
 qreal Airplane::velocityX() const {
-    return mVelocity.x();
+    return m_velocity.x();
 }
 
 qreal Airplane::velocityY() const {
-    return mVelocity.y();
+    return m_velocity.y();
 }
 
 qreal Airplane::directionAngle() const {
-    return mDirectionAngle;
+    return m_directionAngle;
 }
 
 quint16 Airplane::trackNumber() const {
-    return mTrackNumber;
+    return m_trackNumber;
 }
 
 qreal Airplane::counterExtrapolations() const
 {
-    return mCounterExtrapolations;
+    return m_counterExtrapolations;
 }
 
 QByteArray Airplane::getFilteredPlot() const {
-    QByteArray data = mFilteredPlot.asterixPlot().Data;
+    QByteArray data = m_filteredPlot.asterixPlot().Data;
 
-    qreal x = mFilteredPlot.cartesianCoords().x() / 1852.0;
-    qreal y = mFilteredPlot.cartesianCoords().y() / 1852.0;
+    qreal x = m_filteredPlot.cartesianCoords().x() / 1852.0;
+    qreal y = m_filteredPlot.cartesianCoords().y() / 1852.0;
     qreal velocity = this->velocity() / 1852.0;
-    qreal angleVelocity = qRadiansToDegrees(mDirectionAngle);
+    qreal angleVelocity = qRadiansToDegrees(m_directionAngle);
 
     quint16 coordX = x * 128.0;
     quint16 coordY = y * 128.0;
     quint16 groundspeed = velocity * (0x1 << 14);
     quint16 heading = angleVelocity * (0x1 << 16) / 360.0;
 
-    int posTrackNumber = mFilteredPlot.asterixPlot().PosTrackNumber;
-
+    int posTrackNumber = m_filteredPlot.asterixPlot().PosTrackNumber;
 
     if(((data[3] & 0x1) > 0) && ((data[4] & 0b00011100) > 0)) {
         data.remove(posTrackNumber + 1, 10);;
-        data.insert(posTrackNumber + 1, (char) ((mTrackNumber >> 8) & 0xFF));
-        data.insert(posTrackNumber + 1, (char) (mTrackNumber & 0xFF));
+        data.insert(posTrackNumber + 1, (char) ((m_trackNumber >> 8) & 0xFF));
+        data.insert(posTrackNumber + 1, (char) (m_trackNumber & 0xFF));
         data.insert(posTrackNumber + 2, (char) ((coordX >> 8) & 0xFF));
         data.insert(posTrackNumber + 3, (char) (coordX & 0xFF));
         data.insert(posTrackNumber + 4, (char) ((coordY >> 8) & 0xFF));
@@ -205,13 +204,13 @@ QByteArray Airplane::getFilteredPlot() const {
     } else if((data[3] & 0x1) == 0) {
         data[3] = data[3] | 0x1; // устанавливаем единичку которая говорит что дальше ещё есть что-то
         data.insert(4, 0b00011100);
-        quint16 LEN = mFilteredPlot.asterixPlot().LEN;
+        quint16 LEN = m_filteredPlot.asterixPlot().LEN;
         LEN += 1 + 2 + 4 + 4; // sizeof(NewFSPEC-oldFSPEC0 + sizeof(trackNumber) + sizeof(Coordinates) + sizeof(Velocity)
         data[1] = (LEN >> 8) & 0xFF;
         data[2] = LEN & 0xFF;
         posTrackNumber = data.size();
-        data.append((char) ((mTrackNumber >> 8) & 0xFF));
-        data.append((char) (mTrackNumber & 0xFF));
+        data.append((char) ((m_trackNumber >> 8) & 0xFF));
+        data.append((char) (m_trackNumber & 0xFF));
         data.append((char) ((coordX >> 8) & 0xFF));
         data.append((char) (coordX & 0xFF));
         data.append((char) ((coordY >> 8) & 0xFF));
@@ -222,12 +221,12 @@ QByteArray Airplane::getFilteredPlot() const {
         data.append((char) (heading & 0xFF));
     } else {
         data[4] = data[4] | 0b00011100;
-        quint16 LEN = mFilteredPlot.asterixPlot().LEN;
+        quint16 LEN = m_filteredPlot.asterixPlot().LEN;
         LEN += 2 + 4 + 4; // sizeof(trackNumber) + sizeof(Coordinates) + sizeof(Velocity)
         data[1] = (LEN >> 8) & 0xFF;
         data[2] = LEN & 0xFF;
-        data.insert(posTrackNumber, (char) ((mTrackNumber >> 8) & 0xFF));
-        data.insert(posTrackNumber + 1, (char) (mTrackNumber & 0xFF));
+        data.insert(posTrackNumber, (char) ((m_trackNumber >> 8) & 0xFF));
+        data.insert(posTrackNumber + 1, (char) (m_trackNumber & 0xFF));
         data.insert(posTrackNumber + 2, (char) ((coordX >> 8) & 0xFF));
         data.insert(posTrackNumber + 3, (char) (coordX & 0xFF));
         data.insert(posTrackNumber + 4, (char) ((coordY >> 8) & 0xFF));
@@ -242,57 +241,25 @@ QByteArray Airplane::getFilteredPlot() const {
 }
 
 QByteArray Airplane::getExtrapolationPlot() const {
-    QByteArray data = mFilteredPlot.asterixPlot().Data;
-    quint16 LEN = mFilteredPlot.asterixPlot().LEN;
-    quint32 timeOfDay = QTime::currentTime().msecsSinceStartOfDay() * 128;
-    if((data[3] & 0x1) == 0) {
-        data[6] = (timeOfDay >> 16) & 0xFF;
-        data[7] = (timeOfDay >> 8) & 0xFF;
-        data[8] = timeOfDay & 0xFF;
-    } else if ((data[4] & 0x1) == 0){
-        data[7] = (timeOfDay >> 16) & 0xFF;
-        data[8] = (timeOfDay >> 8) & 0xFF;
-        data[9] = timeOfDay & 0xFF;
-    } else if((data[5] & 0x1) == 0) {
-        data[8] = (timeOfDay >> 16) & 0xFF;
-        data[9] = (timeOfDay >> 8) & 0xFF;
-        data[10] = timeOfDay & 0xFF;
-    } else {
-        data[9] = (timeOfDay >> 16) & 0xFF;
-        data[10] = (timeOfDay >> 8) & 0xFF;
-        data[11] = timeOfDay & 0xFF;
-    }
+    QByteArray data = m_filteredPlot.asterixPlot().Data;
+    quint16 LEN = m_filteredPlot.asterixPlot().LEN;
 
-    quint16 i = mFilteredPlot.asterixPlot().TargetReportDescriptor.size();
-    data[3] = data[3] & 0b11101111;
-    if((data[3] & 0x1) == 0) {
-        data.remove(9 + i, 4);
-    } else if ((data[4] & 0x1) == 0){
-        data.remove(10 + i, 4);
-    } else if((data[5] & 0x1) == 0) {
-        data.remove(11 + i, 4);
-    } else {
-        data.remove(12 + i, 4);
-    }
-    LEN -= 4;
-
-
-    qreal x = mFilteredPlot.cartesianCoords().x() / 1852.0;
-    qreal y = mFilteredPlot.cartesianCoords().y() / 1852.0;
+    qreal x = m_filteredPlot.cartesianCoords().x() / 1852.0;
+    qreal y = m_filteredPlot.cartesianCoords().y() / 1852.0;
     qreal velocity = this->velocity() / 1852.0;
-    qreal angleVelocity = qRadiansToDegrees(mDirectionAngle);
+    qreal angleVelocity = qRadiansToDegrees(m_directionAngle);
 
     quint16 coordX = x * 128.0;
     quint16 coordY = y * 128.0;
     quint16 groundspeed = velocity * (0x1 << 14);
     quint16 heading = angleVelocity * (0x1 << 16) / 360.0;
 
-    int posTrackNumber = mFilteredPlot.asterixPlot().PosTrackNumber;
+    int posTrackNumber = m_filteredPlot.asterixPlot().PosTrackNumber;
 
     if(((data[3] & 0x1) > 0) && ((data[4] & 0b00011100) > 0)) {
         data.remove(posTrackNumber + 1, 10);;
-        data.insert(posTrackNumber + 1, (char) ((mTrackNumber >> 8) & 0xFF));
-        data.insert(posTrackNumber + 1, (char) (mTrackNumber & 0xFF));
+        data.insert(posTrackNumber + 1, (char) ((m_trackNumber >> 8) & 0xFF));
+        data.insert(posTrackNumber + 1, (char) (m_trackNumber & 0xFF));
         data.insert(posTrackNumber + 2, (char) ((coordX >> 8) & 0xFF));
         data.insert(posTrackNumber + 3, (char) (coordX & 0xFF));
         data.insert(posTrackNumber + 4, (char) ((coordY >> 8) & 0xFF));
@@ -306,8 +273,8 @@ QByteArray Airplane::getExtrapolationPlot() const {
         data.insert(4, 0b00011100);
         LEN += 1 + 2 + 4 + 4; // sizeof(NewFSPEC-oldFSPEC0 + sizeof(trackNumber) + sizeof(Coordinates) + sizeof(Velocity)
         posTrackNumber = data.size();
-        data.append((char) ((mTrackNumber >> 8) & 0xFF));
-        data.append((char) (mTrackNumber & 0xFF));
+        data.append((char) ((m_trackNumber >> 8) & 0xFF));
+        data.append((char) (m_trackNumber & 0xFF));
         data.append((char) ((coordX >> 8) & 0xFF));
         data.append((char) (coordX & 0xFF));
         data.append((char) ((coordY >> 8) & 0xFF));
@@ -319,8 +286,8 @@ QByteArray Airplane::getExtrapolationPlot() const {
     } else {
         data[4] = data[4] | 0b00011100;
         LEN += 2 + 4 + 4; // sizeof(trackNumber) + sizeof(Coordinates) + sizeof(Velocity)
-        data.insert(posTrackNumber, (char) ((mTrackNumber >> 8) & 0xFF));
-        data.insert(posTrackNumber + 1, (char) (mTrackNumber & 0xFF));
+        data.insert(posTrackNumber, (char) ((m_trackNumber >> 8) & 0xFF));
+        data.insert(posTrackNumber + 1, (char) (m_trackNumber & 0xFF));
         data.insert(posTrackNumber + 2, (char) ((coordX >> 8) & 0xFF));
         data.insert(posTrackNumber + 3, (char) (coordX & 0xFF));
         data.insert(posTrackNumber + 4, (char) ((coordY >> 8) & 0xFF));
@@ -330,6 +297,19 @@ QByteArray Airplane::getExtrapolationPlot() const {
         data.insert(posTrackNumber + 8, (char) ((heading >> 8) & 0xFF));
         data.insert(posTrackNumber + 9, (char) (heading & 0xFF));
     }
+
+    quint16 i = m_filteredPlot.asterixPlot().TargetReportDescriptor.size();
+    data[3] = data[3] & 0b11101111;
+    if((data[3] & 0x1) == 0) {
+        data.remove(9 + i, 4);
+    } else if ((data[4] & 0x1) == 0){
+        data.remove(10 + i, 4);
+    } else if((data[5] & 0x1) == 0) {
+        data.remove(11 + i, 4);
+    } else {
+        data.remove(12 + i, 4);
+    }
+    LEN -= 4;
 
     data[1] = (LEN >> 8) & 0xFF;
     data[2] = LEN & 0xFF;

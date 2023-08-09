@@ -59,27 +59,26 @@ private:
 
     void removePolarCoordinates();
 
+    qreal m_oldAngle;
+    qreal m_oldVelocity;
 
-    qreal mOldAngle;
-    qreal mOldVelocity;
+    Plot m_measuredPlot;
+    Plot m_filteredPlot;
 
-    Plot mMeasuredPlot;
-    Plot mFilteredPlot;
+    quint16 m_trackNumber;
 
-    quint16 mTrackNumber;
+    QPointF m_velocity; /// < м/с
+    qreal m_directionAngle; ///< Радианы
 
-    QPointF mVelocity; /// < м/с
-    qreal mDirectionAngle; ///< Радианы
+    qreal m_counterExtrapolations = 0;
 
-    qreal mCounterExtrapolations = 0;
-
-    qreal mAlpha;
-    qreal mBeta;
-    quint8 mNumberSteps;
-    quint8 mNumberStepsMax;
+    qreal m_alpha;
+    qreal m_beta;
+    quint8 m_numberSteps;
+    quint8 m_numberStepsMax;
 
     /* Для экстраполяции */
-    QQueue<Plot> coordsMNK;
+    QQueue<Plot> m_coordsMNK;
 };
 
 #endif // AIRPLANE_H

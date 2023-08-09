@@ -24,10 +24,10 @@ public:
     static std::pair<qreal, qreal> fromDecartToPolar(qreal y, qreal x);
 
     bool operator ==(const Plot& other) const {
-        return ((mRange == other.mRange) &&
-                (mAngle == other.mAngle) &&
-                (mTime == other.mTime) &&
-                (mCartesianCoords == other.mCartesianCoords));
+        return ((m_range == other.m_range) &&
+                (m_angle == other.m_angle) &&
+                (m_time == other.m_time) &&
+                (m_cartesianCoords == other.m_cartesianCoords));
     }
 
     qreal range() const;
@@ -40,16 +40,15 @@ public:
 
     Asterix48 asterixPlot() const;
 
-
 private:
-    qreal mRange; ///< м
-    qreal mAngle; ///< градусы
-    QPointF mCartesianCoords; ///< прямоугольные координаты, м
-    qreal mFrequencyDoppler; ///< Гц
-    qreal mAmplitude;
-    qreal mTime; ///< с
+    qreal m_range; ///< м
+    qreal m_angle; ///< градусы
+    QPointF m_cartesianCoords; ///< прямоугольные координаты, м
+    qreal m_frequencyDoppler; ///< Гц
+    qreal m_amplitude;
+    qreal m_time; ///< с
 
-    Asterix48 mAsterixPlot;
+    Asterix48 m_asterixPlot;
 };
 
 #endif // PLOT_H

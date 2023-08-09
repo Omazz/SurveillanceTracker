@@ -3,10 +3,6 @@
 
 #include <QtCore>
 
-/* ENCRYPTION PARAMETERS */
-static QString DEFAULT_KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-static QString DEFAULT_INITIALIZING_VECTOR = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-
 /* ANTENNA SYSTEM PARAMETERS*/
 static qreal DEFAULT_SCAN_MSECS = 5000.0;
 static qreal DEFAULT_WAIT_INFO_MSECS = 50.0;
@@ -38,10 +34,6 @@ public:
     static void initialization();
 
     static void saveParameters();
-
-    /* ENCRYPTION PARAMETERS */
-    static QString KEY;
-    static QString INITIALIZING_VECTOR;
 
     /* ANTENNA SYSTEM PARAMETERS*/
     static qreal SCAN_MSECS;

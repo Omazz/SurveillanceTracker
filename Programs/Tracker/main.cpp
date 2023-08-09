@@ -1,9 +1,11 @@
 #include <QCoreApplication>
 #include "AirplaneHandler.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
     SettingsTracker::initialization();
 
     qDebug() << "\nProgram successfully start with settings!"

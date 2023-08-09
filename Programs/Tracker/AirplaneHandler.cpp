@@ -22,11 +22,9 @@ bool AirplaneHandler::onNewPlot(Plot plot) {
             return false;
         } else {
             return true;
-            //mMessageHandler->sendDatagram(plot.asterixPlot().Data);
         }
     } else {
         return true;
-        //mMessageHandler->sendDatagram(plot.asterixPlot().Data);
     }
 }
 
@@ -138,7 +136,6 @@ bool AirplaneHandler::tryCreateTrackBy2Plots(Plot plot) {
         qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime + ADDITION_TO_STROBE_LOCK_M;
 
         qreal differenceDopplerFreq = qAbs(plot.frequencyDoppler() - currentPlot.frequencyDoppler());
-
         qreal differenceAmplitude = qAbs(plot.amplitude() - currentPlot.amplitude());
 
         if(((difX + difY) >= qPow(Rmin, 2.0)) && ((difX + difY) <= pow(Rmax, 2.0))) {// &&
@@ -177,7 +174,6 @@ bool AirplaneHandler::tryCreateTrackBy3Plots(Plot plot) {
         qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime + ADDITION_TO_STROBE_LOCK_M;
 
         qreal differenceDopplerFreq = qAbs(plot.frequencyDoppler() - currentPlot.frequencyDoppler());
-
         qreal differenceAmplitude = qAbs(plot.amplitude() - currentPlot.amplitude());
 
         if(((difX + difY) >= qPow(Rmin, 2.0)) && ((difX + difY) <= pow(Rmax, 2.0))) {// &&
@@ -209,7 +205,6 @@ bool AirplaneHandler::tryCreateTrackBy3Plots(Plot plot) {
         qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime + ADDITION_TO_STROBE_LOCK_M;
 
         qreal differenceDopplerFreq = qAbs(currentPlot.frequencyDoppler() - secondPlot.frequencyDoppler());
-
         qreal differenceAmplitude = qAbs(currentPlot.amplitude() - secondPlot.amplitude());
 
         if(((difX + difY) >= qPow(Rmin, 2.0))  && ((difX + difY) <= pow(Rmax, 2.0))) {// &&
@@ -294,7 +289,6 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
         qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime + ADDITION_TO_STROBE_LOCK_M;
 
         qreal differenceDopplerFreq = qAbs(currentPlot.frequencyDoppler() - thirdPlot.frequencyDoppler());
-
         qreal differenceAmplitude = qAbs(currentPlot.amplitude() - thirdPlot.amplitude());
 
         if(((difX + difY) >= qPow(Rmin, 2.0))  && ((difX + difY) <= pow(Rmax, 2.0))) {// &&
@@ -325,7 +319,6 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
         qreal Rmax = SettingsTracker::MAX_VELOCITY_M_SECS * difTime + ADDITION_TO_STROBE_LOCK_M;
 
         qreal differenceDopplerFreq = qAbs(currentPlot.frequencyDoppler() - secondPlot.frequencyDoppler());
-
         qreal differenceAmplitude = qAbs(currentPlot.amplitude() - secondPlot.amplitude());
 
         if(((difX + difY) >= qPow(Rmin, 2.0))  && ((difX + difY) <= pow(Rmax, 2.0))) {// &&

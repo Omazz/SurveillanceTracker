@@ -42,6 +42,5 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-include(../../PriFiles/EncryptionTools/EncryptionTools.pri)
 include(../../PriFiles/AsterixHandler/AsterixHandler.pri)
 include(../../PriFiles/Settings/Settings.pri)

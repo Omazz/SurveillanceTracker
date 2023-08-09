@@ -107,7 +107,7 @@ std::pair<std::list<Asterix48>, std::list<Asterix34>> AsterixReader::readPcapFil
         }
 
 
-        if (packet == NULL){
+        if (packet == NULL) {
             break;
         }
 
@@ -157,51 +157,45 @@ Asterix34 AsterixReader::parseAsterix34(const uint8_t* data) {
     Asterix34 result;
 
     result.LEN = (data[1] << 8) | data[2];
-
-    uint16_t mask = 0x1;
-    uint8_t maskStart = 15;
     uint16_t position = 3;
-    int shiftMask = -1;
 
     if ((data[position] & 0x1) > 0) {
-        result.FSPEC = (data[position] << 8) | data[position + 1];
+        result.FSPEC = data[position] | (data[position + 1] << 8);
         position += 2;
     } else {
-        result.FSPEC = data[position] << 8;
+        result.FSPEC = data[position];
         position++;
     }
 
-    shiftMask = -1;
-
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.DataSourceIdentifier_isExist) {
         result.DataSourceIdentifier = (data[position] << 8) | data[position + 1];
         position += 2;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.MessageType_isExist) {
         result.MessageType = data[position];
         position++;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.TimeOfDay_isExist) {
         result.TimeOfDay = (data[position] << 16) | (data[position + 1] << 8) | data[position + 2];
         position += 3;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.SectorNumber_isExist) {
         result.SectorNumber = data[position];
         position++;
     }
 
-    if((result.FSPEC & (mask << ++shiftMask)) == 1) {
+    if(result.header34.AntennaRotationPeriod_isExist) {
         result.AntennaRotationPeriod = (data[position] << 8) | data[position + 1];
         position += 2;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.SystemConfigurationAndStatus_isExist) {
         result.SystemConfigurationAndStatus.PrimarySubfield = data[position];
         position++;
-        if ((result.SystemConfigurationAndStatus.PrimarySubfield & 0b10000000) > 0) {
+        if((result.SystemConfigurationAndStatus.PrimarySubfield & 0b10000000) > 0) {
             result.SystemConfigurationAndStatus.COM = data[position];
             position++;
         }
@@ -219,7 +213,7 @@ Asterix34 AsterixReader::parseAsterix34(const uint8_t* data) {
         }
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.SystemProcessingMode_isExist) {
         result.SystemProcessingMode.PrimarySubfield = data[position];
         position++;
         if ((result.SystemProcessingMode.PrimarySubfield & 0b10000000) > 0) {
@@ -240,8 +234,8 @@ Asterix34 AsterixReader::parseAsterix34(const uint8_t* data) {
         }
     }
 
-    if(result.FSPEC & (mask << (maskStart - (++shiftMask)))) { // FX
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header34.Block1_End) { // FX
+        if(result.header34.TYP_COUNTERs_isExist) {
             result.REP = data[position];
             position++;
             result.TYP_COUNTERs.resize(result.REP);
@@ -251,34 +245,34 @@ Asterix34 AsterixReader::parseAsterix34(const uint8_t* data) {
             }
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header34.GenericPolarWindow_isExist) {
             result.GenericPolarWindow = (data[position] << 24) | (data[position + 1] << 16)
                                         | (data[position + 2] << 8) | data[position + 3];
             position += 4;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header34.DataFilter_isExist) {
             result.DataFilter = data[position];
             position++;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header34.PositionOfDataSource_isExist) {
             result.PositionOfDataSource = (data[position] << 24) | (data[position + 1] << 16)
                                           | (data[position + 2] << 8) | data[position + 3];
             position += 4;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header34.CollimationError_isExist) {
             result.CollimationError = (data[position] << 8) | data[position + 1];
             position += 2;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header34.ReservedExpansionField_isExist) {
             result.ReservedExpansionField = data[position];
             position++;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header34.SpecialPurposeField_isExist) {
             result.SpecialPurposeField = data[position];
             position++;
         }
@@ -290,41 +284,33 @@ Asterix34 AsterixReader::parseAsterix34(const uint8_t* data) {
 Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
     Asterix48 result;
     result.LEN = (data[1] << 8) | data[2];
-
-    uint16_t mask = 0x1;
-    uint8_t maskStart = 31;
-    uint16_t start = 3;
-    int shiftMask = -1;
-
-    uint16_t position = start;
+    uint16_t position = 3;
 
     if((data[position] & 0x1) == 0) { // если 1 байт
-        result.FSPEC = data[position] << 24;
+        result.FSPEC = data[position];
         position++;
     } else if ((data[position + 1] & 0x1) == 0) { // если 2 байта
-        result.FSPEC = (data[position] << 24) | (data[position + 1] << 16);
+        result.FSPEC = data[position] | (data[position + 1] << 8);
         position += 2;
     } else if ((data[position + 2] & 0x1) == 0) { // если 3 байта
-        result.FSPEC = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8);
+        result.FSPEC = data[position] | (data[position + 1] << 8) | (data[position + 2] << 16);
         position += 3;
     } else { // если 4 байта
-        result.FSPEC = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8) | data[position + 3];
+        result.FSPEC = data[position] | (data[position + 1] << 8) | (data[position + 2] << 16) | (data[position + 3] << 24);
         position += 4;
     }
 
-    shiftMask = -1;
-
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header48.DataSourceIdentifier_isExist) {
         result.DataSourceIdentifier = (data[position] << 8) | data[position + 1];
         position += 2;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header48.TimeOfDay_isExist) {
         result.TimeOfDay = (data[position] << 16) | (data[position + 1] << 8) | data[position + 2];
         position += 3;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header48.TargetReportDescriptor_isExist) {
         while ((data[position] & 0x1) != 0) {
             result.TargetReportDescriptor.push_back(data[position]);
             position++;
@@ -333,24 +319,23 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
         position++;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
-        result.polarCoordsIsExist = true;
+    if(result.header48.MeasuredPosition_isExist) {
         result.MeasuredPositionInSlantPolarCoordinates = (data[position] << 24) | (data[position + 1] << 16)
                                                          | (data[position + 2] << 8) | data[position + 3];
         position += 4;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header48.Mode3ACode_isExist) {
         result.Mode3ACodeInOctalRepresentation = (data[position] << 8) | data[position + 1];
         position += 2;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header48.FlightLevel_isExist) {
         result.FlightLevelInBinaryRepresentation = (data[position] << 8) | data[position + 1];
         position += 2;
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) { // если 2 байта
+    if(result.header48.RadarPlotCharacteristics_isExist) {
         while((data[position] & 0x1) != 0) {
             RadarPlotCharacteristicsClass curr;
             curr.PrimarySubfield = data[position];
@@ -382,13 +367,12 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
                 position++;
             }
 
-            if((curr.PrimarySubfield & (mask << (++shiftSub))) > 0) {
+            if((curr.PrimarySubfield & (maskSub << (++shiftSub))) > 0) {
                 curr.APD = data[position];
                 position++;
             }
             result.RadarPlotCharacteristics.push_back(curr);
         }
-
 
         RadarPlotCharacteristicsClass curr;
         curr.PrimarySubfield = data[position];
@@ -428,13 +412,13 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
         result.RadarPlotCharacteristics.push_back(curr);
     }
 
-    if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+    if(result.header48.FX1) {
+        if(result.header48.AircraftAddress_isExist) {
             result.AircraftAddress = (data[position] << 16) | (data[position + 1] << 8) | data[position + 2];
             position += 3;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header48.AircraftIdentification_isExist) {
             uint64_t first = (data[position] << 16) | (data[position + 1] << 8) | (data[position + 2]);
             first = (first << 24) & 0x00FFFFFFFF000000;
             uint32_t second = (data[position + 3] << 16) | (data[position + 4] << 8) | (data[position + 5]);
@@ -442,7 +426,7 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
             position += 6;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header48.ModeSdata_isExist) {
             result.BDSRegisterDataREP = data[position];
             position++;
             result.BDSRegisterData.resize(result.BDSRegisterDataREP);
@@ -456,23 +440,22 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
         }
 
         result.PosTrackNumber = position;
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header48.TrackNumber_isExist) {
             result.TrackNumber = (data[position] << 8) | data[position + 1];
             position += 2;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
-            result.cartesianCoordsIsExist = true;
+        if(result.header48.CalculatedPositionInCartesianCoords_isExist) {
             result.CalculatedPositionInCartesianCoordiantes = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8) | data[position + 3];
             position += 4;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header48.CalculatedTrackVelocityInPolarRepresentation_isExist) {
             result.CalculatedTrackVelocityInPolarRepresentation = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8) | data[position + 3];
             position += 4;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header48.TrackStatus_isExist) {
             while((data[position] & 0x1) != 0) {
                 result.TrackStatus.push_back(data[position]);
                 position++;
@@ -481,13 +464,13 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
             position++;
         }
 
-        if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+        if(result.header48.FX2) {
+            if(result.header48.TrackQuality_isExist) {
                 result.TrackQuality = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8) | data[position + 3];
                 position += 4;
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            if(result.header48.WarningConditionsAndTargetClassification_isExist) {
                 while((data[position] & 0x1) != 0) {
                     result.WarningConditionsAndTargetClassification.push_back(data[position]);
                     position++;
@@ -496,23 +479,22 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
                 position++;
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            if(result.header48.Mode3ACodeConfidenceIndicator_isExist) {
                 result.Mode3ACodeConfidenceIndicator = (data[position] << 8) | data[position + 1];
                 position += 2;
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            if(result.header48.ModeCCodeAndConfidenceIndicator_isExist) {
                 result.ModeCCodeAndConfidenceIndicator = (data[position] << 24) | (data[position + 1] << 16) | (data[position + 2] << 8) | data[position + 3];
                 position += 4;
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            if(result.header48.HeightMeasuredBy3dRadar_isExist) {
                 result.HeightMeasuredBy3dRadar = (data[position] << 8) | data[position + 1];
                 position += 2;
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
-
+            if(result.header48.RadialDopplerSpeed_isExist) {
                 result.RadialDopplerSpeed.PrimarySubfield = data[position];
                 position++;
 
@@ -534,46 +516,46 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
                 }
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            if(result.header48.FlightStatus_isExist) {
                 result.FlightStatus = (data[position] << 8) | data[position + 1];
                 position += 2;
             }
 
-            if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+            if(result.header48.FX3) {
                 result.ACASResolutionAdvisoryReport = 0;
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.ACASResolutionAdvisoryReport_isExist) {
                     result.ACASResolutionAdvisoryReport = (((uint64_t)data[position] << 48) | ((uint64_t)data[position + 1] << 40)
                                                               | ((uint64_t)data[position + 2] << 32) | (data[position + 3] << 24)
                                                   | (data[position + 4] << 16) | (data[position + 5] << 8) | data[position + 6]);
                     position += 7;
                 }
 
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.Mode1CodeInOctalRepresentation_isExist) {
                     result.Mode1CodeInOctalRepresentation = data[position];
                     position++;
                 }
 
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.Mode2CodeInOctalRepresentation_isExist) {
                     result.Mode2CodeInOctalRepresentation = (data[position] << 8) | data[position + 1];
                     position += 2;
                 }
 
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.Mode1CodeConfidenceIndicator_isExist) {
                     result.Mode1CodeConfidenceIndicator = data[position];
                     position++;
                 }
 
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.Mode2CodeConfidenceIndicator_isExist) {
                     result.Mode2CodeConfidenceIndicator = (data[position] << 8) | data[position + 1];
                     position += 2;
                 }
 
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.ReservedExpansionField_isExist) {
                     result.ReservedExpansionField = data[position];
                     position++;
                 }
 
-                if((result.FSPEC & (mask << (maskStart - (++shiftMask)))) > 0) {
+                if(result.header48.SpecialPurposeField_isExist) {
                     result.SpecialPurposeField = data[position];
                     position++;
                 }
@@ -584,4 +566,3 @@ Asterix48 AsterixReader::parseAsterix48(const uint8_t* data) {
     result.Data = QByteArray((const char*)(data), result.LEN);
     return result;
 }
-

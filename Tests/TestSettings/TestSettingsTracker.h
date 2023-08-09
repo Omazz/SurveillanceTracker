@@ -15,9 +15,6 @@ public:
 signals:
 
 private slots:
-    void initialization_checkField_KEY();
-
-    void initialization_checkField_INITIALIZING_VECTOR();
 
     void initialization_checkField_SCAN_MSECS();
 

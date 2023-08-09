@@ -1,9 +1,11 @@
 #include "AdaptiveKalmanConstVelocityFilter.h"
 
-AdaptiveKalmanConstVelocityFilter::AdaptiveKalmanConstVelocityFilter(quint16 maximumNumberOfSteps,
+AdaptiveKalmanConstVelocityFilter::AdaptiveKalmanConstVelocityFilter(quint16 numberRecalcsP,
+                                                                     quint16 numberRecalcsR,
                                                                      qreal rhoMSE, qreal thetaMSE,
                                                                      qreal velocityMSE) {
-    m_maximumNumberOfSteps = maximumNumberOfSteps;
+    m_numberRecalcsP = numberRecalcsP;
+    m_numberRecalcsR = numberRecalcsR;
     m_rhoMSE = rhoMSE;
     m_thetaMSE = thetaMSE;
     m_velocityMSE = velocityMSE;
@@ -25,7 +27,7 @@ void AdaptiveKalmanConstVelocityFilter::initialization(QVector<Target> array) {
     m_velocity = (array.last().coordinate - array.first().coordinate) /
                     (array.last().time - array.first().time);
 
-    m_numberOfSteps = array.size();
+    m_counterSteps = array.size();
 
     // R -- взвешенная матрица шума
     m_R = Matrix(2, 2);
@@ -84,7 +86,7 @@ void AdaptiveKalmanConstVelocityFilter::initialization(QVector<Target> array) {
 }
 
 Target AdaptiveKalmanConstVelocityFilter::filterMeasuredValue(Target measurement) {
-    m_numberOfSteps++;
+    m_counterSteps++;
     Matrix z(2, 1);
     z.set(0, 0, measurement.coordinate.x());
     z.set(1, 0, measurement.coordinate.y());
@@ -94,7 +96,7 @@ Target AdaptiveKalmanConstVelocityFilter::filterMeasuredValue(Target measurement
 
     m_x = m_A.multiply(m_x);
 
-    if(m_numberOfSteps < m_maximumNumberOfSteps) {
+    if(m_counterSteps < m_numberRecalcsP) {
         m_P = m_A.multiply(m_P).multiply(m_A.transpose()).sum(m_Q);
     }
 
@@ -107,13 +109,15 @@ Target AdaptiveKalmanConstVelocityFilter::filterMeasuredValue(Target measurement
     QPointF filteredCoordinate = QPointF(m_x.get(0, 0), m_x.get(1, 0));
     m_velocity = QPointF(m_x.get(2, 0), m_x.get(3, 0));
 
-   if((m_numberOfSteps + 1) < m_maximumNumberOfSteps) {
+   if((m_counterSteps + 1) < m_numberRecalcsP) {
         m_P = m_I.difference(K.multiply(m_H)).multiply(m_P);
     }
 
     m_filteredTarget = Target(filteredCoordinate, measurement.time);
 
-    recalculateMatrixR();
+    if(m_counterSteps < m_numberRecalcsR) {
+        recalculateMatrixR();
+    }
 
     return m_filteredTarget;
 }
@@ -143,6 +147,5 @@ void AdaptiveKalmanConstVelocityFilter::recalculateMatrixR() {
 
     m_R.set(0, 0, qPow(m_rhoMSE*qSin(theta),2)+qPow(rho*m_thetaMSE*qCos(theta),2));
     m_R.set(1, 1, qPow(m_rhoMSE*qCos(theta),2)+qPow(rho*m_thetaMSE*qSin(theta),2));
-
 }
 

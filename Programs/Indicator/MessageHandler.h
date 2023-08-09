@@ -3,10 +3,6 @@
 
 #include <QObject>
 #include <QUdpSocket>
-#include <QMessageBox>
-#include "../../PriFiles/EncryptionTools/mycrypto.hpp"
-#include "../../PriFiles/EncryptionTools/Kuznyechik.hpp"
-#include "../../PriFiles/EncryptionTools/gost341112.h"
 #include "../../PriFiles/Settings/SettingsTracker.h"
 #include "../../PriFiles/AsterixHandler/asterixreader.h"
 
@@ -29,9 +25,6 @@ signals:
     void newExtrapolatedTrack(qreal x_km, qreal y_km, qreal directionAngle_rad);
 
 private:
-    ByteBlock m_key;
-    ByteBlock m_iv;
-    Streebog m_streebog;
     QScopedPointer<QUdpSocket> m_socket;
 };
 

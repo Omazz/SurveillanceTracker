@@ -38,4 +38,4 @@ DISTFILES += \
     ../../ApplicationIcons/RadarIcon.ico
 
 include(../../PriFiles/Settings/Settings.pri)
-
+include(../../PriFiles/LoadingScreen/LoadingScreen.pri)

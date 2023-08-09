@@ -48,5 +48,5 @@ DISTFILES += \
 
 include(../../PriFiles/AsterixHandler/AsterixHandler.pri)
 include(../../PriFiles/Settings/Settings.pri)
-include(../../PriFiles/EncryptionTools/EncryptionTools.pri)
+include(../../PriFiles/LoadingScreen/LoadingScreen.pri)
 

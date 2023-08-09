@@ -3,30 +3,23 @@
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::SettingsWindow)
-{
+    , ui(new Ui::SettingsWindow) {
     ui->setupUi(this);
     setFixedSize(width(), height());
     loadSettings();
 }
 
-SettingsWindow::~SettingsWindow()
-{
+SettingsWindow::~SettingsWindow() {
     delete ui;
 }
 
 
-void SettingsWindow::on_PB_apply_clicked()
-{
+void SettingsWindow::on_PB_apply_clicked() {
     saveSettings();
 }
 
 
 void SettingsWindow::loadSettings() {
-
-    /* ENCRYPTION_PARAMETERS */
-    ui->LE_key->setText(SettingsTracker::KEY);
-    ui->LE_iv->setText(SettingsTracker::INITIALIZING_VECTOR);
 
     /* ANTENNA SYSTEM PARAMETERS */
     ui->DSB_scanPeriod->setValue(qRound(SettingsTracker::SCAN_MSECS));
@@ -79,19 +72,6 @@ void SettingsWindow::loadSettings() {
 }
 
 void SettingsWindow::saveSettings() {
-    /* ENCRYPTION_PARAMETERS */
-    QString keyString = ui->LE_key->text();
-    while(keyString.size() < 64) {
-        keyString.push_front("0");
-    }
-    SettingsTracker::KEY = keyString;
-
-    QString ivString = ui->LE_iv->text();
-    while(ivString.size() < 32) {
-        ivString.push_front("0");
-    }
-    SettingsTracker::INITIALIZING_VECTOR = ivString;
-
     /* ANTENNA SYSTEM PARAMETERS */
     SettingsTracker::SCAN_MSECS = ui->DSB_scanPeriod->value();
     SettingsTracker::WAIT_INFO_MSECS = ui->DSB_waitInfo->value();
@@ -139,11 +119,6 @@ void SettingsWindow::on_PB_load_clicked() {
         QSettings settings(fileName, QSettings::IniFormat);
 
         if(settings.status() == QSettings::NoError) {
-            /* ENCRYPTION_PARAMETERS */
-            settings.beginGroup("ENCRYPTION_PARAMETERS");
-            ui->LE_key->setText(settings.value("KEY").toString());
-            ui->LE_iv->setText(settings.value("INITIALIZING_VECTOR").toString());
-            settings.endGroup();
 
             /* ANTENNA SYSTEM PARAMETERS */
             settings.beginGroup("ANTENNA_SYSTEM_PARAMETERS");
@@ -214,20 +189,6 @@ void SettingsWindow::on_PB_save_clicked() {
         QSettings settings(fileName, QSettings::IniFormat);
 
         if(settings.status() == QSettings::NoError) {
-            /* ENCRYPTION PARAMETERS */
-            settings.beginGroup("ENCRYPTION_PARAMETERS");
-            QString keyString = ui->LE_key->text();
-            while(keyString.size() < 64) {
-                keyString.push_front("0");
-            }
-            settings.setValue("KEY", keyString);
-            QString ivString = ui->LE_iv->text();
-            while(ivString.size() < 32) {
-                ivString.push_front("0");
-            }
-            settings.setValue("INITIALIZING_VECTOR", ivString);
-            settings.endGroup();
-
             /* ANTENNA SYSTEM PARAMETERS*/
             settings.beginGroup("ANTENNA_SYSTEM_PARAMETERS");
             settings.setValue("SCAN_MSECS", ui->DSB_scanPeriod->value());

@@ -2,10 +2,6 @@
 
 QSettings* SettingsTracker::_settings;
 
-/* ENCRYPTION PARAMETERS */
-QString SettingsTracker::KEY;
-QString SettingsTracker::INITIALIZING_VECTOR;
-
 /* ANTENNA SYSTEM PARAMETERS*/
 qreal SettingsTracker::SCAN_MSECS;
 qreal SettingsTracker::WAIT_INFO_MSECS;
@@ -36,9 +32,6 @@ void SettingsTracker::initialization() {
     _settings = new QSettings("PetProjects", "SurveillanceTracker");
 
     if(_settings->childGroups().isEmpty()) {
-        /* ENCRYPTION PARAMETERS */
-        KEY = DEFAULT_KEY;
-        INITIALIZING_VECTOR = DEFAULT_INITIALIZING_VECTOR;
 
         /* ANTENNA SYSTEM PARAMETERS*/
         SCAN_MSECS = DEFAULT_SCAN_MSECS;
@@ -59,12 +52,6 @@ void SettingsTracker::initialization() {
         /* MANEUVER PARAMETERS */
         MANEUVER_VELOCITY_M_SECS = DEFAULT_MANEUVER_VELOCITY_M_SECS;
         MANEUVER_ANGLE_DEG = DEFAULT_MANEUVER_ANGLE_DEG;
-
-        /* ENCRYPTION PARAMETERS */
-        _settings->beginGroup("ENCRYPTION_PARAMETERS");
-        _settings->setValue("KEY", KEY);
-        _settings->setValue("INITIALIZING_VECTOR", INITIALIZING_VECTOR);
-        _settings->endGroup();
 
         /* ANTENNA SYSTEM PARAMETERS*/
         _settings->beginGroup("ANTENNA_SYSTEM_PARAMETERS");
@@ -94,11 +81,6 @@ void SettingsTracker::initialization() {
         _settings->setValue("MANEUVER_ANGLE_DEG", MANEUVER_ANGLE_DEG);
         _settings->endGroup();
     } else {
-        /* ENCRYPTION PARAMETERS */
-        _settings->beginGroup("ENCRYPTION_PARAMETERS");
-        KEY = _settings->value("KEY", DEFAULT_KEY).toString();
-        INITIALIZING_VECTOR = _settings->value("INITIALIZING_VECTOR", DEFAULT_INITIALIZING_VECTOR).toString();
-        _settings->endGroup();
 
         /* ANTENNA SYSTEM PARAMETERS */
         _settings->beginGroup("ANTENNA_SYSTEM_PARAMETERS");
@@ -131,12 +113,6 @@ void SettingsTracker::initialization() {
 }
 
 void SettingsTracker::saveParameters() {
-    /* ENCRYPTION PARAMETERS */
-    _settings->beginGroup("ENCRYPTION_PARAMETERS");
-    _settings->setValue("KEY", KEY);
-    _settings->setValue("INITIALIZING_VECTOR", INITIALIZING_VECTOR);
-    _settings->endGroup();
-
     /* ANTENNA SYSTEM PARAMETERS*/
     _settings->beginGroup("ANTENNA_SYSTEM_PARAMETERS");
     _settings->setValue("SCAN_MSECS", SCAN_MSECS);

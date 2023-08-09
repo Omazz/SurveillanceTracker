@@ -9,6 +9,7 @@
 #include "../../PriFiles/Filters/KalmanConstVelocityFilter.h"
 #include "../../PriFiles/Filters/KalmanConstAccelerationFilter.h"
 #include "../../PriFiles/Filters/AdaptiveKalmanConstVelocityFilter.h"
+#include "../../PriFiles/Filters/AlphaBetaWLeastSquaresFilter.h"
 #include "../../PriFiles/GraphUI/GraphicsBuilderWidget.h"
 #include "RadarView.h"
 #include "TargetItem.h"
@@ -76,6 +77,9 @@ private:;
     QVector<QPointF> calcAlphaBetaLeastSquaresFilter(QVector<Target> targets, uint16_t k_max,
                                                      uint16_t numberToExtrapolation);
 
+
+    QVector<QPointF> calcAlphaBetaWLeastSquaresFilter(QVector<Target> targets);
+
     QVector<QPointF> calcKalmanConstVelocityFilter(QVector<Target> targets, uint16_t k_max,
                                                    qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
                                                    qreal sigmaNoiseVelocity);
@@ -84,7 +88,8 @@ private:;
                                                        qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
                                                        qreal sigmaNoiseVelocity, qreal sigmaAcceleration);
 
-    QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets, uint16_t k_max,
+    QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets,
+                                                           quint16 numberRecalcsP, quint16 numberRecalcsR,
                                                            qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
                                                            qreal sigmaNoiseVelocity);
 
@@ -94,6 +99,7 @@ private:;
     QVector<QVector<QPointF>> mTrackWithNoise;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilter;
     QVector<QVector<QPointF>> mTrackAlphaBetaFilterMNK;
+    QVector<QVector<QPointF>> mTrackAlphaBetaFilterWMNK;
     QVector<QVector<QPointF>> mTrackKalmanFilterCV;
     QVector<QVector<QPointF>> mTrackKalmanFilterCA;
     QVector<QVector<QPointF>> mTrackAdaptiveKalmanFilterCV;
