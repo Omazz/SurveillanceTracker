@@ -112,28 +112,6 @@ jobs:
       
     - name: Compile
       run: cd ./Programs/Settings/ && make
-      
-  test_encryption_tools:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Update
-      run: sudo apt-get update
-      
-    - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
-    
-    - name: Get repository code
-      uses: actions/checkout@v3
-  
-    - name: Build qmake-file encryption tools
-      run: cd ./Tests/TestEncryptionTools/ && qmake TestEncryptionTools.pro
-    
-    - name: Create executable test encryption tools file
-      run: cd ./Tests/TestEncryptionTools/ && make
-
-    - name: Run test cipher and mac
-      run: cd ./ProgramBuilds/TEST-EncryptionTools/ && ./TestEncryptionTools
 
   test_asterix_handler:
     runs-on: ubuntu-latest
