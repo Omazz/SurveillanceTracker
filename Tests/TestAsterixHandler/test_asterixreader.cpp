@@ -20,7 +20,7 @@ void Test_AsterixReader::parseAsterix34_checkField_FSPEC() {
     std::pair<std::list<Asterix48>, std::list<Asterix34>> records = asterixReader.readPcapFile(
                 "../../Tests/TestAsterixHandler/TestRecords/recordAsterix34_1packet_NorthMarker.pcapng"
                 );
-    QCOMPARE(records.second.back().FSPEC, 0xE000);
+    QCOMPARE(records.second.back().FSPEC, 224);
 }
 
 void Test_AsterixReader::parseAsterix34_checkField_DataSourceIdentifier() {
@@ -60,7 +60,7 @@ void Test_AsterixReader::parseAsterix48_checkField_FSPEC() {
     std::pair<std::list<Asterix48>, std::list<Asterix34>> records = asterixReader.readPcapFile(
                 "../../Tests/TestAsterixHandler/TestRecords/recordAsterix48_1packet.pcapng"
                 );
-    QCOMPARE(records.first.back().FSPEC, 0xF0000000);
+    QCOMPARE(records.first.back().FSPEC, 240);
 }
 
 void Test_AsterixReader::parseAsterix48_checkField_DataSourceIdentifier() {
