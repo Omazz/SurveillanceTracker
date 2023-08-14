@@ -2,7 +2,7 @@
 #define PLOT_H
 
 #include <QtCore>
-#include "../../PriFiles/AsterixHandler/asterixreader.h"
+#include "AsterixReader.h"
 
 class Plot
 {

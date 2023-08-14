@@ -2,8 +2,6 @@
 
 #include <QGraphicsView>
 
-class TargetItem;
-
 class RadarView: public QGraphicsView {
 Q_OBJECT
 

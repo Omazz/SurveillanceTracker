@@ -1,16 +1,15 @@
 #include "RadarWindow.h"
-#include "../../PriFiles/LoadingScreen/AppLoadScreen.h"
+#include "AppLoadScreen.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    SettingsTracker::initialization();
 
     RadarWindow w;
-    w.setWindowIcon(QIcon("../../ApplicationIcons/RadarIcon.ico"));
-    AppLoadScreen loadScreen(QPixmap("../../ApplicationIcons/loadscreen_Radar.png"));
+    w.setWindowIcon(QIcon("../../../ApplicationIcons/RadarIcon.ico"));
+    AppLoadScreen loadScreen(QPixmap("../../../ApplicationIcons/loadscreen_Radar.png"));
     loadScreen.showLoadingScreen(2500, &w);
     w.show();
     w.activateWindow();

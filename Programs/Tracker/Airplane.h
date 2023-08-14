@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtCore>
 #include "Plot.h"
-#include "../../PriFiles/Settings/SettingsTracker.h"
+#include "SettingsTracker.h"
 
 class Airplane : public QObject
 {

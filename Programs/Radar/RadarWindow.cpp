@@ -19,14 +19,12 @@ RadarWindow::RadarWindow(QWidget *parent)
     ui->LE_ipAddress->setValidator(ipValidator);
 }
 
-RadarWindow::~RadarWindow()
-{
+RadarWindow::~RadarWindow() {
     delete ui;
 }
 
-
 void RadarWindow::on_PB_start_clicked() {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open pcap"), "../../Records", tr("pcap (*.pcapng)"));
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open pcap"), "../../../Records", tr("pcap (*.pcapng)"));
 
     if(filePath.isEmpty()) {
         return;

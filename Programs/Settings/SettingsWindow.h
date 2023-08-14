@@ -3,7 +3,8 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
-#include "../../PriFiles/Settings/SettingsTracker.h"
+#include "SettingsTracker.h"
+#include "AppLoadScreen.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SettingsWindow; }

@@ -8,7 +8,7 @@
 
 #include "Airplane.h"
 #include "MessageHandler.h"
-#include "../../PriFiles/Settings/SettingsTracker.h"
+#include "SettingsTracker.h"
 
 
 static quint16 CURRENT_TRACK_NUMBER = 1; // 1...511

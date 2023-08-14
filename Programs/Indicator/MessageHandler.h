@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QUdpSocket>
-#include "../../PriFiles/Settings/SettingsTracker.h"
-#include "../../PriFiles/AsterixHandler/asterixreader.h"
+#include "SettingsTracker.h"
+#include "AsterixReader.h"
 
 class MessageHandler : public QObject
 {

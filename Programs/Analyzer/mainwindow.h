@@ -4,13 +4,13 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QtCore>
-#include "../../PriFiles/Filters/AlphaBetaFilter.h"
-#include "../../PriFiles/Filters/AlphaBetaLeastSquaresFilter.h"
-#include "../../PriFiles/Filters/KalmanConstVelocityFilter.h"
-#include "../../PriFiles/Filters/KalmanConstAccelerationFilter.h"
-#include "../../PriFiles/Filters/AdaptiveKalmanConstVelocityFilter.h"
-#include "../../PriFiles/Filters/AlphaBetaWLeastSquaresFilter.h"
-#include "../../PriFiles/GraphUI/GraphicsBuilderWidget.h"
+#include "AlphaBetaFilter.h"
+#include "AlphaBetaLeastSquaresFilter.h"
+#include "KalmanConstVelocityFilter.h"
+#include "KalmanConstAccelerationFilter.h"
+#include "AdaptiveKalmanConstVelocityFilter.h"
+#include "AlphaBetaWLeastSquaresFilter.h"
+#include "GraphicsBuilderWidget.h"
 #include "RadarView.h"
 #include "TargetItem.h"
 
@@ -56,6 +56,8 @@ private slots:
 private:;
     void createGrid();
 
+    QVector<qreal> calculateStandardDeviation(QVector<QVector<QPointF>> array);
+
     void drawLineTrajectory();
 
     void drawTurnTrajectory();
@@ -64,46 +66,21 @@ private:;
 
     QVector<QPointF> addNoiseToMeasurements(QVector<QPointF> measurements);
 
-    qreal calculateNoise(const qreal sigma, bool flag);
+    void calculateTracks();
 
-    void calculateVariablesTrajectories(qreal updateTime);
-
-    void drawVariablesTrajectories();
+    void drawTracks();
 
     void clearModulation();
 
-    QVector<QPointF> calcAlphaBetaFilter(QVector<Target> targets, uint16_t k_max);
-
-    QVector<QPointF> calcAlphaBetaLeastSquaresFilter(QVector<Target> targets, uint16_t k_max,
-                                                     uint16_t numberToExtrapolation);
-
-
-    QVector<QPointF> calcAlphaBetaWLeastSquaresFilter(QVector<Target> targets);
-
-    QVector<QPointF> calcKalmanConstVelocityFilter(QVector<Target> targets, uint16_t k_max,
-                                                   qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
-                                                   qreal sigmaNoiseVelocity);
-
-    QVector<QPointF> calcKalmanConstAccelerationFilter(QVector<Target> targets, uint16_t k_max,
-                                                       qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
-                                                       qreal sigmaNoiseVelocity, qreal sigmaAcceleration);
-
-    QVector<QPointF> calcAdaptiveKalmanConstVelocityFilter(QVector<Target> targets,
-                                                           quint16 numberRecalcsP, quint16 numberRecalcsR,
-                                                           qreal sigmaNoiseRho, qreal sigmaNoiseTheta,
-                                                           qreal sigmaNoiseVelocity);
-
     QPointF polarToCart(qreal rho, qreal theta);
 
-    QVector<QPointF> mTrajectoryOriginal;
-    QVector<QVector<QPointF>> mTrackWithNoise;
-    QVector<QVector<QPointF>> mTrackAlphaBetaFilter;
-    QVector<QVector<QPointF>> mTrackAlphaBetaFilterMNK;
-    QVector<QVector<QPointF>> mTrackAlphaBetaFilterWMNK;
-    QVector<QVector<QPointF>> mTrackKalmanFilterCV;
-    QVector<QVector<QPointF>> mTrackKalmanFilterCA;
-    QVector<QVector<QPointF>> mTrackAdaptiveKalmanFilterCV;
-
+    QVector<QPointF> m_originalTrack;
+    QVector<QVector<QPointF>> m_noiseTrack;
+    QVector<QVector<QPointF>> m_alphaBetaTrack;
+    QVector<QVector<QPointF>> m_alphaBetaWlsmTrack;
+    QVector<QVector<QPointF>> m_kalmanConstVelocityTrack;
+    QVector<QVector<QPointF>> m_kalmanConstAccelerationTrack;
+    QVector<QVector<QPointF>> m_adaptiveKalmanConstVelocityTrack;
 
     Ui::MainWindow *ui;
     QGraphicsScene* m_graphicsScene;

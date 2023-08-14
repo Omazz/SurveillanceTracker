@@ -7,8 +7,6 @@
 #include <QTime>
 #include <pcap.h>
 
-#include "../../PriFiles/Settings/SettingsTracker.h"
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class RadarWindow; }
 QT_END_NAMESPACE

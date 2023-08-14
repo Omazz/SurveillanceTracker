@@ -1,0 +1,5 @@
+if(EXISTS "/home/leonid/Рабочий стол/Projects/PetProjects/CppQt/SurveillanceTracker/Build/Tests/TestAsterixHandler/TestAsterixHandler[1]_tests.cmake")
+  include("/home/leonid/Рабочий стол/Projects/PetProjects/CppQt/SurveillanceTracker/Build/Tests/TestAsterixHandler/TestAsterixHandler[1]_tests.cmake")
+else()
+  add_test(TestAsterixHandler_NOT_BUILT TestAsterixHandler_NOT_BUILT)
+endif()

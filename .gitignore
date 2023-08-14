@@ -1,18 +1,60 @@
 #linux executable file
 *.elf
 
+# Prerequisites
+*.d
 
-# C++ objects and libs
+# Compiled Object files
 *.slo
 *.lo
 *.o
-*.a
-*.la
-*.lai
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
 *.so
-*.so.*
-*.dll
 *.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.elf
+*.exe
+*.out
+*.app
+
+### CMake ###
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+### CMake Patch ###
+# External projects
+*-prefix/
+
+### Qt ###
+# C++ objects and libs
+*.so.*
 
 # Qt-es
 object_script.*.Release
@@ -50,11 +92,11 @@ target_wrapper.*
 CMakeLists.txt.user*
 
 # QtCreator 4.8< compilation database
-compile_commands.json
 
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
 *_qmlcache.qrc
-*.elf
-*.conf
+*.json
+
+# End of https://www.toptal.com/developers/gitignore/api/c++,qt,cmake

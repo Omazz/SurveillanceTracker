@@ -23,11 +23,8 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
 
-    - name: Build qmake-file tracker
-      run: cd ./Programs/Tracker/ && qmake Tracker.pro    
-    
-    - name: Compile 
-      run: cd ./Programs/Tracker/ && make
+    - name: Compile
+      run: cd ./Manage/ && ./compile.sh Tracker
   
      
   compile_analyzer:
@@ -43,11 +40,8 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file Analyzer
-      run: cd ./Programs/Analyzer/ && qmake Analyzer.pro
-      
     - name: Compile
-      run: cd ./Programs/Analyzer/ && make
+      run: cd ./Manage/ && ./compile.sh Analyzer
     
 
   compile_indicator:
@@ -66,11 +60,8 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file indicator
-      run: cd ./Programs/Indicator/ && qmake Indicator.pro
-      
     - name: Compile
-      run: cd ./Programs/Indicator/ && make
+      run: cd ./Manage/ && ./compile.sh Indicator
   
   compile_radar:
     runs-on: ubuntu-latest
@@ -88,11 +79,8 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file radar program
-      run: cd ./Programs/Radar/ && qmake Radar.pro
-      
     - name: Compile
-      run: cd ./Programs/Radar/ && make
+      run: cd ./Manage/ && ./compile.sh Radar
       
   compile_settings:
     runs-on: ubuntu-latest
@@ -107,34 +95,9 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
     
-    - name: Build qmake-file settings program
-      run: cd ./Programs/Settings/ && qmake Settings.pro
-      
     - name: Compile
-      run: cd ./Programs/Settings/ && make
+      run: cd ./Manage/ && ./compile.sh Settings
       
-  test_encryption_tools:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Update
-      run: sudo apt-get update
-      
-    - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
-    
-    - name: Get repository code
-      uses: actions/checkout@v3
-  
-    - name: Build qmake-file encryption tools
-      run: cd ./Tests/TestEncryptionTools/ && qmake TestEncryptionTools.pro
-    
-    - name: Create executable test encryption tools file
-      run: cd ./Tests/TestEncryptionTools/ && make
-
-    - name: Run test cipher and mac
-      run: cd ./ProgramBuilds/TEST-EncryptionTools/ && ./TestEncryptionTools
-
   test_asterix_handler:
     runs-on: ubuntu-latest
 
@@ -151,14 +114,11 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
   
-    - name: Build qmake-file test asterix handler
-      run: cd ./Tests/TestAsterixHandler/ && qmake TestAsterixHandler.pro
-    
-    - name: Create executable test asterix handler file
-      run: cd ./Tests/TestAsterixHandler/ && make
-
-    - name: Run test asterix handler
-      run: cd ./ProgramBuilds/TEST-AsterixHandler/ && ./TestAsterixHandler
+    - name: Compile
+      run: cd ./Manage/ && ./compile.sh TestAsterixHandler
+      
+    - name: Run tests
+      run: cd ./Manage/ && ./run.sh TestAsterixHandler
 
   test_filters:
     runs-on: ubuntu-latest
@@ -173,12 +133,12 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
   
-    - name: Build qmake-file test filters
-      run: cd ./Tests/TestFilters/ && qmake TestFilters.pro
-    
-    - name: Create executable test filters file
-      run: cd ./Tests/TestFilters/ && make
-
+    - name: Compile
+      run: cd ./Manage/ && ./compile.sh TestFilters
+      
+    - name: Run tests
+      run: cd ./Manage/ && ./run.sh TestFilters
+      
   test_settings:
     runs-on: ubuntu-latest
 
@@ -192,14 +152,11 @@ jobs:
     - name: Get repository code
       uses: actions/checkout@v3
   
-    - name: Build qmake-file test settings
-      run: cd ./Tests/TestSettings/ && qmake TestSettings.pro
-    
-    - name: Create executable test settings file
-      run: cd ./Tests/TestSettings/ && make
-
-    - name: Run test settings
-      run: cd ./ProgramBuilds/TEST-SettingsTracker/ && ./TestSettingsTracker
+    - name: Compile
+      run: cd ./Manage/ && ./compile.sh TestTrackerSettings
+      
+    - name: Run tests
+      run: cd ./Manage/ && ./run.sh TestTrackerSettings
       
   test_tracker:
     runs-on: ubuntu-latest
@@ -216,12 +173,10 @@ jobs:
     
     - name: Get repository code
       uses: actions/checkout@v3
-  
-    - name: Build qmake-file test tracker
-      run: cd ./Tests/TestTracker/ && qmake TestTracker.pro
-    
-    - name: Create executable test tracker file
-      run: cd ./Tests/TestTracker/ && make
-
-    - name: Run test tracker
-      run: cd ./ProgramBuilds/TEST-Tracker/ && ./TestTracker
+      
+    - name: Compile
+      run: cd ./Manage/ && ./compile.sh TestTracker
+      
+    - name: Run tests
+      run: cd ./Manage/ && ./run.sh TestTracker
+      

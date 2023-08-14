@@ -600,7 +600,7 @@ QSpinBox:disabled {
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QCheckBox" name="CB_ABfilterMNK">
+           <widget class="QCheckBox" name="CB_ABfilterWLSM">
             <property name="text">
              <string>α-β фильтр МНК</string>
             </property>
@@ -633,16 +633,6 @@ QSpinBox:disabled {
            <widget class="QCheckBox" name="CB_AdaptiveKalmanFilterCV">
             <property name="text">
              <string>Адаптивный Калман CV</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="CB_ABfilterWMNK">
-            <property name="text">
-             <string>α-β фильтр МНК</string>
             </property>
             <property name="checked">
              <bool>false</bool>
