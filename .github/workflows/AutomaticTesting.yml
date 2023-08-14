@@ -20,7 +20,7 @@ jobs:
     - name: Install Qt
       run: sudo apt install -y qtbase5-dev qt5-qmake cmake
       
-    - name: Install Qt
+    - name: Install charts
       run: sudo apt install libqt5charts5-dev
 
     - name: Install CMake
