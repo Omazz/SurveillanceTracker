@@ -18,13 +18,7 @@ jobs:
       run: sudo apt-get install libpcap-dev
 
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
-      
-    - name: Install charts
-      run: sudo apt install libqt5charts5-dev
-
-    - name: Install CMake
-      run: sudo snap install cmake --classic
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
 
     - name: Get repository code
       uses: actions/checkout@v3
