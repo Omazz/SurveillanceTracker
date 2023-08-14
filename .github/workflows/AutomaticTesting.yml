@@ -19,7 +19,10 @@ jobs:
 
     - name: Install Qt
       run: sudo apt install -y qtbase5-dev qt5-qmake cmake
-    
+
+    - name: Install CMake
+      run: sudo snap install cmake
+
     - name: Get repository code
       uses: actions/checkout@v3
 
