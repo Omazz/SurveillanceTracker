@@ -35,5 +35,4 @@ target_link_libraries(Settings
         Qt5::Widgets
         SettingsTracker
         LoadingScreen
-        ${PCAP_LIBRARY}
 )
