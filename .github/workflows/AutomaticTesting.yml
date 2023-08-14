@@ -19,6 +19,9 @@ jobs:
 
     - name: Install Qt
       run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      
+    - name: Install Qt
+      run: sudo apt install libqt5charts5-dev
 
     - name: Install CMake
       run: sudo snap install cmake --classic
