@@ -35,7 +35,7 @@ jobs:
       run: sudo apt-get update
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -55,7 +55,7 @@ jobs:
       run: sudo apt-get install libpcap-dev
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -74,7 +74,7 @@ jobs:
       run: sudo apt-get install libpcap-dev
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -90,7 +90,7 @@ jobs:
       run: sudo apt-get update
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -109,7 +109,7 @@ jobs:
       run: sudo apt-get install libpcap-dev
 
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -128,7 +128,7 @@ jobs:
       run: sudo apt-get update
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -147,7 +147,7 @@ jobs:
       run: sudo apt-get update
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
@@ -169,7 +169,7 @@ jobs:
       run: sudo apt-get install libpcap-dev
       
     - name: Install Qt
-      run: sudo apt install -y qtbase5-dev qt5-qmake cmake
+      run: sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
     
     - name: Get repository code
       uses: actions/checkout@v3
