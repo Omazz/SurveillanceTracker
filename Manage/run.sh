@@ -14,9 +14,9 @@ fi
 
 if [ -f "../Build/Tests/$target/$target" ] || [ -f "../Build/Programs/$target/$target" ]; then
   if [[ $1 == Test* ]]; then
-    ../Build/Tests/$target/$target
+    cd ../Build/Tests/$target && ./$target
   else
-    ../Build/Programs/$target/$target
+    cd ../Build/Programs/$target && ./$target
   fi
 else
   echo "Module $target not compiled! You can use: \"./compile.sh $target\""
