@@ -99,7 +99,6 @@ CMakeLists.txt.user*
 *_qmlcache.qrc
 
 Build/
-.github/
 .cmake/
 .gitattributes
 
