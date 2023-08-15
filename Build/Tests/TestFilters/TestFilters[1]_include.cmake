@@ -1,5 +1,0 @@
-if(EXISTS "/home/leonid/Рабочий стол/Projects/PetProjects/CppQt/SurveillanceTracker/Build/Tests/TestFilters/TestFilters[1]_tests.cmake")
-  include("/home/leonid/Рабочий стол/Projects/PetProjects/CppQt/SurveillanceTracker/Build/Tests/TestFilters/TestFilters[1]_tests.cmake")
-else()
-  add_test(TestFilters_NOT_BUILT TestFilters_NOT_BUILT)
-endif()
