@@ -97,6 +97,10 @@ CMakeLists.txt.user*
 *creator.user*
 
 *_qmlcache.qrc
-*.json
+
+Build/
+.github/
+.cmake/
+.gitattributes
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,qt,cmake

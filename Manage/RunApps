@@ -1,0 +1,30 @@
+all: Tracker
+
+tests: TestFilters TestSettingsTracker TestAsterixHandler TestTracker
+
+Radar:
+	cd ../Build/Programs/Radar && ./Radar
+	
+Tracker:
+	cd ../Build/Programs/Tracker && ./Tracker
+
+Indicator:
+	cd ../Build/Programs/Indicator && ./Indicator
+
+Settings:
+	cd ../Build/Programs/Settings && ./Settings
+	
+Analyzer:
+	cd ../Build/Programs/Analyzer && ./Analyzer
+	
+TestFilters:
+	cd ../Build/Tests/TestFilters && ./TestFilters
+
+TestTracker:
+	cd ../Build/Tests/TestTracker && ./TestTracker
+
+TestSettingsTracker:
+	cd ../Build/Tests/TestSettingsTracker && ./TestSettingsTracker
+
+TestAsterixHandler:
+	cd ../Build/Tests/TestAsterixHandler && ./TestAsterixHandler
