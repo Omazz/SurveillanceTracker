@@ -1,5 +1,0 @@
-if(EXISTS "/home/leonid/Рабочий стол/Projects/PetProjects/CppQt/SurveillanceTracker/Build123/Tests/TestTracker/TestTracker[1]_tests.cmake")
-  include("/home/leonid/Рабочий стол/Projects/PetProjects/CppQt/SurveillanceTracker/Build123/Tests/TestTracker/TestTracker[1]_tests.cmake")
-else()
-  add_test(TestTracker_NOT_BUILT TestTracker_NOT_BUILT)
-endif()

@@ -1,4 +1,4 @@
-DIR_BUILD = Build123
+DIR_BUILD = Build
 
 CREATE_DIR = mkdir -p ../$(DIR_BUILD) 
 
@@ -31,11 +31,6 @@ Radar:
 	$(MOVE_TO_DIR)
 	$(COMPILE_TARGET) $@
 	
-Tracker:
-	$(CREATE_DIR)
-	$(MOVE_TO_DIR)
-	$(COMPILE_TARGET) $@
-
 Indicator:
 	$(CREATE_DIR)
 	$(MOVE_TO_DIR)
@@ -75,5 +70,5 @@ clean:
 	$(COMPILE_TARGET) clean
 	
 remove_build_dir:
-	-rm r ../$(DIR_BUILD)
+	-rm -r ../$(DIR_BUILD)
 
