@@ -1,0 +1,79 @@
+DIR_BUILD = Build123
+
+CREATE_DIR = mkdir -p ../$(DIR_BUILD) 
+
+MOVE_TO_DIR = cd ../$(DIR_BUILD) && cmake ..
+
+COMPILE_TARGET = cmake --build ../$(DIR_BUILD) --target
+
+all: 
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+	
+programs:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) Tracker Radar Indicator Settings Analyzer
+
+tests:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) TestFilters TestSettingsTracker TestAsterixHandler TestTracker
+
+Tracker:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+
+Radar:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+	
+Tracker:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+
+Indicator:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+
+Settings:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+	
+Analyzer:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+	
+TestFilters:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+
+TestTracker:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+
+TestSettingsTracker:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+
+TestAsterixHandler:
+	$(CREATE_DIR)
+	$(MOVE_TO_DIR)
+	$(COMPILE_TARGET) $@
+	
+clean:
+	$(COMPILE_TARGET) clean
+	
+remove_build_dir:
+	-rm r ../$(DIR_BUILD)
+

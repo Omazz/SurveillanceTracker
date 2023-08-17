@@ -1,23 +1,28 @@
 #!/bin/bash
 
 
-target=$1
+TARGET=$1
+
+DIR_PROGRAMS=../Build/Programs
+
+DIR_TESTS=../Build/Tests
+
 
 if [ -z "$1" ]; then
-  target="Tracker"
+  TARGET="Tracker"
 fi
 
-if [ "$target" != "Tracker" ] && [ "$target" != "Indicator" ] && [ "$target" != "Analyzer" ] && [ "$target" != "Radar" ] && [ "$target" != "Settings" ] && [ "$target" != "TestFilters" ] && [ "$target" != "TestTracker" ] && [ "$target" != "TestSettingsTracker" ] && [ "$target" != "TestAsterixHandler" ]; then
+if [ "$TARGET" != "Tracker" ] && [ "$TARGET" != "Indicator" ] && [ "$TARGET" != "Analyzer" ] && [ "$TARGET" != "Radar" ] && [ "$TARGET" != "Settings" ] && [ "$TARGET" != "TestFilters" ] && [ "$TARGET" != "TestTracker" ] && [ "$TARGET" != "TestSettingsTracker" ] && [ "$TARGET" != "TestAsterixHandler" ]; then
   echo "Write correct target to run: all, Tracker, Indicator, Analyzer, Radar, Settings, TestFilters, TestTracker, TestSettingsTracker, TestAsterixHandler."
   exit 1
 fi
 
-if [ -f "../Build/Tests/$target/$target" ] || [ -f "../Build/Programs/$target/$target" ]; then
+if [ -f "$DIR_TESTS/$TARGET/$TARGET" ] || [ -f "$DIR_PROGRAMS/$TARGET/$TARGET" ]; then
   if [[ $1 == Test* ]]; then
-    cd ../Build/Tests/$target && ./$target
+    cd $DIR_TESTS/$TARGET && ./$TARGET
   else
-    cd ../Build/Programs/$target && ./$target
+    cd $DIR_PROGRAMS/$TARGET && ./$TARGET
   fi
 else
-  echo "Module $target not compiled! You can use: \"./compile.sh $target\""
+  echo "Module $TARGET not compiled! You can use: \"./compile.sh $TARGET\""
 fi

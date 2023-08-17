@@ -1,30 +1,34 @@
+DIR_PROGRAMS = ../Build/Programs
+
+DIR_TESTS = ../Build/Tests
+
 all: Tracker
 
 tests: TestFilters TestSettingsTracker TestAsterixHandler TestTracker
 
 Radar:
-	cd ../Build/Programs/Radar && ./Radar
+	cd $(DIR_PROGRAMS)/$@ && ./$@
 	
 Tracker:
-	cd ../Build/Programs/Tracker && ./Tracker
+	cd $(DIR_PROGRAMS)/$@ && ./$@
 
 Indicator:
-	cd ../Build/Programs/Indicator && ./Indicator
+	cd $(DIR_PROGRAMS)/$@ && ./$@
 
 Settings:
-	cd ../Build/Programs/Settings && ./Settings
+	cd $(DIR_PROGRAMS)/$@ && ./$@
 	
 Analyzer:
-	cd ../Build/Programs/Analyzer && ./Analyzer
+	cd $(DIR_PROGRAMS)/$@ && ./$@
 	
 TestFilters:
-	cd ../Build/Tests/TestFilters && ./TestFilters
+	cd $(DIR_TESTS)/$@ && ./$@
 
 TestTracker:
-	cd ../Build/Tests/TestTracker && ./TestTracker
+	cd $(DIR_TESTS)/$@ && ./$@
 
 TestSettingsTracker:
-	cd ../Build/Tests/TestSettingsTracker && ./TestSettingsTracker
+	cd $(DIR_TESTS)/$@ && ./$@
 
 TestAsterixHandler:
-	cd ../Build/Tests/TestAsterixHandler && ./TestAsterixHandler
+	cd $(DIR_TESTS)/$@ && ./$@
