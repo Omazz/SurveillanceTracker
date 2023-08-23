@@ -359,14 +359,16 @@ void MainWindow::drawTracks() {
             m_graphicsScene->addItem(new TargetItem(
                                          QPointF(m_kalmanConstAccelerationTrack[0][i].x() / 1000.0,
                                                 -m_kalmanConstAccelerationTrack[0][i].y() / 1000.0),
-                                     Qt::magenta)
+                                         Qt::magenta)
                                     );
         }
 
         if(ui->CB_AdaptiveKalmanFilterCV->isChecked()) {
-            m_graphicsScene->addItem(new TargetItem(QPointF(m_adaptiveKalmanConstVelocityTrack[0][i].x() / 1000.0,
-                                                           -m_adaptiveKalmanConstVelocityTrack[0][i].y() / 1000.0),
-                                     Qt::cyan));
+            m_graphicsScene->addItem(new TargetItem(
+                                         QPointF(m_adaptiveKalmanConstVelocityTrack[0][i].x() / 1000.0,
+                                                -m_adaptiveKalmanConstVelocityTrack[0][i].y() / 1000.0),
+                                         Qt::cyan)
+                                    );
         }
     }
 }
