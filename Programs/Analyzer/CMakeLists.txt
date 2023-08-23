@@ -25,9 +25,11 @@ add_executable(Analyzer
     RadarView.h
     TargetItem.cpp
     TargetItem.h
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
+    MainWindow.cpp
+    MainWindow.h
+    MainWindow.ui
+    TrackHandler.cpp
+    TrackHandler.h
 )
 
 include_directories(
