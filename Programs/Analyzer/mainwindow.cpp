@@ -249,85 +249,69 @@ void MainWindow::calculateTracks() {
         /* Альфа-бета фильтр */
         if(ui->CB_ABfilter->isChecked()) {
             AlphaBetaFilter filter(ui->SB_AB_Kmax->value());
-            m_alphaBetaTrack.append(QVector<QPointF>());
-            for(int i = 0; i < 3; ++i) {
-                m_alphaBetaTrack.last().append(targets[i].coordinate);
-            }
-            filter.initialization({targets[0], targets[1], targets[2]});
-            for(int i = 3; i < targets.size(); ++i) {
-                m_alphaBetaTrack.last().append(filter.filterMeasuredValue(targets[i]).coordinate);
-            }
+            m_alphaBetaTrack.append(filterMeasurements(&filter, targets));
         }
 
         /* Альфа-бета фильтр с взвешенным методом наименьших квадратов */
         if(ui->CB_ABfilterWLSM->isChecked()) {
             AlphaBetaWLeastSquaresFilter filter;
-            m_alphaBetaWlsmTrack.append(QVector<QPointF>());
-            for(int i = 0; i < 3; ++i) {
-                m_alphaBetaWlsmTrack.last().append(targets[i].coordinate);
-            }
-            filter.initialization({targets[0], targets[1], targets[2]});
-            for(int i = 3; i < targets.size(); ++i) {
-                m_alphaBetaWlsmTrack.last().append(filter.filterMeasuredValue(targets[i]).coordinate);
-            }
+            m_alphaBetaWlsmTrack.append(filterMeasurements(&filter, targets));
         }
 
         /* Линейный фильтр Калмана */
         if(ui->CB_KalmanFilterCV->isChecked()) {
-            KalmanConstVelocityFilter filter(ui->SB_KalmanFilterCV_Kmax->value(),
-                                             ui->DSB_KalmanFilterCV_sigmaNoiseRho->value(),
-                                             qDegreesToRadians(ui->DSB_KalmanFilterCV_sigmaNoiseTheta->value() / 60.0),
-                                             ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value()
+            KalmanConstVelocityFilter filter(
+                                                ui->SB_KalmanFilterCV_Kmax->value(),
+                                                ui->DSB_KalmanFilterCV_sigmaNoiseRho->value(),
+                                                qDegreesToRadians(ui->DSB_KalmanFilterCV_sigmaNoiseTheta->value() / 60.0),
+                                                ui->DSB_KalmanFilterCV_sigmaNoiseVelocity->value()
                                              );
-            m_kalmanConstVelocityTrack.append(QVector<QPointF>());
-            for(int i = 0; i < 3; ++i) {
-                m_kalmanConstVelocityTrack.last().append(targets[i].coordinate);
-            }
-            filter.initialization({targets[0], targets[1], targets[2]});
-            for(int i = 3; i < targets.size(); ++i) {
-                m_kalmanConstVelocityTrack.last().append(filter.filterMeasuredValue(targets[i]).coordinate);
-            }
+            m_kalmanConstVelocityTrack.append(filterMeasurements(&filter, targets));
         }
 
         /* Квадартичный фильтр Калмана */
         if(ui->CB_KalmanFilterCA->isChecked()) {
-            KalmanConstAccelerationFilter filter(ui->SB_KalmanFilterCA_Kmax->value(),
-                                                 ui->DSB_KalmanFilterCA_sigmaNoiseRho->value(),
-                                                 qDegreesToRadians(ui->DSB_KalmanFilterCA_sigmaNoiseTheta->value() / 60.0),
-                                                 ui->DSB_KalmanFilterCA_sigmaNoiseVelocity->value(),
-                                                 ui->DSB_KalmanFilterCA_sigmaNoiseAcceleration->value()
+            KalmanConstAccelerationFilter filter(
+                                                    ui->SB_KalmanFilterCA_Kmax->value(),
+                                                    ui->DSB_KalmanFilterCA_sigmaNoiseRho->value(),
+                                                    qDegreesToRadians(ui->DSB_KalmanFilterCA_sigmaNoiseTheta->value() / 60.0),
+                                                    ui->DSB_KalmanFilterCA_sigmaNoiseVelocity->value(),
+                                                    ui->DSB_KalmanFilterCA_sigmaNoiseAcceleration->value()
                                                  );
-            m_kalmanConstAccelerationTrack.append(QVector<QPointF>());
-            for(int i = 0; i < 3; ++i) {
-                m_kalmanConstAccelerationTrack.last().append(targets[i].coordinate);
-            }
-            filter.initialization({targets[0], targets[1], targets[2]});
-            for(int i = 3; i < targets.size(); ++i) {
-                m_kalmanConstAccelerationTrack.last().append(filter.filterMeasuredValue(targets[i]).coordinate);
-            }
+            m_kalmanConstAccelerationTrack.append(filterMeasurements(&filter, targets));
         }
 
         /* Адаптивный фильтр Калмана */
         if(ui->CB_AdaptiveKalmanFilterCV->isChecked()) {
-            AdaptiveKalmanConstVelocityFilter filter(ui->SB_AdaptiveKalmanFilterCV_Kmax->value(),
-                                                     ui->SB_AdaptiveKalmanFilterCV_numberMeasToRecalcR->value(),
-                                                     ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseRho->value(),
-                                                     qDegreesToRadians(ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseTheta->value() / 60.0),
-                                                     ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseVelocity->value()
+            AdaptiveKalmanConstVelocityFilter filter(
+                                                        ui->SB_AdaptiveKalmanFilterCV_Kmax->value(),
+                                                        ui->SB_AdaptiveKalmanFilterCV_numberMeasToRecalcR->value(),
+                                                        ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseRho->value(),
+                                                        qDegreesToRadians(ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseTheta->value() / 60.0),
+                                                        ui->DSB_AdaptiveKalmanFilterCV_sigmaNoiseVelocity->value()
                                                      );
-            m_adaptiveKalmanConstVelocityTrack.append(QVector<QPointF>());
-            for(int i = 0; i < 3; ++i) {
-                m_adaptiveKalmanConstVelocityTrack.last().append(targets[i].coordinate);
-            }
-            filter.initialization({targets[0], targets[1], targets[2]});
-            for(int i = 3; i < targets.size(); ++i) {
-                m_adaptiveKalmanConstVelocityTrack.last().append(filter.filterMeasuredValue(targets[i]).coordinate);
-            }
+            m_adaptiveKalmanConstVelocityTrack.append(filterMeasurements(&filter, targets));
         }
     }
-
 }
 
+QVector<QPointF> MainWindow::filterMeasurements(AbstractFilter* const filter, QVector<Target> measurements) {
+    QVector<QPointF> filteredMeasurements = {
+                                                measurements[0].coordinate,
+                                                measurements[1].coordinate,
+                                                measurements[2].coordinate
+                                            };
+    filter->initialization({
+                               measurements[0],
+                               measurements[1],
+                               measurements[2]
+                           });
+    for(int i = 3; i < measurements.size(); ++i) {
+        filteredMeasurements.append(filter->filterMeasuredValue(measurements[i]).coordinate);
+    }
+
+    return filteredMeasurements;
+}
 
 void MainWindow::drawTracks() {
     for(int i = 0; i < m_originalTrack.size(); ++i) {

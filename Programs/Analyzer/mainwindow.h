@@ -68,6 +68,8 @@ private:;
 
     void calculateTracks();
 
+    QVector<QPointF> filterMeasurements(AbstractFilter* const filter, QVector<Target> measurements);
+
     void drawTracks();
 
     void clearModulation();
