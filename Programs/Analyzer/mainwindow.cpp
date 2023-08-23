@@ -310,6 +310,7 @@ QVector<QPointF> MainWindow::filterMeasurements(AbstractFilter* const filter, QV
         filteredMeasurements.append(filter->filterMeasuredValue(measurements[i]).coordinate);
     }
 
+
     return filteredMeasurements;
 }
 
