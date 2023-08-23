@@ -713,7 +713,7 @@ QSpinBox:disabled {
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="P_ABfilter">
              <layout class="QFormLayout" name="formLayout_3">

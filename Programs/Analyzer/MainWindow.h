@@ -1,18 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtCore>
 #include <QMainWindow>
 #include <QGraphicsScene>
-#include <QtCore>
-#include "AlphaBetaFilter.h"
-#include "AlphaBetaLeastSquaresFilter.h"
-#include "KalmanConstVelocityFilter.h"
-#include "KalmanConstAccelerationFilter.h"
-#include "AdaptiveKalmanConstVelocityFilter.h"
-#include "AlphaBetaWLeastSquaresFilter.h"
 #include "GraphicsBuilderWidget.h"
 #include "RadarView.h"
 #include "TargetItem.h"
+#include "TrackHandler.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -34,8 +29,6 @@ const quint8 SECTOR_COUNT = 32;
 
 const qreal PEN_TRAJECTORY_WIDTH = 1;
 
-const quint16 NUMBER_MODULATIONS = 1000;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -56,33 +49,19 @@ private slots:
 private:;
     void createGrid();
 
-    QVector<qreal> calculateStandardDeviation(QVector<QVector<QPointF>> array);
-
     void drawLineTrajectory();
 
     void drawTurnTrajectory();
 
     void drawCircleTrajectory();
 
-    QVector<QPointF> addNoiseToMeasurements(QVector<QPointF> measurements);
-
-    void calculateTracks();
-
-    QVector<QPointF> filterMeasurements(AbstractFilter* const filter, QVector<Target> measurements);
-
     void drawTracks();
 
-    void clearModulation();
+    void initializationScene();
 
-    QPointF polarToCart(qreal rho, qreal theta);
+    FiltrationParams getFiltrationParams();
 
-    QVector<QPointF> m_originalTrack;
-    QVector<QVector<QPointF>> m_noiseTrack;
-    QVector<QVector<QPointF>> m_alphaBetaTrack;
-    QVector<QVector<QPointF>> m_alphaBetaWlsmTrack;
-    QVector<QVector<QPointF>> m_kalmanConstVelocityTrack;
-    QVector<QVector<QPointF>> m_kalmanConstAccelerationTrack;
-    QVector<QVector<QPointF>> m_adaptiveKalmanConstVelocityTrack;
+    TrackHandler m_trackHandler;
 
     Ui::MainWindow *ui;
     QGraphicsScene* m_graphicsScene;
