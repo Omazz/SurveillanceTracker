@@ -5,6 +5,30 @@ TrackHandler::TrackHandler()
 
 }
 
+void TrackHandler::onStartCalculateLineTrack(QPointF start, QPointF end, qreal velocity, qreal updateTime,
+                                             FiltrationParams params, qreal sigmaRho, qreal sigmaTheta) {
+    clearTracks();
+    calculateLineTrack(start, end, velocity, updateTime);
+    calculateTracks(params, updateTime, sigmaRho, sigmaTheta);
+    emit finished();
+}
+
+void TrackHandler::onStartCalculateTurnTrack(qreal radius, qreal velocity, qreal updateTime,
+                                             FiltrationParams params, qreal sigmaRho, qreal sigmaTheta) {
+    clearTracks();
+    calculateTurnTrack(radius, velocity, updateTime);
+    calculateTracks(params, updateTime, sigmaRho, sigmaTheta);
+    emit finished();
+}
+
+void TrackHandler::onStartCalculateCircleTrack(qreal radius, qreal velocity, qreal updateTime,
+                                               FiltrationParams params, qreal sigmaRho, qreal sigmaTheta) {
+    clearTracks();
+    calculateCircleTrack(radius, velocity, updateTime);
+    calculateTracks(params, updateTime, sigmaRho, sigmaTheta);
+    emit finished();
+}
+
 void TrackHandler::calculateLineTrack(const QPointF& start, const QPointF& end,
                                       const qreal& velocity, const qreal& updateTime) {
 

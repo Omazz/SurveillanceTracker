@@ -58,8 +58,23 @@ struct FiltrationParams {
 
 class TrackHandler : public QObject
 {
+    Q_OBJECT
+
 public:
     TrackHandler();
+
+public slots:
+
+    void onStartCalculateLineTrack(QPointF start, QPointF end, qreal velocity, qreal updateTime,
+                                   FiltrationParams params, qreal sigmaRho, qreal sigmaTheta);
+
+    void onStartCalculateTurnTrack(qreal radius, qreal velocity, qreal updateTime,
+                                   FiltrationParams params, qreal sigmaRho, qreal sigmaTheta);
+
+    void onStartCalculateCircleTrack(qreal radius, qreal velocity, qreal updateTime,
+                                     FiltrationParams params, qreal sigmaRho, qreal sigmaTheta);
+
+public:
 
     void calculateLineTrack(const QPointF& start, const QPointF& end,
                             const qreal& velocity, const qreal& updateTime);
@@ -97,6 +112,10 @@ public:
     const QVector<QVector<QPointF> > &kalmanConstAccelerationTrack() const;
 
     const QVector<QVector<QPointF> > &adaptiveKalmanConstVelocityTrack() const;
+
+signals:
+
+    void finished();
 
 private:
     QVector<QPointF> m_originalTrack;

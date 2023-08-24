@@ -37,6 +37,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void onFinished();
+
 private slots:
     void on_PB_modeling_clicked();
 
@@ -46,14 +49,19 @@ private slots:
 
     void on_ComB_filters_currentIndexChanged(int index);
 
+signals:
+    void startCalculateLineTrack(QPointF start, QPointF end, qreal velocity, qreal updateTime,
+                                 FiltrationParams params, qreal sigmaRho, qreal sigmaTheta);
+
+    void startCalculateTurnTrack(qreal radius, qreal velocity, qreal updateTime,
+                                 FiltrationParams params, qreal sigmaRho, qreal sigmaTheta);
+
+    void startCalculateCircleTrack(qreal radius, qreal velocity, qreal updateTime,
+                                   FiltrationParams params, qreal sigmaRho, qreal sigmaTheta);
+
+
 private:
     void createGrid();
-
-    void drawLineTrajectory();
-
-    void drawTurnTrajectory();
-
-    void drawCircleTrajectory();
 
     void drawTracks();
 

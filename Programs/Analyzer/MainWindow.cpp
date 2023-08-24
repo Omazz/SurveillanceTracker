@@ -33,6 +33,17 @@ MainWindow::MainWindow(QWidget *parent)
     m_workerThread = new QThread();
     m_trackHandler->moveToThread(m_workerThread);
     m_workerThread->start();
+
+    qRegisterMetaType<FiltrationParams>("FiltrationParams");
+    connect(this, &MainWindow::startCalculateLineTrack, m_trackHandler, &TrackHandler::onStartCalculateLineTrack);
+    connect(this, &MainWindow::startCalculateTurnTrack, m_trackHandler, &TrackHandler::onStartCalculateTurnTrack);
+    connect(this, &MainWindow::startCalculateCircleTrack, m_trackHandler, &TrackHandler::onStartCalculateCircleTrack);
+    connect(m_trackHandler, &TrackHandler::finished, this, &MainWindow::onFinished);
+}
+
+void MainWindow::onFinished() {
+    drawTracks();
+    ui->PB_buildingGraphics->setEnabled(true);
 }
 
 void MainWindow::createGrid() {
@@ -63,13 +74,26 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_PB_modeling_clicked() {
     initializationScene();
-    ui->PB_buildingGraphics->setEnabled(true);
+    ui->PB_buildingGraphics->setEnabled(false);
     if(ui->RB_onLine->isChecked() == true) {
-        drawLineTrajectory();
+        QPointF start(ui->SB_firstPointX->value() * 1000.0, ui->SB_firstPointY->value() * 1000.0);
+        QPointF end(ui->SB_secondPointX->value() * 1000.0, ui->SB_secondPointY->value() * 1000.0);
+        qreal velocity = ui->DSB_velocity->value();
+        qreal updateTime = ui->DSB_updateTime->value();
+        emit startCalculateLineTrack(start, end, velocity, updateTime, getFiltrationParams(),
+                                     ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
     } else if(ui->RB_turn->isChecked() == true) {
-        drawTurnTrajectory();
+        qreal radius = ui->SB_radius->value() * 1000.0;
+        qreal velocity = ui->DSB_velocity->value();
+        qreal updateTime = ui->DSB_updateTime->value();
+        emit startCalculateTurnTrack(radius, velocity, updateTime, getFiltrationParams(),
+                                     ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
     } else if(ui->RB_onCircle->isChecked() == true) {
-        drawCircleTrajectory();
+        qreal radius = ui->SB_radius->value() * 1000.0;
+        qreal velocity = ui->DSB_velocity->value();
+        qreal updateTime = ui->DSB_updateTime->value();
+        emit startCalculateCircleTrack(radius, velocity, updateTime, getFiltrationParams(),
+                                       ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
     }
 }
 
@@ -127,53 +151,6 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     window->setWindowModality(Qt::WindowModality::ApplicationModal);
 
     window->show();
-}
-
-
-void MainWindow::drawLineTrajectory() {
-    QPointF start(ui->SB_firstPointX->value() * 1000.0, ui->SB_firstPointY->value() * 1000.0);
-    QPointF end(ui->SB_secondPointX->value() * 1000.0, ui->SB_secondPointY->value() * 1000.0);
-    qreal velocity = ui->DSB_velocity->value();
-    qreal updateTime = ui->DSB_updateTime->value();
-
-    m_trackHandler->clearTracks();
-
-    m_trackHandler->calculateLineTrack(start, end, velocity, updateTime);
-
-    m_trackHandler->calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
-                                   ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
-
-    drawTracks();
-}
-
-void MainWindow::drawTurnTrajectory() {
-    qreal radius = ui->SB_radius->value() * 1000.0;
-    qreal velocity = ui->DSB_velocity->value();
-    qreal updateTime = ui->DSB_updateTime->value();
-
-    m_trackHandler->clearTracks();
-
-    m_trackHandler->calculateTurnTrack(radius, velocity, updateTime);
-
-    m_trackHandler->calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
-                                   ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
-
-    drawTracks();
-}
-
-void MainWindow::drawCircleTrajectory() {
-    qreal radius = ui->SB_radius->value() * 1000.0;
-    qreal velocity = ui->DSB_velocity->value();
-    qreal updateTime = ui->DSB_updateTime->value();
-
-    m_trackHandler->clearTracks();
-
-    m_trackHandler->calculateCircleTrack(radius, velocity, updateTime);
-
-    m_trackHandler->calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
-                                   ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
-
-    drawTracks();
 }
 
 void MainWindow::drawTracks() {
