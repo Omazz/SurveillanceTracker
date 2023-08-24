@@ -43,23 +43,17 @@ QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
     left: 10px;
-	/* background-color: #393E46; 
-	 border: 2px solid #00ADB5;*/
 }
 
 QLabel {
     color: #EEEEEE;
 }
 
+
 QPushButton {
 	background-color: #820000;  
     color: #EEEEEE;
-    border: 2px solid #903749;
-    border-radius: 8px ;
-    padding: 4px 8px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    border-radius: 8px;
     font-size: 14px;
 }
 
