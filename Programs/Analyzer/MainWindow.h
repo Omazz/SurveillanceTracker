@@ -46,7 +46,7 @@ private slots:
 
     void on_ComB_filters_currentIndexChanged(int index);
 
-private:;
+private:
     void createGrid();
 
     void drawLineTrajectory();
@@ -61,7 +61,8 @@ private:;
 
     FiltrationParams getFiltrationParams();
 
-    TrackHandler m_trackHandler;
+    TrackHandler* m_trackHandler = nullptr;
+    QThread* m_workerThread = nullptr;
 
     Ui::MainWindow *ui;
     QGraphicsScene* m_graphicsScene;

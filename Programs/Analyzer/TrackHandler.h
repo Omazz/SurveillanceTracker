@@ -56,7 +56,7 @@ struct FiltrationParams {
     AdaptiveKalmanConstVelocityParams adaptiveKalmanCV;
 };
 
-class TrackHandler
+class TrackHandler : public QObject
 {
 public:
     TrackHandler();

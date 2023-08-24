@@ -28,6 +28,11 @@ MainWindow::MainWindow(QWidget *parent)
     createGrid();
 
     ui->PB_buildingGraphics->setEnabled(false);
+
+    m_trackHandler = new TrackHandler();
+    m_workerThread = new QThread();
+    m_trackHandler->moveToThread(m_workerThread);
+    m_workerThread->start();
 }
 
 void MainWindow::createGrid() {
@@ -70,7 +75,7 @@ void MainWindow::on_PB_modeling_clicked() {
 
 void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<qreal> steps;
-    QVector<QPointF> originalTrack = m_trackHandler.originalTrack();
+    QVector<QPointF> originalTrack = m_trackHandler->originalTrack();
 
     for(int i = 0; i < originalTrack.size(); ++i) {
         steps.append(i * ui->DSB_updateTime->value());
@@ -81,33 +86,33 @@ void MainWindow::on_PB_buildingGraphics_clicked() {
     QVector<QVector<qreal>> plots;
     QVector<QString> labels;
 
-    if(ui->CB_withNoise->isChecked() && !m_trackHandler.noiseTrack().empty()) {
-        plots.append(m_trackHandler.calculateStandardDeviation(m_trackHandler.noiseTrack()));
+    if(ui->CB_withNoise->isChecked() && !m_trackHandler->noiseTrack().empty()) {
+        plots.append(m_trackHandler->calculateStandardDeviation(m_trackHandler->noiseTrack()));
         labels.append("Шум");
     }
 
-    if(ui->CB_ABfilter->isChecked() && !m_trackHandler.alphaBetaTrack().empty()) {
-        plots.append(m_trackHandler.calculateStandardDeviation(m_trackHandler.alphaBetaTrack()));
+    if(ui->CB_ABfilter->isChecked() && !m_trackHandler->alphaBetaTrack().empty()) {
+        plots.append(m_trackHandler->calculateStandardDeviation(m_trackHandler->alphaBetaTrack()));
         labels.append("α-β");
     }
 
-    if(ui->CB_ABfilterWLSM->isChecked() && !m_trackHandler.alphaBetaWlsmTrack().empty()) {
-        plots.append(m_trackHandler.calculateStandardDeviation(m_trackHandler.alphaBetaWlsmTrack()));
+    if(ui->CB_ABfilterWLSM->isChecked() && !m_trackHandler->alphaBetaWlsmTrack().empty()) {
+        plots.append(m_trackHandler->calculateStandardDeviation(m_trackHandler->alphaBetaWlsmTrack()));
         labels.append("α-β ВМНК");
     }
 
-    if(ui->CB_KalmanFilterCV->isChecked() && !m_trackHandler.kalmanConstVelocityTrack().empty()) {
-        plots.append(m_trackHandler.calculateStandardDeviation(m_trackHandler.kalmanConstVelocityTrack()));
+    if(ui->CB_KalmanFilterCV->isChecked() && !m_trackHandler->kalmanConstVelocityTrack().empty()) {
+        plots.append(m_trackHandler->calculateStandardDeviation(m_trackHandler->kalmanConstVelocityTrack()));
         labels.append("Калман CV");
     }
 
-    if(ui->CB_KalmanFilterCA->isChecked() && !m_trackHandler.kalmanConstAccelerationTrack().empty()) {
-        plots.append(m_trackHandler.calculateStandardDeviation(m_trackHandler.kalmanConstAccelerationTrack()));
+    if(ui->CB_KalmanFilterCA->isChecked() && !m_trackHandler->kalmanConstAccelerationTrack().empty()) {
+        plots.append(m_trackHandler->calculateStandardDeviation(m_trackHandler->kalmanConstAccelerationTrack()));
         labels.append("Калман CA");
     }
 
-    if(ui->CB_AdaptiveKalmanFilterCV->isChecked() && !m_trackHandler.adaptiveKalmanConstVelocityTrack().empty()) {
-        plots.append(m_trackHandler.calculateStandardDeviation(m_trackHandler.adaptiveKalmanConstVelocityTrack()));
+    if(ui->CB_AdaptiveKalmanFilterCV->isChecked() && !m_trackHandler->adaptiveKalmanConstVelocityTrack().empty()) {
+        plots.append(m_trackHandler->calculateStandardDeviation(m_trackHandler->adaptiveKalmanConstVelocityTrack()));
         labels.append("Адаптивный Калман");
     }
 
@@ -131,11 +136,11 @@ void MainWindow::drawLineTrajectory() {
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
 
-    m_trackHandler.clearTracks();
+    m_trackHandler->clearTracks();
 
-    m_trackHandler.calculateLineTrack(start, end, velocity, updateTime);
+    m_trackHandler->calculateLineTrack(start, end, velocity, updateTime);
 
-    m_trackHandler.calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
+    m_trackHandler->calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
                                    ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
 
     drawTracks();
@@ -146,11 +151,11 @@ void MainWindow::drawTurnTrajectory() {
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
 
-    m_trackHandler.clearTracks();
+    m_trackHandler->clearTracks();
 
-    m_trackHandler.calculateTurnTrack(radius, velocity, updateTime);
+    m_trackHandler->calculateTurnTrack(radius, velocity, updateTime);
 
-    m_trackHandler.calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
+    m_trackHandler->calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
                                    ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
 
     drawTracks();
@@ -161,11 +166,11 @@ void MainWindow::drawCircleTrajectory() {
     qreal velocity = ui->DSB_velocity->value();
     qreal updateTime = ui->DSB_updateTime->value();
 
-    m_trackHandler.clearTracks();
+    m_trackHandler->clearTracks();
 
-    m_trackHandler.calculateCircleTrack(radius, velocity, updateTime);
+    m_trackHandler->calculateCircleTrack(radius, velocity, updateTime);
 
-    m_trackHandler.calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
+    m_trackHandler->calculateTracks(getFiltrationParams(), ui->DSB_updateTime->value(),
                                    ui->DSB_sigmaRho->value(), ui->DSB_sigmaTheta->value());
 
     drawTracks();
@@ -173,7 +178,7 @@ void MainWindow::drawCircleTrajectory() {
 
 void MainWindow::drawTracks() {
 
-    QVector<QPointF> originalTrack = m_trackHandler.originalTrack();
+    QVector<QPointF> originalTrack = m_trackHandler->originalTrack();
     QVector<QPointF> noiseTrack;
     QVector<QPointF> alphaBetaTrack;
     QVector<QPointF> alphaBetaWlsmTrack;
@@ -181,30 +186,30 @@ void MainWindow::drawTracks() {
     QVector<QPointF> kalmanConstAccelerationTrack;
     QVector<QPointF> adaptiveKalmanConstVelocityTrack;
 
-    if(!m_trackHandler.noiseTrack().empty()) {
-        noiseTrack = m_trackHandler.noiseTrack().first();
+    if(!m_trackHandler->noiseTrack().empty()) {
+        noiseTrack = m_trackHandler->noiseTrack().first();
     }
 
 
-    if(!m_trackHandler.alphaBetaTrack().empty()) {
-        alphaBetaTrack = m_trackHandler.alphaBetaTrack().first();
+    if(!m_trackHandler->alphaBetaTrack().empty()) {
+        alphaBetaTrack = m_trackHandler->alphaBetaTrack().first();
     }
 
-    if(!m_trackHandler.alphaBetaWlsmTrack().empty()) {
-        alphaBetaWlsmTrack = m_trackHandler.alphaBetaWlsmTrack().first();
+    if(!m_trackHandler->alphaBetaWlsmTrack().empty()) {
+        alphaBetaWlsmTrack = m_trackHandler->alphaBetaWlsmTrack().first();
     }
 
-    if(!m_trackHandler.kalmanConstVelocityTrack().empty()) {
-        kalmanConstVelocityTrack = m_trackHandler.kalmanConstVelocityTrack().first();
+    if(!m_trackHandler->kalmanConstVelocityTrack().empty()) {
+        kalmanConstVelocityTrack = m_trackHandler->kalmanConstVelocityTrack().first();
     }
 
 
-    if(!m_trackHandler.kalmanConstAccelerationTrack().empty()) {
-        kalmanConstAccelerationTrack = m_trackHandler.kalmanConstAccelerationTrack().first();
+    if(!m_trackHandler->kalmanConstAccelerationTrack().empty()) {
+        kalmanConstAccelerationTrack = m_trackHandler->kalmanConstAccelerationTrack().first();
     }
 
-    if(!m_trackHandler.adaptiveKalmanConstVelocityTrack().empty()) {
-        adaptiveKalmanConstVelocityTrack = m_trackHandler.adaptiveKalmanConstVelocityTrack().first();
+    if(!m_trackHandler->adaptiveKalmanConstVelocityTrack().empty()) {
+        adaptiveKalmanConstVelocityTrack = m_trackHandler->adaptiveKalmanConstVelocityTrack().first();
     }
 
     for(int i = 0; i < originalTrack.size(); ++i) {
