@@ -30,30 +30,30 @@ void MessageHandler::readDatagram() {
 
             sendDatagram(datagram);
 
-            qDebug() << Qt::hex
-                      << "\nRecord Asterix34"
-                      << "\nFSPEC:" << record34.FSPEC
-                      << "\nDataSourceIdentifier:" << record34.DataSourceIdentifier
-                      << "\nTimeOfDay:" << record34.TimeOfDay
-                      << "\nMessageType:" << record34.MessageType << "\n";
+//            qDebug() << Qt::hex
+//                      << "\nRecord Asterix34"
+//                      << "\nFSPEC:" << record34.FSPEC
+//                      << "\nDataSourceIdentifier:" << record34.DataSourceIdentifier
+//                      << "\nTimeOfDay:" << record34.TimeOfDay
+//                      << "\nMessageType:" << record34.MessageType << "\n";
 
         } else if(packet[0] == CAT48) {
             Asterix48 record48 = AsterixReader::parseAsterix48((const uint8_t*)(packet));
 
 
             if(record48.TargetReportDescriptor.size() == 0 ||
-               (record48.TargetReportDescriptor.front() != 0xA0)) {
+               (record48.TargetReportDescriptor.front() == 0xA0)) {
                return;
             }
 
             emit newPlot(convertFromDatagramToPlot(record48));
 
-            qDebug() << Qt::hex
-                     << "\nRecord Asterix48"
-                     << "\nFSPEC:" << record48.FSPEC
-                     << "\nDataSourceIdentifier:" << record48.DataSourceIdentifier
-                     << "\nTimeOfDay:" << record48.TimeOfDay
-                     << "\nMeasuredPositionInSlantPolarCoordinates:" << record48.MeasuredPositionInSlantPolarCoordinates << "\n";
+//            qDebug() << Qt::hex
+//                     << "\nRecord Asterix48"
+//                     << "\nFSPEC:" << record48.FSPEC
+//                     << "\nDataSourceIdentifier:" << record48.DataSourceIdentifier
+//                     << "\nTimeOfDay:" << record48.TimeOfDay
+//                     << "\nMeasuredPositionInSlantPolarCoordinates:" << record48.MeasuredPositionInSlantPolarCoordinates << "\n";
         }
     }
 }
