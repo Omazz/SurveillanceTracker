@@ -58,7 +58,7 @@ private:
 
 
     QList<Plot> m_plots;
-    QList<QPair<QThread*, Airplane*>> m_airplanes;
+    QList<Airplane*> m_airplanes;
 
     QTimer* m_timer;
 };
