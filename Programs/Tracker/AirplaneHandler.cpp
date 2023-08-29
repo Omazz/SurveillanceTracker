@@ -56,26 +56,14 @@ void AirplaneHandler::onRemoveTrack() {
     if(obj) {
         Airplane* airplane = qobject_cast<Airplane*>(obj);
         if(airplane) {
-            QMutableListIterator<QPair<QThread*, Airplane*>> airplanesIterator(m_airplanes);
+            QMutableListIterator<Airplane*> airplanesIterator(m_airplanes);
             while(airplanesIterator.hasNext()) {
-                QPair<QThread*, Airplane*> currentPair = airplanesIterator.next();
-                QThread* currentThread = currentPair.first;
-                Airplane* currentAirplane = currentPair.second;
+                Airplane* currentAirplane = airplanesIterator.next();
                 if(currentAirplane == airplane) {
-
                     airplanesIterator.remove();
-
-                    currentThread->quit();
-                    currentThread->wait();
-
-                    QThread* bufferThread = currentThread;
-                    currentThread = nullptr;
-                    delete bufferThread;
-
                     Airplane* bufferAirplane = currentAirplane;
                     currentAirplane = nullptr;
                     delete bufferAirplane;
-
                     return;
                 }
             }
@@ -107,9 +95,9 @@ bool AirplaneHandler::tryAddToTrack(Plot plot) {
     qreal x = plot.x();
     qreal y = plot.y();
 
-    QMutableListIterator<QPair<QThread*, Airplane*>> airplanesIterator(m_airplanes);
+    QMutableListIterator<Airplane*> airplanesIterator(m_airplanes);
     while(airplanesIterator.hasNext()) {
-        Airplane* currentAirplane = airplanesIterator.next().second;
+        Airplane* currentAirplane = airplanesIterator.next();
 
         Plot extrapolatedPlot = currentAirplane->doExtrapolation(currentTime).first;
         qreal x0 = extrapolatedPlot.x();
@@ -171,9 +159,11 @@ bool AirplaneHandler::tryCreateTrackBy2Plots(Plot plot) {
             QThread* thread = new QThread();
             track->moveToThread(thread);
             connect(track, &Airplane::skippingMeasurement, this, &AirplaneHandler::onSkippingMeasurement);
-            connect(track, &Airplane::removeTrack, this, &AirplaneHandler::onRemoveTrack);
+            connect(track, &Airplane::removeTrack, this, &AirplaneHandler::onRemoveTrack, Qt::QueuedConnection);
+            connect(track, &Airplane::removeTrack, thread, &QThread::quit, Qt::QueuedConnection);
+            connect(thread, &QThread::finished, thread, &QThread::deleteLater, Qt::QueuedConnection);
             thread->start();
-            m_airplanes.append(QPair<QThread*, Airplane*>(thread, track));
+            m_airplanes.append(track);
 
             m_messageHandler->sendDatagram(track->getFilteredPlot());
 
@@ -253,9 +243,11 @@ bool AirplaneHandler::tryCreateTrackBy3Plots(Plot plot) {
     QThread* thread = new QThread();
     track->moveToThread(thread);
     connect(track, &Airplane::skippingMeasurement, this, &AirplaneHandler::onSkippingMeasurement);
-    connect(track, &Airplane::removeTrack, this, &AirplaneHandler::onRemoveTrack);
+    connect(track, &Airplane::removeTrack, this, &AirplaneHandler::onRemoveTrack, Qt::QueuedConnection);
+    connect(track, &Airplane::removeTrack, thread, &QThread::quit, Qt::QueuedConnection);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater, Qt::QueuedConnection);
     thread->start();
-    m_airplanes.append(QPair<QThread*, Airplane*>(thread, track));
+    m_airplanes.append(track);
 
     m_messageHandler->sendDatagram(track->getFilteredPlot());
 
@@ -371,9 +363,11 @@ bool AirplaneHandler::tryCreateTrackBy4Plots(Plot plot) {
     QThread* thread = new QThread();
     track->moveToThread(thread);
     connect(track, &Airplane::skippingMeasurement, this, &AirplaneHandler::onSkippingMeasurement);
-    connect(track, &Airplane::removeTrack, this, &AirplaneHandler::onRemoveTrack);
+    connect(track, &Airplane::removeTrack, this, &AirplaneHandler::onRemoveTrack, Qt::QueuedConnection);
+    connect(track, &Airplane::removeTrack, thread, &QThread::quit, Qt::QueuedConnection);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater, Qt::QueuedConnection);
     thread->start();
-    m_airplanes.append(QPair<QThread*, Airplane*>(thread, track));
+    m_airplanes.append(track);
 
     m_messageHandler->sendDatagram(track->getFilteredPlot());
 
