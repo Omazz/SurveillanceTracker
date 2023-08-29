@@ -26,6 +26,19 @@ Airplane::Airplane(QVector<Plot> initPlots, quint16 trackNumber, QObject* parent
 
     m_numberSteps = 3;
     m_numberStepsMax = 7;
+
+    QTimer* timer = new QTimer(this);
+    m_timer = QSharedPointer<QTimer>(timer);
+    connect(m_timer.data(), &QTimer::timeout, this, &Airplane::onTimeout);
+    m_timer->setTimerType(Qt::PreciseTimer);
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(SettingsTracker::SCAN_MSECS + SettingsTracker::WAIT_INFO_MSECS);
+    m_timer->start();
+}
+
+
+Airplane::~Airplane() {
+
 }
 
 void Airplane::setTrack(Plot measuredPlot) {
@@ -64,7 +77,7 @@ void Airplane::setTrack(Plot measuredPlot) {
     replaceQueue(m_filteredPlot);
 }
 
-bool Airplane:: isManeuverAngle() const {
+bool Airplane::isManeuverAngle() const {
     qreal differenceAngles = qAbs(m_filteredPlot.angle() - m_oldAngle);
     if(differenceAngles > 180.0) {
        differenceAngles = 360.0 - differenceAngles;
@@ -72,7 +85,7 @@ bool Airplane:: isManeuverAngle() const {
     return qAbs(differenceAngles) >= SettingsTracker::MANEUVER_ANGLE_DEG;
 }
 
-bool Airplane:: isManeuverVelocity() const {
+bool Airplane::isManeuverVelocity() const {
     return qAbs(velocity() - m_oldVelocity) >= SettingsTracker::MANEUVER_VELOCITY_M_SECS;
 }
 
@@ -119,7 +132,7 @@ std::pair<Plot, QPointF> Airplane::doExtrapolation(qreal currentTimeSecs) {
     return std::pair<Plot, QPointF>(extrapolatedPlot, extrapolatedVelocity);
 }
 
-void Airplane::updateExtrapolationPlot() {
+void Airplane::onTimeout() {
     m_oldAngle = m_filteredPlot.angle();
     m_oldVelocity = velocity();
     qreal currentTime = static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) / 1000.0;
@@ -134,6 +147,27 @@ void Airplane::updateExtrapolationPlot() {
     m_counterExtrapolations++;
 
     replaceQueue(m_filteredPlot);
+
+    emit skippingMeasurement();
+
+    if(m_counterExtrapolations == SettingsTracker::NUMBER_OF_MISSING_PLOTS) {
+        m_timer->stop();
+        emit removeTrack();
+        return;
+    }
+
+    m_timer->setTimerType(Qt::PreciseTimer);
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(SettingsTracker::SCAN_MSECS + SettingsTracker::WAIT_INFO_MSECS);
+    m_timer->start();
+}
+
+void Airplane::onRestartTimer() {
+    m_timer->stop();
+    m_timer->setTimerType(Qt::PreciseTimer);
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(SettingsTracker::SCAN_MSECS + SettingsTracker::WAIT_INFO_MSECS);
+    m_timer->start();
 }
 
 const Plot &Airplane::measuredPlot() const {

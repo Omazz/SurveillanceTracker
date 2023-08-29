@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
              << "\nNumber of scans to lock: " << SettingsTracker::NUMBER_OF_SCANS_TO_LOCK
              << "\n\nHOLD PARAMETERS"
              << "\nMean deviation of distance, m: " << SettingsTracker::MEAN_DEVIATION_RHO_M
-             << "\nMean deviation of angle, angular minutes: " << qRound(qRadiansToDegrees(SettingsTracker::MEAN_DEVIATION_ANGLE_RAD) / 60.0)
+             << "\nMean deviation of angle, angular minutes: " << qRound(60.0 * qRadiansToDegrees(SettingsTracker::MEAN_DEVIATION_ANGLE_RAD))
              << "\nNumber of missing plots to remove track: " << SettingsTracker::NUMBER_OF_MISSING_PLOTS
              << "\nCoefficient increase strobe of hold: " << SettingsTracker::COEF_STROBE_HOLD
              << "\n\nMANEUVER PARAMETERS"

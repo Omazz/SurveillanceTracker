@@ -36,6 +36,13 @@ public slots:
 
     void checkPlotsAndTracks();
 
+    void onSkippingMeasurement();
+
+    void onRemoveTrack();
+
+signals:
+    void restartTimer();
+
 private:
     bool tryCreateTrackBy2Plots(Plot plot);
 
@@ -45,16 +52,13 @@ private:
 
     MessageHandler* m_messageHandler;
 
-    qreal TIME_TO_REMOVE_TRACK =
-            (qreal)(SettingsTracker::NUMBER_OF_MISSING_PLOTS * SettingsTracker::SCAN_MSECS) + SettingsTracker::WAIT_INFO_MSECS;
-
     qreal TIME_TO_REMOVE_PLOT =
             (qreal)((SettingsTracker::NUMBER_OF_SCANS_TO_LOCK - 1) * SettingsTracker::SCAN_MSECS)
                         + SettingsTracker::WAIT_INFO_MSECS;
 
 
     QList<Plot> m_plots;
-    QList<Airplane*> m_airplanes;
+    QList<QPair<QThread*, Airplane*>> m_airplanes;
 
     QTimer* m_timer;
 };

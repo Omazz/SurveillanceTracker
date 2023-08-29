@@ -14,6 +14,8 @@ public:
 
     Airplane(QVector<Plot> initPlots, quint16 trackNumber, QObject* parent = nullptr);
 
+    ~Airplane();
+
     void setTrack(Plot measuredPlot);
 
     bool isManeuverAngle() const;
@@ -25,8 +27,6 @@ public:
     void replaceQueue(Plot plot);
 
     std::pair<Plot, QPointF> doExtrapolation(qreal currentTimeSecs);
-
-    void updateExtrapolationPlot();
 
     const Plot &measuredPlot() const;
 
@@ -50,7 +50,15 @@ public:
 
     QByteArray getFilteredPlot() const;
 
+public slots:
+    void onTimeout();
+
+    void onRestartTimer();
+
 signals:
+    void skippingMeasurement();
+
+    void removeTrack();
 
 private:
     void addTrackData(qreal x, qreal y, quint16 trackNumber, qreal velocity, qreal angleVelocity);
@@ -79,6 +87,13 @@ private:
 
     /* Для экстраполяции */
     QQueue<Plot> m_coordsMNK;
+
+
+    qreal TIME_TO_REMOVE_TRACK =
+            (qreal)(SettingsTracker::NUMBER_OF_MISSING_PLOTS * SettingsTracker::SCAN_MSECS)
+                + SettingsTracker::WAIT_INFO_MSECS;
+
+    QSharedPointer<QTimer> m_timer;
 };
 
 #endif // AIRPLANE_H
