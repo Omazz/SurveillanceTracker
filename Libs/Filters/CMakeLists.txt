@@ -1,15 +1,22 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.22)
 
 project(Filters)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(
+    Qt5 COMPONENTS
+    Core
+    Gui
+    Widgets
+    REQUIRED
+)
 
-set(SOURCE_FILES
+set(
+    SOURCE_FILES
     AdaptiveKalmanConstVelocityFilter.cpp
     AlphaBetaFilter.cpp
     AlphaBetaLeastSquaresFilter.cpp
@@ -19,7 +26,8 @@ set(SOURCE_FILES
     Matrix.cpp
 )
 
-set(HEADER_FILES
+set(
+    HEADER_FILES
     AbstractFilter.h
     AdaptiveKalmanConstVelocityFilter.h
     AlphaBetaFilter.h
@@ -31,6 +39,16 @@ set(HEADER_FILES
 )
 
 
-add_library(Filters STATIC ${HEADER_FILES} ${SOURCE_FILES})
+add_library(
+    Filters
+    STATIC
+    ${HEADER_FILES}
+    ${SOURCE_FILES}
+)
 
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(
+    Filters
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+)

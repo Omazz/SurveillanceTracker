@@ -9,30 +9,33 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS
-        Core
-        Gui
-        Widgets
-        REQUIRED
+find_package(
+    Qt5 COMPONENTS
+    Core
+    Gui
+    Widgets
+    REQUIRED
 )
 
-add_executable(Settings
-        main.cpp
-        SettingsWindow.cpp
-        SettingsWindow.h
-        SettingsWindow.ui
+add_executable(
+    Settings
+    main.cpp
+    SettingsWindow.cpp
+    SettingsWindow.h
+    SettingsWindow.ui
 )
 
 
 include_directories(
-        "../../Libs/SettingsTracker"
-        "../../Libs/LoadingScreen"
+    "../../Libs/SettingsTracker"
+    "../../Libs/LoadingScreen"
 )
 
-target_link_libraries(Settings
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        SettingsTracker
-        LoadingScreen
+target_link_libraries(
+    Settings
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    SettingsTracker
+    LoadingScreen
 )

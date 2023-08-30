@@ -13,9 +13,10 @@ include_directories(
     "../../Libs/AsterixHandler"
 )
 
-find_package(Qt5 COMPONENTS
-        Core
-        REQUIRED
+find_package(
+    Qt5 COMPONENTS
+    Core
+    REQUIRED
 )
 
 include(FetchContent)

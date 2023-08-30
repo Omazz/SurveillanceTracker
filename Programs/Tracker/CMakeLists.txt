@@ -9,34 +9,36 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS
-        Core
-        Network
-        REQUIRED
+find_package(
+    Qt5 COMPONENTS
+    Core
+    Network
+    REQUIRED
 )
 
-add_executable(Tracker
-        main.cpp
-        Airplane.cpp
-        AirplaneHandler.cpp
-        MessageHandler.cpp
-        Plot.cpp
-        Airplane.h
-        AirplaneHandler.h
-        MessageHandler.h
-        Plot.h
+add_executable(
+    Tracker
+    main.cpp
+    Airplane.cpp
+    AirplaneHandler.cpp
+    MessageHandler.cpp
+    Plot.cpp
+    Airplane.h
+    AirplaneHandler.h
+    MessageHandler.h
+    Plot.h
 )
-
 
 include_directories(
-        "../../Libs/AsterixHandler"
-        "../../Libs/SettingsTracker"
+    "../../Libs/AsterixHandler"
+    "../../Libs/SettingsTracker"
 )
 
-target_link_libraries(Tracker
-        Qt5::Core
-        Qt5::Network
-        AsterixHandler
-        SettingsTracker
-        ${PCAP_LIBRARY}
+target_link_libraries(
+    Tracker
+    Qt5::Core
+    Qt5::Network
+    AsterixHandler
+    SettingsTracker
+    ${PCAP_LIBRARY}
 )

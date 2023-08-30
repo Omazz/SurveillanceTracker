@@ -42,7 +42,7 @@ __SurveillanceTracker__ представляет собой программны
 # Компиляция
 Для сборки любого ПО из комплекса потребуется выполнить следующие шаги:
 1) Установить __Qt__:
->sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev
+>sudo apt install -y qtbase5-dev qt5-qmake cmake libqt5charts5-dev libgtest-dev
 
 2) Установить библиотеку __libpcap__:
 > sudo apt-get install libpcap-dev
