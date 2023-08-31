@@ -88,7 +88,6 @@ private:
     /* Для экстраполяции */
     QQueue<Plot> m_coordsMNK;
 
-
     qreal TIME_TO_REMOVE_TRACK =
             (qreal)(SettingsTracker::NUMBER_OF_MISSING_PLOTS * SettingsTracker::SCAN_MSECS)
                 + SettingsTracker::WAIT_INFO_MSECS;
